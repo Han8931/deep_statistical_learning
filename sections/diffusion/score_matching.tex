@@ -1,0 +1,124 @@
+\section{Score Matching}
+\begin{itemize}
+	\item Suppose $\{\rvx_0,\cdots,\rvx_N\}$, where each data point (\eg image, video, or text)) is sampled independently from a data distribution $p(\rvx)$. 
+	\item Given the dataset, the goal of generative modeling is to fit a model to the data distribution such that we can synthesize new data points at will by sampling from the model. 
+	\item One way is to directly model the distribution function as in likelihood-based models. Let $f_\theta(\rvx)\in \mathbb{R}^d$, then we can define a density function:
+	$$p_\theta(\rvx) = \frac{\exp^{-f_{\theta}(\rvx)}}{Z_\theta}$$.
+	\item $f_\theta(\rvx)\in \mathbb{R}^d$ is often called unnormalized probabilistic model or energy-based model.
+	\item Energy-based model originates from the Gibbs distribution in statistical physics.
+	\item $p_\theta(\rvx)$ can be trained by maximizing the log-likelihood of the data.
+		\begin{align*}
+			\max_\theta \sum_i^N \log p_\theta(\rvx_i).
+		\end{align*}
+	\item The gradient of the loglikelihood is given by
+		\begin{align*}
+			\nabla_\theta \log p_\theta(\rvx) &= \nabla_\theta f_\theta(\rvx)- \nabla_\theta Z_\theta\\
+			\nabla_\theta Z_\theta	&= \frac{\nabla_\theta Z_\theta}{ Z_\theta}\\
+									&= \frac{1}{ Z_\theta}\nabla_\theta \int\exp(f_\theta(\rvx))d\rvx \\
+									&= \frac{1}{ Z_\theta} \int\exp(f_\theta(\rvx))\nabla_\theta f_\theta(\rvx)d\rvx \\
+									&=  \int \frac{1}{ Z_\theta}\exp(f_\theta(\rvx))\nabla_\theta f_\theta(\rvx)d\rvx \\
+									&=  \int p_\theta(\rvx)\nabla_\theta f_\theta(\rvx)d\rvx \\
+									&=  \mathbb{E}_{p_\theta(\rvx)}[\nabla_\theta f_\theta(\rvx)] \\
+			\nabla_\theta \log p_\theta(\rvx) &= \nabla_\theta f_\theta(\rvx) - \mathbb{E}_{p_\theta(\rvx)}[\nabla_\theta f_\theta(\rvx)]
+		\end{align*}
+	\item However, it is undesirable, since $Z_\theta$ is intractable.
+		\begin{itemize}
+			\item For instance, a gray scale image of $100\times 100$ has $256^{10,000}$ space. 
+		\end{itemize}
+	\item Thus, we have to sidestep the issue by using some solutions, for instance:
+		\begin{itemize}
+			% \item Architecture: NMF
+			\item Approximate by using VAE or MCMC
+		\end{itemize}
+\end{itemize}
+
+Instead, we can leverage \textbf{\textit{Stein Score}}: 
+\begin{itemize}
+	\item By modeling a score function, instead of the density function, we can sidestep the difficulty of computing the intractable normalizaing constants.
+	\item \textit{Stein Score} function: $\nabla_\rvx\log p(\rvx)$.
+		\begin{itemize}
+			\item \textbf{Not a gradient w.r.t. model parameters.}
+			\item Gradient of the log probability density function.
+			\item Not same as the score in stat.
+		\end{itemize}
+	\item It is a direction that maximizes a log data density.
+	\item A model for approximating the score function is called a \textit{score-based model} $s_\theta(\rva)$.
+	\item Score-based models does not have to compute the intractable normalizing constant, $Z_\theta$.
+		$$s_\theta(\rvx) = \nabla_\rvx\log p_\theta(\rvx) = -\nabla_\rvx f_{\theta}(\rvx)- \underbrace{\nabla_\rvx \log Z_\theta}_{\text{Constant}}.$$
+	\end{itemize}
+
+\subsection{Fisher Divergence}
+We need to know about \textit{Fisher Divergence}:
+\begin{itemize}
+	\item Given \textit{i.i.d.} samples $\{\rvx_1, \cdots, \rvx_N\}\sim p_{data}(\rvx) = p(\rvx).$
+	\item Estimating the score function $\nabla_\rvx \log p(\rvx)$.
+	\item Score model $s_\theta(\rvx):\mathbb{R}^D\to \mathbb{R}^D$.
+	\item Use score estimator $s_\theta(x)$:
+		$$\mathcal{L}_{\theta} = \frac{1}{2}\mathbb{E}_{p(\rvx)}\big[||\nabla_\rvx \log p(\rvx)-s_\theta(\rvx)||^2_2\big]\,.$$
+	\item It is called \textit{Fisher divergence}.
+	\item Intuitively, the Fisher divergence compares the squared distance between the ground-truth data score and the score-based model. 
+	\begin{itemize}
+		\item It changes the problem into a \textit{regression} problem.
+	\end{itemize}
+	\item Direct computation of the divergence is \textbf{infeasible} due to the unknown data score $\nabla_\rvx \log p(\rvx)$.
+	\begin{itemize}
+		\item Since we have no access to the true data distribution $p(\rvx)$.
+	\end{itemize}
+\end{itemize}
+
+Fortunately, there exists a family of methods called \textbf{\textit{score matching}} that minimize the Fisher divergence without knowledge of the ground-truth data score.
+\begin{itemize}
+	\item Score matching objectives can directly be estimated on a dataset and optimized with stochastic gradient descent, analogous to the log-likelihood objective for training likelihood-based models (with known normalizing constants).
+	\item We can train the score-based model by minimizing a score matching objective, without requiring adversarial optimization.
+\end{itemize}
+\begin{align*}
+	\mathcal{L}_{\theta} &=  \mathbb{E}_{p(\rvx)}\bigg[\frac{1}{2}||s_\theta(x)||^2_2+tr(\nabla_{\rvx}s_\theta(x))\bigg]\\
+	&\approx \frac{1}{N}\sum_{i=1}^N\bigg[\frac{1}{2}||s_\theta(x)||^2_2+tr(\nabla_{\rvx}s_\theta(x))\bigg]
+	\label{eq:score_integration}
+\end{align*}
+\begin{itemize}
+	\item $\{\rvx_1, \cdots, \rvx_N\}\sim  p(\rvx)$
+	\item $\nabla_{\rvx}s_\theta(x)$: Jacobian
+	\item Remove the dependency of $p(\rvx)$
+\end{itemize}
+\begin{align}
+	\mathcal{L}_{\theta} &= \frac{1}{2}\mathbb{E}_{p(x)}\big[||\nabla_x \log p(x)-s_\theta(x)||^2_2\big]\\
+&= \frac{1}{2}\mathbb{E}_{p(x)}\big[\big(\nabla_x \log p(x)-s_\theta(x)\big)^2\big]\\
+&= \frac{1}{2}\int p(x)(\nabla_x \log p(x)-s_\theta(x))^2dx\\
+&= \underbrace{\frac{1}{2}\int p(x)(\nabla_x \log p(x))^2dx}_{\textrm{independent from theta}}+\frac{1}{2}\int p(x)s_\theta(x)^2dx-\int p(x)s_\theta(x)\nabla_x \log p(x)dx\\
+	&= \dots-\int p(x)s_\theta(x)\nabla_x \log p(x)dx\\
+	&= \dots-\int p(x)s_\theta(x)\frac{\nabla_x p(\rvx)}{p(x)}dx\\
+	&= \dots-\int \nabla_\rvx p(x)s_\theta(x)dx\\
+	&= \dots-\bigg[p(x)s_\theta(x)\bigg]^{\infty}_{x=-\infty}+\int  p(x) \nabla_x s_\theta(x)dx\\
+	&= \frac{1}{2}\int p(x)s_\theta(x)^2dx+\int  p(x) \nabla_x s_\theta(x)dx+\textrm{const}\\
+	&= \frac{1}{2}\mathbb{E}_{p(x)}[s_\theta(x)^2]+\mathbb{E}_{p(x)}[\nabla_xs_\theta(x)]+ \textrm{const}.
+\end{align}
+\begin{itemize}
+	\item The second last term used the integration by parts.
+	\item The last step is done by a boundary condition assumption which makes score function to be zero (\cf Sliced score matching paper).
+		\begin{itemize}
+			\item $p_{data}(x)\to 0$ as $|x|\to \infty$.
+			\item In other words, gradient vanishes on the boundary. 
+		\end{itemize}
+\end{itemize}
+% \begin{align*}
+% 	&\quad \quad \frac{1}{2}\mathbb{E}_{p(x)}\big[(s_\theta(x)-\nabla_x \log p(x))^2\big]\\
+% 	&= \frac{1}{2}\int p(x)(\nabla_x \log p(x))^2dx+\frac{1}{2}\int p(x)s_\theta(x)^2dx\\
+% 	&\quad+\int  p(x) \nabla_x s_\theta(x)dx\\
+% 	&= 
+% \end{align*}
+
+\subsection{Langevin Dynamics}
+\begin{itemize}
+	\item Once we have trained a score-based model $s_\theta(\rvx)\approx \nabla_\rvx\log p(\mathbf{x})$, we can use an iterative procedure called \textit{Langevin Dynamics} (LD) \cite{sgld2011} to draw samples from it.
+	\item LD provides an MCMC procedure to sample from a distribution $p(\rvx)$ using only its score function.
+\end{itemize}
+
+	$$ \mathbf{x}_t \leftarrow \mathbf{x}_{t-1} + \frac{\epsilon}{2} \nabla_\rvx\log p(\mathbf{x}_{t-1}) + \sqrt{\epsilon} \mathbf{z}_t$$
+\begin{itemize}
+	\item Specifically, it initializes the chain from an arbitrary prior distribution $\rvx_0\sim \pi(\rvx)$, and then iterates the following
+	\item Sample from $p(x)$ using only the score $\nabla_x\log p(x)$.
+	\item $\mathbf{z}_t \sim \mathcal{N}(\mathbf{0},\mathbf{I})$.
+	\item $\epsilon$ is the step size.
+\item As $T\to \infty$ and $\epsilon\to 0$, $\rvx_T$ will become the true probability density $p(\rvx)$.
+\end{itemize}

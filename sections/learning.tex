@@ -1,0 +1,71 @@
+\chapter{Training, Testing, and Regularization}
+\section{Sources of Error in ML}
+$$E_{out} \leq E_{ml}+\Omega$$
+\begin{itemize}
+	\item $E_{out}$: estimation of error. 
+	\item $E_{ml}$: error from a learning algorithm
+	\item $\Omega$: error caused by the variance from observations. 
+\end{itemize}
+We also define 
+\begin{itemize}
+	\item $f$: target function
+	\item $g$: learning function
+	\item $g^{(D)}$: learned function based on $D$, or simply \textit{hypothesis}.
+	\item $D$: dataset drawn from the real world.
+	\item $\bar{g}$: the average hypothesis of a given infinite number of $D$s. 
+		$$\bar{g}(x) = \mathbb{E}_D[g^{(D)}(x)].$$
+\end{itemize}
+
+Error of a single instance $x$ from $g$ learnt from $D$ is given by
+\begin{align*}
+	Err_{\textrm{out}}(g^{(D)}(x)) = \mathbb{E}_{X}[(g^{(D)}(x)-f(x))^2],
+\end{align*}
+where $X$ can be considered as test sets. Then, the expected error over the infinite number of datasets $D$ sampled from a true data distribution is
+\begin{align*}
+	\mathbb{E}_D[Err_{\textrm{out}}(g^{(D)}(x))] &= \mathbb{E}_D[\mathbb{E}_{X}[(g^{(D)}(x)-f(x))^2]]\\
+												 &= \mathbb{E}_X[\mathbb{E}_D[(g^{(D)}(x)-f(x))^2]]
+\end{align*}
+Let's simplify the term inside with an average of hypothesis $\bar{g}(x)$:
+\begin{align*}
+	\mathbb{E}_D[(g^{(D)}(x)-f(x))^2]&= \mathbb{E}_D[(g^{(D)}(x)-\bar{g}(x)+\bar{g}(x)-f(x))^2]\\
+	&= \mathbb{E}_D\big[(g^{(D)}(x)-\bar{g}(x))^2+(\bar{g}(x)-f(x))^2\\ &\quad + 2 (g^{(D)}(x)-\bar{g}(x))(\bar{g}(x)-f(x))\big]\\
+	&= \mathbb{E}_D\big[(g^{(D)}(x)-\bar{g}(x))^2\big]+(\bar{g}(x)-f(x))^2\\ &\quad + \mathbb{E}_D\big[2 (g^{(D)}(x)-\bar{g}(x))(\bar{g}(x)-f(x))\big]
+\end{align*}
+Since, $\mathbb{E}_D\big[2 (g^{(D)}(x)-\bar{g}(x))(\bar{g}(x)-f(x))\big]$ is 0, the expectation of the error becomes
+\begin{align*}
+	\mathbb{E}_D[Err_{\textrm{out}}(g^{(D)}(x))] = \mathbb{E}_X\big[\mathbb{E}_D\big[(g^{(D)}(x)-\bar{g}(x))^2\big]+(\bar{g}(x)-f(x))^2\big].
+\end{align*}
+Let's closely look at this formula. The errors are from two sources:
+\begin{itemize}
+	\item \textbf{Variance}: $\mathbb{E}_D\big[(g^{(D)}(x)-\bar{g}(x))^2\big]$. Variance captures how much your classifier changes if you train on a different training set. We need to collect more data to reduce the variance. 
+	\item \textbf{Bias}: $(\bar{g}(x)-f(x))^2$. Bias is the inherent error that you obtain from your classifier even with infinite training data. We need to build a more complex model to reduce the bias. 
+\end{itemize}
+However, if we reduce the bias, then the variance tends to increase. 
+
+\subsection{Alternative Derivation}
+
+The derivation of the bias–variance decomposition for squared error proceeds as follows.[6][7] For notational convenience, abbreviate $f = f(x)$ and $\hat{f} = \hat{f}(x)$. First, recall that, by definition, for any random variable $\mathbf{X}$, we have
+$$\displaystyle \operatorname {Var} {\big [}{\hat {f}}(x){\big ]}=\operatorname {E} [X^{2}]-\operatorname {E} [X]^{2}.$$
+By rearranging, we get 
+$$\operatorname {E} [X^{2}] = \displaystyle \operatorname {Var} {\big [}{\hat {f}}(x){\big ]}+\operatorname {E} [X]^{2}.$$
+Since $f$ is deterministic
+$$\operatorname {E} [f] = f$$
+
+Thus, given $y = f+\varepsilon$ and $\operatorname {E} [\varepsilon] = 0$, implies $\operatorname {E} [y] = \operatorname {E} [f+\varepsilon] = \operatorname {E} [f] = f$
+
+Also, since $\operatorname{Var} [\varepsilon ]=\sigma ^{2}$
+$$\displaystyle \operatorname {Var} [y]=\operatorname {E} [(y-\operatorname {E} [y])^{2}]=\operatorname {E} [(y-f)^{2}]=\operatorname {E} [(f+\varepsilon -f)^{2}]=\operatorname {E} [\varepsilon ^{2}]=\operatorname {Var} [\varepsilon ]+{\Big (}\operatorname {E} [\varepsilon ]{\Big )}^{2}=\sigma ^{2}$$
+
+Thus, since $\varepsilon$ and $\hat {f}$ are independent, we can write:
+\begin{align*}
+	\operatorname {E} {\big [}(y-{\hat {f}})^{2}{\big ]}&=\operatorname {E} {\big [}(f+\varepsilon -{\hat {f}})^{2}{\big ]}\\
+	&=\operatorname {E} {\big [}(f+\varepsilon -{\hat {f}}+\operatorname {E} [{\hat {f}}]-\operatorname {E} [{\hat {f}}])^{2}{\big ]}\\
+	&=\operatorname {E} {\big [}(f-\operatorname {E} [{\hat {f}}])^{2}{\big ]}+\operatorname {E} [\varepsilon ^{2}]+\operatorname {E} {\big [}(\operatorname {E} [{\hat {f}}]-{\hat {f}})^{2}{\big ]}+2\operatorname {E} {\big [}(f-\operatorname {E} [{\hat {f}}])\varepsilon {\big ]}+\\
+	&\quad 2\operatorname {E} {\big [}\varepsilon (\operatorname {E} [{\hat {f}}]-{\hat {f}}){\big ]}+2\operatorname {E} {\big [}(\operatorname {E} [{\hat {f}}]-{\hat {f}})(f-\operatorname {E} [{\hat {f}}]){\big ]}\\
+	&=(f-\operatorname {E} [{\hat {f}}])^{2}+\operatorname {E} [\varepsilon ^{2}]+\operatorname {E} {\big [}(\operatorname {E} [{\hat {f}}]-{\hat {f}})^{2}{\big ]}+\\
+	&\quad 2(f-\operatorname {E} [{\hat {f}}])\operatorname {E} [\varepsilon ]+2\operatorname {E} [\varepsilon ]\operatorname {E} {\big [}\operatorname {E} [{\hat {f}}]-{\hat {f}}{\big ]}+2\operatorname {E} {\big [}\operatorname {E} [{\hat {f}}]-{\hat {f}}{\big ]}(f-\operatorname {E} [{\hat {f}}])\\
+	&=(f-\operatorname {E} [{\hat {f}}])^{2}+\operatorname {E} [\varepsilon ^{2}]+\operatorname {E} {\big [}(\operatorname {E} [{\hat {f}}]-{\hat {f}})^{2}{\big ]}\\
+	&=(f-\operatorname {E} [{\hat {f}}])^{2}+\operatorname {Var} [y]+\operatorname {Var} {\big [}{\hat {f}}{\big ]}\\
+	&=\operatorname {Bias} [{\hat {f}}]^{2}+\operatorname {Var} [y]+\operatorname {Var} {\big [}{\hat {f}}{\big ]}\\
+	&=\operatorname {Bias} [{\hat {f}}]^{2}+\sigma ^{2}+\operatorname {Var} {\big [}{\hat {f}}{\big ]}
+\end{align*}

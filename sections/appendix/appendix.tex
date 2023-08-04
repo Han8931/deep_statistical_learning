@@ -1,0 +1,84 @@
+\renewcommand{\thesection}{\Alph{section}.\arabic{section}}
+\setcounter{section}{0}
+
+\begin{appendices}
+\chapter{Appendix}
+
+\section{KL Divergence between Two Normal Distribution}
+\begin{align*}
+D_\text{KL}(P||Q) & = \mathbbm{E}_P\Big[\textrm{log}\frac{P}{Q}\Big]\\
+\end{align*}
+Consider two multivariate Gaussians in $\mathbbm{R}^n$, $P_1$ and $P_2$
+
+\begin{align*}
+D_\text{KL}(P||Q) &= \int \left[ \frac{1}{2} \log\frac{|\Sigma_2|}{|\Sigma_1|} - \frac{1}{2} (x-\mu_1)^T\Sigma_1^{-1}(x-\mu_1) + \frac{1}{2} (x-\mu_2)^T\Sigma_2^{-1}(x-\mu_2) \right] \times p(x) dx \\
+&= \frac{1}{2} \log\frac{|\Sigma_2|}{|\Sigma_1|} - \frac{1}{2} \text{tr} \left\{E[(x - \mu_1)(x - \mu_1)^T] \ \Sigma_1^{-1} \right\} + \frac{1}{2} E[(x - \mu_2)^T \Sigma_2^{-1} (x - \mu_2)] \\
+&= \frac{1}{2} \log\frac{|\Sigma_2|}{|\Sigma_1|} - \frac{1}{2} \text{tr}\ \{I_n \} + \frac{1}{2} (\mu_1 - \mu_2)^T \Sigma_2^{-1} (\mu_1 - \mu_2) + \frac{1}{2} \text{tr} \{ \Sigma_2^{-1} \Sigma_1 \} \\
+&= \frac{1}{2}\left[\log\frac{|\Sigma_2|}{|\Sigma_1|} - n + \text{tr} \{ \Sigma_2^{-1}\Sigma_1 \} + (\mu_2 - \mu_1)^T \Sigma_2^{-1}(\mu_2 - \mu_1)\right]
+\end{align*}
+
+Trace tricks:
+$$x^TAx = tr[x^TAx] = tr[xx^TA]$$
+$$tr[A+B] = tr[A]+tr[B]$$
+$$E[(x-\mu)^T \Sigma^{-1} (x-\mu)]= tr(E[(x-\mu)(x-\mu)^T] \Sigma^{-1})$$
+$$\Sigma = E[(X-\mu)(X-\mu)^T]=E[XX^T]-\mu\mu^T$$
+$$E[XX^T] = \Sigma + \mu\mu^T$$
+
+Note that the determinant of a diagonal matrix could be computed as product of its diagonal.
+
+
+\section{Various Tricks}
+
+\subsection{Spectral Normalization}
+
+A persisting challenge in the training of GANs is the performance control of the discriminator. The derivative of discriminator could be unbounded and even incomputable, so they introduced a regularization on the derivative of discriminator called, Lipchitz continuity, which bound the gradient.
+
+Neural network is actually a composite function. So if we make each function to satisfy the Lipchitz continuity, then we can make whole network satisfy it. Lipchitz continuity of a linear operator can be seen as 
+
+\begin{align*}
+	||f(x_1)-f(x_2)||_2 &\leq L||x_1-x_2||_2\\
+	||Ax_1-Ax_2||_2 &\leq L||x_1-x_2||_2\\
+	\frac{||Ax||_2}{||x||_2}&\leq L\\
+	\sigma_{max}\underbrace{\sup_x \frac{||Ax||_2}{||x||_2}}_{Spectral Norm}&\leq L, \quad \textrm{Since inequaility holds for all }x
+\end{align*}
+, where $\sigma_{max}$ is the maximum singular value. Note that the spectral norm is from the linear algebra. We can make the matrix $A$ Lipchitz continuous by 
+\begin{align*}
+1 = \underbrace{\sup_x \frac{||\frac{A}{\sigma_{max}}x||_2}{||x||_2}}_{Spectral Norm}\leq L
+\end{align*}
+
+
+\subsection{Moving Averaging}
+
+\subsection{Weight Averaging}
+
+\subsection{Quality Measurements}
+
+\section{f-Divergence}
+In probability theory, an $f$-divergence is a function $D_{f}(p||q)$ that measures the difference between two probability distributions $p$ and $q$. It helps the intuition to think of the divergence as an average, weighted by the function $f$, of the odds ratio given by $p$ and $q$.
+
+For distributions $p$ and $q$, f-divergence is defined as:
+$$D_{f}(p||q) = \int_{\mathcal{X}}f\Bigg(\frac{p(x)}{q(x)}\Bigg)q(x)dx$$
+
+\begin{itemize}
+	\item KL-divergence: $f(t) = t\log t$
+	\item Reversed KL-divergence: $f(t) = -\log t$
+	\item Total variation: $f(t) = \frac{1}{2}|t-1|$
+	$$D_{f}(p||q) = \int_{\mathcal{X}}|p(x)-q(x)|dx$$
+\end{itemize}
+
+\section{Lipchitz Continuous}
+The function $f$ in the new form of Wasserstein metric is demanded to satisfy $\| f \|_L \leq K$, meaning it should be $K$-Lipschitz continuous. \citep{Lil2017}
+
+A real-valued function $f: \mathbbm{R} \rightarrow \mathbbm{R}$ is called $K$-Lipschitz continuous if there exists a real constant $K\geq 0$ such that, for all $x_1, x_2 \in \mathbb{R}$
+$$\lvert f(x_1) - f(x_2) \rvert \leq K \lvert x_1 - x_2 \rvert$$
+
+\section{Singular Value}
+All singular values can be calculated via the singular value decomposition (SVD)
+$$A = U\Sigma V^T$$
+, where $U$ is the left singular vectors and $V$ is the right singular vectors. However, if we just want the maximum singular value then we just need to find corresponding vectors
+$$\sigma = uAv^T$$
+Actually, there is a simpler way to find the maximum singular value e.g., power iteration. 
+
+
+
+\end{appendices}

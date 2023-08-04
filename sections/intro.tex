@@ -1,0 +1,26 @@
+\chapter{Introduction}
+\section{Probability}
+
+
+
+\begin{definition}{Independence}\vspace{-0.5cm}
+	\begin{align*}
+	X\perp Y \leftrightarrow p(X,Y)=p(X)p(Y)
+	\end{align*}
+\end{definition}
+\begin{definition}{Conditional independence}\vspace{-0.5cm}
+	\begin{align*}
+	X\perp Y|Z \leftrightarrow p(X,Y|Z)=p(X|Z)p(Y|Z)
+	\end{align*}
+\end{definition}
+All the dependencies between $X$ and $Y$ are mediated via $Z$. If $X$ and $Y$ are conditionally independent, then 
+\begin{align*}
+	p(X|Y,Z)&=\frac{p(X,Y|Z)}{p(Y|Z)}\\
+	&=\frac{p(X|Z)p(Y|Z)}{p(Y|Z)}\\
+	&=p(X|Z).
+\end{align*}
+
+\input{./sections/naive_bayes}
+\input{./sections/logistic_reg}
+
+

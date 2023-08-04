@@ -1,0 +1,21 @@
+\section{Learning}
+Error of a single instance from $g$ learnt from $D$ is given by
+\begin{align*}
+	Err_{\textrm{out}}(g^{(D)}(x)) = \mathbb{E}_{X}[(g^{(D)}(x)-f(x))^2]
+\end{align*}
+Then, the expected error over the infinite number of datasets, $D$ is
+\begin{align*}
+	\mathbb{E}_D[Err_{\textrm{out}}(g^{(D)}(x))] &= \mathbb{E}_D[\mathbb{E}_{X}[(g^{(D)}(x)-f(x))^2]]\\
+												 &= \mathbb{E}_X[\mathbb{E}_D[(g^{(D)}(x)-f(x))^2]]
+\end{align*}
+Let's simplify the term inside with an average of hypothesis $\bar{g}(x)$:
+\begin{align*}
+	\mathbb{E}_D[(g^{(D)}(x)-f(x))^2]&= \mathbb{E}_D[(g^{(D)}(x)-\bar{g}(x)+\bar{g}(x)-f(x))^2]\\
+	&= \mathbb{E}_D\big[(g^{(D)}(x)-\bar{g}(x))^2+(\bar{g}(x)-f(x))^2\\ &\quad + 2 (g^{(D)}(x)-\bar{g}(x))(\bar{g}(x)-f(x))\big]\\
+	&= \mathbb{E}_D\big[(g^{(D)}(x)-\bar{g}(x))^2\big]+(\bar{g}(x)-f(x))^2\\ &\quad + \mathbb{E}_D\big[2 (g^{(D)}(x)-\bar{g}(x))(\bar{g}(x)-f(x))\big]
+\end{align*}
+Since, $\mathbb{E}_D\big[2 (g^{(D)}(x)-\bar{g}(x))(\bar{g}(x)-f(x))\big]$ is 0, the expectation of the error becomes
+\begin{align*}
+	\mathbb{E}_D[Err_{\textrm{out}}(g^{(D)}(x))] = \mathbb{E}_X\big[\mathbb{E}_D\big[(g^{(D)}(x)-\bar{g}(x))^2\big]+(\bar{g}(x)-f(x))^2\big].
+\end{align*}
+Let's closely look at this formula.

@@ -1,0 +1,14 @@
+\begin{thebibliography}{1}
+
+\bibitem{murphy2012machine}
+Kevin~P. Murphy.
+\newblock {\em Machine learning : a probabilistic perspective}.
+\newblock Adaptive computation and machine learning series. MIT, Cambridge, MA,
+  2012.
+
+\bibitem{bishop:PRML}
+Christopher~M. Bishop.
+\newblock {\em Pattern Recognition and Machine Learning}.
+\newblock Springer, 2006.
+
+\end{thebibliography}

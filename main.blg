@@ -1,0 +1,66 @@
+This is BibTeX, Version 0.99d (TeX Live 2023)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+A level-1 auxiliary file: ./sections/intro.aux
+A level-1 auxiliary file: ./sections/learning.aux
+A level-1 auxiliary file: ./sections/svm/intro.aux
+A level-1 auxiliary file: ./sections/svm/optimization.aux
+A level-1 auxiliary file: ./sections/sampling.aux
+A level-1 auxiliary file: ./sections/gibbs.aux
+A level-1 auxiliary file: ./sections/lda/topic_modeling.aux
+A level-1 auxiliary file: ./sections/generative/intro.aux
+A level-1 auxiliary file: ./sections/generative/clustering.aux
+A level-1 auxiliary file: ./sections/generative/elbo.aux
+A level-1 auxiliary file: ./sections/generative/vae.aux
+A level-1 auxiliary file: ./sections/generative/gan/gan.aux
+A level-1 auxiliary file: ./sections/generative/gan/wasserstein.aux
+A level-1 auxiliary file: ./sections/generative/gan/infogan.aux
+A level-1 auxiliary file: ./sections/diffusion/intro.aux
+A level-1 auxiliary file: ./sections/diffusion/distribution.aux
+A level-1 auxiliary file: ./sections/diffusion/summary.aux
+A level-1 auxiliary file: ./sections/diffusion/score_matching.aux
+The style file: unsrt.bst
+Database file #1: references.bib
+Warning--I didn't find a database entry for "sgld2011"
+You've used 2 entries,
+            1791 wiz_defined-function locations,
+            477 strings with 4315 characters,
+and the built_in function-call counts, 328 in all, are:
+= -- 29
+> -- 8
+< -- 0
++ -- 4
+- -- 2
+* -- 10
+:= -- 59
+add.period$ -- 7
+call.type$ -- 2
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 2
+duplicate$ -- 20
+empty$ -- 39
+format.name$ -- 2
+if$ -- 76
+int.to.chr$ -- 0
+int.to.str$ -- 2
+missing$ -- 4
+newline$ -- 13
+num.names$ -- 2
+pop$ -- 11
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 4
+stack$ -- 0
+substring$ -- 0
+swap$ -- 2
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 2
+width$ -- 3
+write$ -- 24
+(There was 1 warning)

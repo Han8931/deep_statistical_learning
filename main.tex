@@ -1,0 +1,113 @@
+\documentclass[oneside, a4paper,11pt]{book}
+\usepackage[margin=1in]{geometry}
+
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+
+\usepackage[autostyle]{csquotes}
+\usepackage{dsfont}
+
+%\usepackage{algorithm,algpseudocode}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{multicol}
+
+\usepackage{hyperref}
+\usepackage{amssymb}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+
+\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\magenta}[1]{\textcolor{magenta}{#1}}
+\newcommand{\green}[1]{\textcolor{green}{#1}}
+\newcommand{\cyan}[1]{\textcolor{cyan}{#1}}
+
+\input{math-com.tex}
+
+\begin{document}
+
+\begin{titlepage}
+	\begin{center}
+		\vspace*{5.5cm}
+		\textbf{\Huge Deep Statistical Learning}\\
+        \vspace{2.5cm}
+		\includegraphics[width=0.4\textwidth]{./logo/ntunlp_logo.png}\\
+        \vspace{1.5cm}
+        \Large My Note \\
+        \vspace{1.5cm}
+		Han Cheol Moon\\
+		School of Computer Science and Engineering\\
+		Nanyang Technological University\\
+		Singapore\\
+		\texttt{hancheol001@edu.ntu.edu.sg}
+            
+		\date{\today}
+	\end{center}
+\end{titlepage}
+
+% \frontmatter
+% \maketitle
+\tableofcontents
+\newpage
+
+
+\mainmatter
+\include{./sections/intro}
+\include{./sections/learning}
+\input{./sections/svm/svm}
+\include{./sections/sampling}
+\include{./sections/gibbs}
+\include{./sections/lda/topic_modeling}
+% \include{./sections/explicit_models/explicit}
+\input{./sections/generative/generative}
+\input{./sections/diffusion/diffusion_model}
+
+\backmatter
+% bibliography, glossary and index would go here.
+
+\nocite{*}
+\bibliographystyle{unsrt}
+\bibliography{references}
+\end{document}

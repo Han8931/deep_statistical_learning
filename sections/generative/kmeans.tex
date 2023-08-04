@@ -1,0 +1,44 @@
+
+
+\section{K-Means Clustering}
+Suppose we have a data set $\mathbf{X} = \{\mathbf{x}_1,...,\mathbf{x}_n\}$ consisting of $N$ observations of a random $D$-dimensional variable $\mathbf{x}\in \mathbbm{R}^{D}$. Our goal is to partition the data into some number $K$ of clusters.  Intuitively, we may think of a cluster as comprising a group of data points whose inter-point distances are small compared with the distances to points outside of the cluster.
+
+This notion can be formalized by introducing a set of $D$-dimensional vectors $\boldsymbol{\mu}_k$, which represents the centers of the clusters. Our goal is to find an assignment of data points to clusters, as well as a set of vectors $\{\boldsymbol{\mu}_k\}$. Objective function of $K$-means clustering (\textit{distortion measure}) can be defined as follows:
+$$J =  \sum_{n=1}^{N}\sum_{k=1}^{K}r_{nk}||\boldsymbol{x}_n-\boldsymbol{\mu}_k||^2$$
+, where $r_{nk}\in\{0,1\}$ is a binary indicator variable which represents the \textbf{membership of data} $\mathbf{x}_n$. Our goal is to find values for the $\boldsymbol{\mu}_k$ and the $r_{nk}$ so as to minimize $J$. 
+
+We can minimize $J$ through an iterative procedure in which each iteration involves two successive steps corresponding to successive optimizations with respect to the $\boldsymbol{\mu}_k$ and the $r_{nk}$ First we choose some initial values for the $\boldsymbol{\mu}_k$. Then in the first phase we minimize $J$ with respect to the $r_{nk}$, keeping the $\boldsymbol{\mu}_k$ fixed. In the second phase we minimize $J$ with respect to the $\boldsymbol{\mu}_k$, keeping $r_{nk}$ fixed. This two-stage optimization is then repeated until convergence.
+
+The $r_{nk}$ can be optimized in a closed-form solution as follows:
+$$r_{nk}=\begin{cases}
+1 & \textrm{if } k=\argmin_{j} ||\boldsymbol{x}_n-\boldsymbol{\mu}_j||^2\\
+0 & \textrm{otherwise}
+\end{cases}$$
+
+Now consider the optimization of the $\boldsymbol{\mu}_k$ with the $r_{nk}$ held fixed. The objective function $J$ is a quadratic function of $\boldsymbol{\mu}_k$, and it can be minimized by setting its derivative with respect to $\boldsymbol{\mu}_k$ to zero giving
+\begin{align*}
+2\sum_{n=1}^{N}r_{nk}(\boldsymbol{x}_n-\boldsymbol{\mu}_k) = 0.
+\end{align*}
+We can arrange as
+\begin{align*}
+\boldsymbol{\mu}_k = \frac{\sum_n r_{nk}\boldsymbol{x}_n}{\sum_n r_{nk}}.
+\end{align*}
+
+% \begin{enumerate}
+% 	\item Expectation (expectation of a log-likelihood give parameters): $$2\sum_{n=1}^{N}r_{nk}(\boldsymbol{x}_n-\boldsymbol{\mu}_k) = 0.$$
+% 	\item Maximization (maximize parameters give a log-likelihood function): $$\boldsymbol{\mu}_k = \frac{\sum_n r_{nk}\boldsymbol{x}_n}{\sum_n r_{nk}}.$$ This updates the centroids. 
+% \end{enumerate}
+
+The denominator of $\boldsymbol{\mu}_k$ is equal to the number of points assigned to cluster $k$. The mean of cluster $k$ is essentially the same as the mean of data points $\mathbf{x}_n$ assigned to cluster $k$. For this reason, the procedure is known as the $K$-means clustering algorithm. 
+
+The two phases of re-assigning data points to clusters and re-computing the cluster means are repeated in turn until there is no further change in the assignments. These two phases reduce the value of the objective function $J$, so the convergence of the algorithm is assured. However, it may converge to a local rather than global minimum of $J$. 
+
+Some properties:
+\begin{itemize}
+	\item Hard clustering ($\leftrightarrow$ Soft clusstering)
+	\item Centroid initialization issue.
+	\item The number of clusters is uncertain. 
+	\item Distance metric issue (\eg Euclidean?)
+\end{itemize}
+
+

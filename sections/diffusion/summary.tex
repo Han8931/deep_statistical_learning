@@ -1,0 +1,84 @@
+\section{Summary}
+\begin{itemize}
+	\item The loss function can be decomposed.
+		$$L_\text{VLB} = L_T + L_{T-1} + \dots + L_0 .$$
+	\item $L_T = D_\text{KL}(q(\mathbf{x}_T \vert \mathbf{x}_0) \parallel p_\theta(\mathbf{x}_T))$
+		\begin{itemize}
+			\item Constant $\approx 0$ since $x_T$ is a Gaussian noise.
+		\end{itemize}
+	\item $L_t = D_\text{KL}(q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t}, \mathbf{x}_0) \parallel p_\theta(\mathbf{x}_{t-1} \vert\mathbf{x}_{t})) \text{ for } t>1 $
+	%\item $L_t = D_\text{KL}(q(\mathbf{x}_t \vert \mathbf{x}_{t+1}, \mathbf{x}_0) \parallel p_\theta(\mathbf{x}_t \vert\mathbf{x}_{t+1})) \text{ for }1 \leq t \leq T-1 $
+		\begin{itemize}
+			\item This is the main part.
+		\end{itemize}
+	\item $L_0 = - \log p_\theta(\mathbf{x}_0 \vert \mathbf{x}_1)$
+		\begin{itemize}
+			\item Can be modeled by a separate decoder.
+		\end{itemize}
+	\item $q(\rvx_t|\rvx_0) = \mathcal{N}(\sqrt{\bar{\alpha}_t}\rvx_0, (1-\bar{\alpha}_t)I )$
+	\item $q(\rvx_t \vert \rvx_{t-1}) &= \mathcal{N}(\mathbf{x}_t; \sqrt{1 - \beta_t}\rvx_{t-1}, \beta_t\mathbf{I}),$
+		\begin{itemize}
+			\item[] We can sample by $\rvx_t=\sqrt{1 - \beta_t}\rvx_{t-1}+ \sqrt{\beta_t}\epsilon$
+		\end{itemize}
+	\item $p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t))$.
+		\begin{itemize}
+			\item We need to learn mean and variance.
+			\item DDPM kept the variance fixed and let the neural network only learn the mean $\mu_\theta$.
+			\item $\boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t)) = \sigma_t^2\mathbf{I}$ and set $\sigma_t^2 = \beta_t$.
+		\item Improved DDPM model trains $\sigma$ also.
+		\end{itemize}
+	\item One can reparameterize the mean to make the nerual network learn the added noise via a network $\epsilon_\theta$.
+		$$\mu_\theta(\rvx_t, t) = \frac{1}{\sqrt{\alpha_t}}\bigg(\rvx_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\underbrace{\epsilon_\theta(\rvx_t,t)}_{\text{Network}}\bigg)$$
+	\item Final objective function $L_t$ is
+		$$||\epsilon -\epsilon_\theta(\rvx_t,t)||^2 = ||\epsilon -\epsilon_\theta(\sqrt{\bar{\alpha}_t}\rvx_0+\sqrt{(1-\bar{\alpha}_t)}\epsilon,t)||^2 $$
+		\begin{itemize}
+			\item $t\sim\text{Unif}[\{1,..,T\}]$ 
+			\item $\rvx_t=\sqrt{\bar{\alpha}_t}\rvx_0+\sqrt{(1-\bar{\alpha}_t)}\epsilon \sim q(\rvx_t|\rvx_0)$
+			\item $\epsilon\sim \mathcal{N}(0,I)$
+		\end{itemize}
+	\item $\rvx_t$ is perturbed by $\epsilon$ and the noise prediction network $\epsilon_\theta$ predicts $\epsilon$.
+\end{itemize}
+
+\newpage
+\begin{algorithm}[t]
+	\begin{algorithmic}[1]
+		\Repeat
+			\State $\rvx_0\sim q(\rvx_0)$
+			\State $t\sim \text{Unif}[\{1,\cdots,T\}]$
+			\State $\epsilon\sim \mathcal{N}(0,I)$
+			\State Take gradient descent step on
+			$\nabla_\theta||\epsilon -\epsilon_\theta(\sqrt{\bar{\alpha}_t}\rvx_0+\sqrt{(1-\bar{\alpha}_t)}\epsilon,t)||^2 $
+		\Until converged
+	\end{algorithmic}
+	\caption{Training}
+	\label{alg:diffusion_training}
+\end{algorithm}
+
+The training process is given by
+\begin{enumerate}
+	\item $\rvx_0\sim q(\rvx_0)$ 
+	\item Sample a noise level $t$ between $1$ and $T$ (\ie random time step).
+	\item Sample a noise from a Gaussian distribution and perturb the input by the sampling equation.
+	\item NN is trained to predict this noise $\epsilon$ used for generating $\rvx_t$.
+	\item $\beta$ is often scheduled linearly.
+	\item $\Sigma$ is set equal to $\beta$.
+\end{enumerate}
+
+The sampling process is given by
+\begin{algorithm}[h]
+	\begin{algorithmic}[1]
+		\State $\rvx_T\sim \mathcal{N}(0,I)$
+		\For{$t=T,\cdots,1$}
+			\State $\rvz\sim \mathcal{N}(0,I)$
+			\State $\rvx_{t-1}= \frac{1}{\sqrt{\alpha_t}}\bigg(\rvx_t-\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}}\boldsymbol{\epsilon}_\theta(\rvx_t,t)\bigg)+\Sigma_t\rvz$
+		\EndFor
+		\State \textbf{return} $\rvx_0$
+	\end{algorithmic}
+	\caption{Sampling}
+	\label{alg:diffusion_sampling}
+\end{algorithm*}
+\begin{itemize}
+	\item Ancestral sampling.
+	\item $T$ is typically around 1,000
+\end{itemize}
+	

@@ -1,0 +1,146 @@
+\section{Distribution Modeling}
+	What we want to learn (or model) is $p_\theta(\rvx_0)\approx p(\rvx_0)$ (approximate data distribution).
+	\begin{itemize}
+%		\item $p_\theta(\rvx_0)$: a distribution of output (denoised) image.
+%			\begin{itemize}
+%				\item This is our target.
+%			\end{itemize}
+		\item $p_\theta(\rvx_0) = \int p_\theta(\rvx_{0:T})d\rvx_{1:T}$
+		\item It is intractable to compute all trajectories.
+			$$\argmax_\theta\mathbb{E}_{\rvx_0\sim p}[\log p_\theta(\rvx_0)] = \mathbb{E}_{\rvx_0\sim p}\bigg[\log\int p_\theta(\rvx_{0:T})d\rvx_{1:T}\bigg].$$
+		\item Thus, we will use variational lower bound with KL-Div:
+	\end{itemize}
+\begin{align}
+\log p_\theta(\rvx_0) 
+	&=  \log\int p(\rvx_{0:T})d\rvx_{1:T}\\
+	&= \log\int p(\rvx_{0:T})\frac{q(\rvx_{1:T}|\rvx_0)}{q(\rvx_{1:T}|\rvx_0)}d\rvx_{1:T}\\
+	&= \log\int q(\rvx_{1:T}|\rvx_0)\frac{p(\rvx_{0:T})}{q(\rvx_{1:T}|\rvx_0)}d\rvx_{1:T}\\
+	&\geq \int q(\rvx_{1:T}|\rvx_0)\log\frac{p(\rvx_{0:T})}{q(\rvx_{1:T}|\rvx_0)}d\rvx_{1:T}\\
+	&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log\frac{p(\rvx_{0:T})}{q(\rvx_{1:T}|\rvx_0)}\bigg] \quad \to \textrm{ELBO}\\
+	&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log p(\rvx_T)\prod_{t=1}^T\frac{p(\rvx_{t-1}|\rvx_t)}{q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
+	&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)p(\rvx_0|\rvx_{1})\prod_{t=1}^{T-1} p(\rvx_{t}|\rvx_{t+1})}{q(\rvx_T|\rvx_{T-1})\prod_{t=1}^{T-1}  q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
+	&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)p(\rvx_0|\rvx_{1})}{q(\rvx_T|\rvx_{T-1})}\bigg] + \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \prod_{t=1}^{T-1}\frac{ p(\rvx_{t}|\rvx_{t+1})}{q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
+	&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})]+\mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)}{q(\rvx_T|\rvx_{T-1})}\bigg]\\ 
+	&\quad + \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\sum_{t=1}^{T-1}\log \frac{ p(\rvx_{t}|\rvx_{t+1})}{q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
+	&= \dots + \blue{\mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)}{q(\rvx_T|\rvx_{T-1})}\bigg]} + \sum_{t=1}^{T-1}\mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{ p(\rvx_{t}|\rvx_{t+1})}{q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
+	% % &= \log\int q(\rvx_{1:T}|\rvx_0)p(\rvx_T)\prod_{t=1}^T\frac{p(\rvx_{t-1}|\rvx_t)}{q(\rvx_{t}|\rvx_{t-1})}d\rvx_{1:T}
+		&= \dots + \int_{x_1}\dots\int_{x_T}q(\rvx_{1},\dots,\rvx_{T})\bigg[\log \frac{p(\rvx_T)}{q(\rvx_T|\rvx_{T-1})}\bigg]dx_1\dots dx_T + \dots\\
+		&= \dots + \int_{x_T}\int_{x_{T-1}}\bigg[\log \frac{p(\rvx_T)}{q(\rvx_T|\rvx_{T-1})}\bigg]\dots\int_{x_1} q(\rvx_{1},\dots,\rvx_{T})dx_1\dots dx_T + \dots\\
+		&= \dots + \int_{x_T}\int_{x_{T-1}}\bigg[\log \frac{p(\rvx_T)}{q(\rvx_T|\rvx_{T-1})}\bigg] q(\rvx_{t},\rvx_{t-1})dx_{T-1} dx_T + \dots\\
+		&= \dots + \mathbb{E}_{q(\rvx_{t}, \rvx_{t-1}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)}{q(\rvx_T|\rvx_{T-1})}\bigg] + \sum_{t=1}^{T-1}\mathbb{E}_{q(\rvx_{t-1},\rvx_t,\rvx_{t+1}|\rvx_0)}\bigg[\log \frac{ p(\rvx_{t}|\rvx_{t+1})}{q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
+		&= \mathbb{E}_{q(\rvx_{1}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})] + \mathbb{E}_{q(\rvx_{t}, \rvx_{t-1}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)}{q(\rvx_T|\rvx_{T-1})}\bigg]\\ 
+		&\quad+ \sum_{t=1}^{T-1}\mathbb{E}_{q(\rvx_{t-1},\rvx_t,\rvx_{t+1}|\rvx_0)}\bigg[\log \frac{ p(\rvx_{t}|\rvx_{t+1})}{q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
+		&= \mathbb{E}_{q(\rvx_{1}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})] - \mathbb{E}_{q(\rvx_{t-1}|\rvx_0)}[D_{KL}(q(\rvx_T|\rvx_{T-1})\| p(\rvx_T))]\\
+		&\,- \sum_{t=1}^{T-1}\mathbb{E}_{q(\rvx_{t-1},\rvx_{t+1}|\rvx_0)}D_{KL}[q(\rvx_{t}|\rvx_{t-1})\|p(\rvx_{t}|\rvx_{t+1})]\\
+		& \because q(\rvx_{t}, \rvx_{t-1}|\rvx_0) = \frac{q(\rvx_{t}, \rvx_{t-1},\rvx_0)}{q(\rvx_0)} = \frac{q(\rvx_{t}|\rvx_{t-1}, \rvx_0)q(\rvx_{t-1}, \rvx_0)}{q(\rvx_0)} = q(\rvx_{t}|\rvx_{t-1})q(\rvx_{t-1}|\rvx_0)
+	% % &= \log\int q(\rvx_{1:T}|\rvx_0)p(\rvx_T)\prod_{t=1}^T\frac{p(\rvx_{t-1}|\rvx_t)}{q(\rvx_{t}|\rvx_{t-1})}d\rvx_{1:T}
+	\label{eq:diffusion_mle}
+\end{align}
+\begin{itemize}
+	\item The sixth step is done by Markov property.
+	\item The first term is a \textit{reconstruction term}. 
+	\item The second term is a \textit{prior matching term}. This term requires no optimization, as it has no trainable parameters; furthermore, as we have assumed a large enough $T$ such that the final distribution is Gaussian, this term effectively becomes zero.
+	\item The last term is a \textit{consistency term}. It endeavors to make the distribution at xt consistent, from both forward and backward processes. That is, a denoising step from a noisier image should match the corresponding noising step from a cleaner image, for every intermediate timestep.  This term is minimized when we train $p_\theta(\rvx_t|\rvx_{t+1})$ to match the Gaussian distribution $q(\rvx_t|\rvx_{t-1})$, which is defined in \Cref{eq:forward_diffusion}. % \item For a small $\beta$, the forward and the backward processes can be identical.
+	\item Under this derivation, all terms of the ELBO are computed as expectations, and can therefore be approximated using Monte Carlo estimates. 
+	\item However, actually optimizing the ELBO using the terms we just derived might be suboptimal, because the consistency term is computed as an expectation over two random variables $\{x_{t-1}, x_{t+1}\}$ for every time step, the variance of its Monte Carlo estimate could potentially be higher than a term that is estimated using only one random variable per time step. As it is computed by summing up $T-1$ consistency terms, the final estimated value of the ELBO may have high variance for large $T$ values.
+\end{itemize}
+
+Let us instead try to derive a form for our ELBO where each term is computed as an expectation over \textbf{only one random variable at a time}. The key insight is that we can rewrite encoder transitions as $q(x_t|x_{t-1}) = q(x_t|x_{t-1}, x_0)$, where the extra conditioning term is superfluous due to the Markov property. Then, according to Bayes rule, we can rewrite each transition as:
+\begin{align*}
+	q(\rvx_t|\rvx_{t-1}, \rvx_0)= \frac{q(\rvx_{t-1}|\rvx_t, \rvx_0)q(\rvx_t| \rvx_0)}{q(\rvx_{t-1}| \rvx_0)} 
+\end{align*}
+Armed with this equation, we can factorize the ELBO again as follows:
+\begin{align}
+		L &= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log\frac{p(\rvx_{0:T})}{q(\rvx_{1:T}|\rvx_0)}\bigg] \quad \to \textrm{ELBO}\\
+		&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log p(\rvx_T)\prod_{t=1}^T\frac{p(\rvx_{t-1}|\rvx_t)}{q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
+		&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)p(\rvx_0|\rvx_{1})\prod_{t=2}^{T} p(\rvx_{t-1}|\rvx_{t})}{q(\rvx_1|\rvx_{0})\prod_{t=2}^{T}  q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
+		&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)p(\rvx_0|\rvx_{1})\prod_{t=2}^{T} p(\rvx_{t-1}|\rvx_{t})}{q(\rvx_1|\rvx_{0})\prod_{t=2}^{T}  q(\rvx_{t}|\rvx_{t-1}, \blue{\rvx_0})}\bigg] \quad \textrm{ by Markov Property}\\
+		&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)p(\rvx_0|\rvx_{1})}{q(\rvx_1|\rvx_{0})}+\log \prod_{t=2}^{T}\frac{ p(\rvx_{t-1}|\rvx_{t})}{q(\rvx_{t}|\rvx_{t-1}, \rvx_0)}\bigg]\\
+		&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)p(\rvx_0|\rvx_{1})}{q(\rvx_1|\rvx_{0})}+\log \prod_{t=2}^{T}\frac{ p(\rvx_{t-1}|\rvx_{t})}{\frac{q(\rvx_{t-1}|\rvx_t, \rvx_0)q(\rvx_t| \rvx_0)}{q(\rvx_{t-1}| \rvx_0)}}\bigg]\\
+		&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)p(\rvx_0|\rvx_{1})}{q(\rvx_1|\rvx_{0})}+\log \frac{q(\rvx_1|\rvx_0)}{q(\rvx_T|\rvx_0)}+\log \prod_{t=2}^{T}\frac{ p(\rvx_{t-1}|\rvx_{t})}{q(\rvx_{t-1}|\rvx_t, \rvx_0)}\bigg]\\
+		&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)p(\rvx_0|\rvx_{1})}{q(\rvx_T|\rvx_{0})}+\log \prod_{t=2}^{T}\frac{ p(\rvx_{t-1}|\rvx_{t})}{q(\rvx_{t-1}|\rvx_t, \rvx_0)}\bigg]\\
+		&= \mathbb{E}_{q(\rvx_{1}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})]+\mathbb{E}_{q(\rvx_{T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)}{q(\rvx_T|\rvx_{0})}\bigg]+\ \sum_{t=2}^{T}\mathbb{E}_{q(\rvx_{t},\rvx_{t-1}|\rvx_0)}\bigg[\log\frac{ p(\rvx_{t-1}|\rvx_{t})}{q(\rvx_{t-1}|\rvx_t, \rvx_0)}\bigg]\\
+		&= \mathbb{E}_{q(\rvx_{1}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})]-D_{KL}_(q(\rvx_{T}|\rvx_0)||p(\rvx_T))-\sum_{t=2}^{T}\mathbb{E}_{q(\rvx_{t}|\rvx_0)}[D_{KL}(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p(\rvx_{t-1}|\rvx_{t}))]
+		% &= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)p(\rvx_0|\rvx_{1})}{q(\rvx_T|\rvx_{T-1})}\bigg] + \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \prod_{t=1}^{T-1}\frac{ p(\rvx_{t}|\rvx_{t+1})}{q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
+% 		&= \mathbb{E}_{q}\Bigg[-\log p_\theta(x_T)-\log\frac{\prod_{t=1}^Tp_\theta(x_{t-1}|x_t)}{\prod_{t=1}^Tq(x_{t}|x_{t-1})}\Bigg]\\
+% 		&= \mathbb{E}_{q}\Bigg[-\log p_\theta(x_T)-\sum_{t\geq 1}\log\frac{p_\theta(x_{t-1}|x_t)}{q(x_{t}|x_{t-1})}\Bigg]\\
+% 		&= \mathbb{E}_{q}\Bigg[-\log p_\theta(x_T)-\sum_{t=2}^T\log\frac{p_\theta(x_{t-1}|x_t)}{q(x_{t}|x_{t-1})}-\log \frac{p_\theta(x_{0}|x_1)}{q(x_{1}|x_{0})}\Bigg]\\
+% 		&= \mathbb{E}_{q}\Bigg[-\log p_\theta(x_T)-\sum_{t=2}^T\log\frac{p_\theta(x_{t-1}|x_t)}{q(x_{t-1}|x_{t},x_0)}\cdot \red{ \frac{q(x_{t-1}|x_0)}{q(x_{t}|x_0)}}\\
+% 		&\quad -\log \frac{p_\theta(x_{0}|x_1)}{q(x_{1}|x_{0})}\Bigg]\\
+	\label{eq:diffusion_objective}
+\end{align}
+Let's closely look at the last three terms:
+\begin{itemize}
+	\item $\mathbb{E}_{q(\rvx_{1}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})]$: reconstruction term. 
+	\item $D_{KL}_(q(\rvx_{T}|\rvx_0)||p(\rvx_T))$: Prior matching term.
+		\begin{itemize}
+			\item No trainable parameters 
+		\end{itemize}
+	\item $\sum_{t=2}^{T}\mathbb{E}_{q(\rvx_{t}|\rvx_0)}[D_{KL}(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p(\rvx_{t-1}|\rvx_{t}))]$: Denoising matching term.
+		\begin{itemize}
+			\item $p_\theta(\rvx_{t−1}|\rvx_t)$ as an approximation to tractable, ground-truth denoising transition step $q(\rvx_{t−1}|\rvx_t, \rvx_0)$. The $q(\rvx_{t−1}|\rvx_t, \rvx_0)$ transition step can act as a ground-truth signal, since it defines how to denoise a noisy image with access to what the final, completely denoised image $\rvx_0$ should be. This term is therefore minimized when the two denoising steps match as closely as possible, as measured by their KL Divergence.
+		\end{itemize}
+\end{itemize}
+In the last term, $q(\rvx_{t-1}|\rvx_t, \rvx_0)$ can be further factorized as follows:
+\begin{align*}
+	q(\rvx_{t-1}|\rvx_t, \rvx_0) = \frac{q(\rvx_{t}|\rvx_{t-1}, \rvx_0)q(\rvx_{t-1}|\rvx_0)}{q(\rvx_{t}|\rvx_0)}=\frac{q(\rvx_{t}|\rvx_{t-1})q(\rvx_{t-1}|\rvx_0)}{q(\rvx_{t}|\rvx_0)}.
+\end{align*}
+Then, $q(\rvx_{t}|\rvx_{t-1}, \rvx_0) = q(\rvx_{t}|\rvx_{t-1})$ by Markov property. Now, let's compute the KL-divergence in the denoising matching term. 
+
+\begin{align}
+	q(\rvx_{t-1}|\rvx_t, \rvx_0) &=\frac{q(\rvx_{t}|\rvx_{t-1})q(\rvx_{t-1}|\rvx_0)}{q(\rvx_{t}|\rvx_0)}\\
+								 &= \frac{\mathcal{N}(\mathbf{x}_t; \sqrt{\bar{\alpha}_t} \rvx_{t-1}, (1-\bar{\alpha}_t)\mathbf{I})\mathcal{N}(\mathbf{x}_{t-1}; \sqrt{\bar{\alpha}_{t-1}} \rvx_{0}, (1-\bar{\alpha}_{t-1})\mathbf{I})}{\mathcal{N}(\mathbf{x}_t; \sqrt{\bar{\alpha}_t} \rvx_{0}, (1-\bar{\alpha}_t)\mathbf{I})}\\
+								 & \vdots\\
+								 &\propto \mathcal{N}\bigg(\rvx_{t-1};\underbrace{\frac{\sqrt{{\alpha}_{t}}(1-\bar{\alpha}_{t-1})\rvx_t+\sqrt{\bar{\alpha}_{t-1}}(1-{\alpha}_{t})\rvx_0}{1-\bar{\alpha}_{t}}}_{\mu_q(\rvx_t,\rvx_0)}, \underbrace{\frac{(1-{\alpha}_{t})(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_{t}}\mathbf{I}}_{\Sigma_{q}(t)}\bigg)
+	\label{eq:diffusion_kl_true_denoising}
+\end{align}
+
+We have therefore shown that at each step, $\rvx_{t-1} \sim q(\rvx_{t-1}|\rvx_t, \rvx_0)$ is normally distributed, with mean $\mu_q(\rvx_t,\rvx_0)$ that is a function of $\rvx_t$ and $\rvx_0$, and variance $\Sigma_q(t)$ as a function of $\alpha$ coefficients. 
+
+% These $\alpha$ coefficients are known and fixed at each time step; they are either set permanently when modeled as hyperparameters, or treated as the current inference output of a network that seeks to model them. We can rewrite the variance equation as $\Sigma_q(t) = \sigma^2_q(t)I$, where:
+% $$\sigma^2_q(t) = \frac{(1-{\alpha}_{t})(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_{t}}.$$
+% In order to match approximate denoising transition step $p_\theta(\rvx_{t-1}|\rvx_{t})$ to ground-truth denoising transition step $q(\rvx_{t-1}|\rvx_t, \rvx_0)$ as closely as possible, we can also model it as a Gaussian. Furthermore, as all $\alpha$ terms are known to be frozen at each timestep, we can immediately construct the variance of the approximate denoising transition step to also be $\Sigma_q(t) = \sigma^2_q(t)I$.
+
+% The following equation is the KL divergence between two normal distributions $P$ and $Q$:
+% $$D_{KL}(P\|Q) = \frac{1}{2}\left[\log\frac{|\Sigma_2|}{|\Sigma_1|} - n + \text{tr} \{ \Sigma_2^{-1}\Sigma_1 \} + (\mu_2 - \mu_1)^T \Sigma_2^{-1}(\mu_2 - \mu_1)\right]$$
+% We can optimize the KL divergence between two normal distributions to minimize the difference between the two means: 
+% \begin{align}
+% 	\mathcal{L} &= \min_\theta D_{KL}(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p_\theta(\rvx_{t-1}|\rvx_{t}))\\
+% 				& \vdots\\
+% 				&= \min_\theta \frac{1}{2\sigma^2_q(t)}\big[\|\boldsymbol{\mu}_\theta- \boldsymbol{\mu}_q\|^2_2\big],
+% 	\label{eq:diffusion_kl_mean}
+% \end{align}
+% where $\boldsymbol{\mu}_q$ is a shorthand for $\boldsymbol{\mu}_q(\rvx_t,\rvx_0)$.
+
+We can use the \Cref{eq:diffusion_kl_true_denoising} to compute the optimal $\theta$ by solving $\min_\theta D_{KL}(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p_\theta(\rvx_{t-1}|\rvx_{t}))$, but we can simplify the optimization problem by using \Cref{eq:diffusion_forward_sampling}:
+\begin{align*}
+	\rvx_t &= \sqrt{\bar{\alpha}_t} \mathbf{x}_{0}+ \sqrt{1-\bar{\alpha}_t} \odot \epsilon\\
+	\mathbf{x}_{0} &= \frac{\rvx_t - \sqrt{1-\bar{\alpha}_t}\odot \epsilon}{\sqrt{\bar{\alpha}_t} } 
+\end{align*}
+By plugging the above equation into $\boldsymbol{\mu}_q(\rvx_t,\rvx_0)$, we can exclude $\rvx_0$ term as follows:
+\begin{align}
+	\boldsymbol{\mu}_q(\rvx_t,\rvx_0) &= \frac{\sqrt{{\alpha}_{t}}(1-\bar{\alpha}_{t-1})\rvx_t+\sqrt{\bar{\alpha}_{t-1}}(1-{\alpha}_{t})\rvx_0}{1-\bar{\alpha}_{t}}\\
+									  &= \frac{\sqrt{{\alpha}_{t}}(1-\bar{\alpha}_{t-1})\rvx_t+\sqrt{\bar{\alpha}_{t-1}}(1-{\alpha}_{t})\frac{\rvx_t - \sqrt{1-\bar{\alpha}_t}\odot \epsilon}{\sqrt{\bar{\alpha}_t} }}{1-\bar{\alpha}_{t}}\\
+									  &\vdots\\
+									  &= \frac{1}{\sqrt{\alpha_t}}\rvx_t - \frac{1-\alpha_t}{\sqrt{1-\bar{\alpha_t}}\sqrt{\alpha_t}}\boldsymbol{\epsilon}_0
+	\label{eq:diffusion_mean_simple}
+\end{align}
+Thus, we can force $\boldsymbol{\mu}_\theta(\mathbf{x}_t, t)$, which has no dependency on $\rvx_0$ term, to match the $\boldsymbol{\mu}_q$. Since the $\rvx_t$ is given at training time, we just need to predict the $\boldsymbol{\epsilon}_t$. Then, we can express $\boldsymbol{\mu}_\theta(\mathbf{x}_t, t)$ as follows:
+\begin{align*}
+\boldsymbol{\mu}_\theta(\mathbf{x}_t, t) &= \frac{1}{\sqrt{\alpha_t}} \bigg( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \bigg) \\
+\end{align*}
+Thus, $\rvx_{t-1}\sim p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ can be expressed as follows:
+\begin{align*}
+	\mathcal{N}\Bigg(\mathbf{x}_{t-1}; \frac{1}{\sqrt{\alpha_t}} \bigg( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \bigg), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t)\Bigg)
+\end{align*}
+Note that we can use the variance derived in \Cref{eq:diffusion_kl_true_denoising} instead of estimating it from a network for simplicity. Finally, we can solve the KL-divergence term:
+
+\begin{align}
+	\mathcal{L} &= \min_\theta D_{KL}(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p_\theta(\rvx_{t-1}|\rvx_{t}))\\
+				& \vdots\\
+				&= \min_\theta \frac{1}{2\sigma^2_q(t)}\frac{(1-\alpha_t)^2}{(1-\bar{\alpha}_t)\alpha_t}\big[\|\boldsymbol{\epsilon}_0- \hat{\boldsymbol{\epsilon}}_\theta(\rvx_t,t)\|^2_2\big].
+	\label{eq:diffusion_kl_mean_simple}
+\end{align}
+Here $\hat{\boldsymbol{\epsilon}}_\theta(\rvx_t,t)$ is a is a neural network that learns to predict the source noise $\boldsymbol{\epsilon}_0 \sim \mathcal{N}(\boldsymbol{\epsilon}}; \mathbf{0}, \mathbf{I})$ that determines $\rvx_t$ from $\rvx_0$. We have therefore shown that the overall learning objective is equivalent to learning to predict the noise.
+
+

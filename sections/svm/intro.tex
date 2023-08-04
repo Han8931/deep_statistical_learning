@@ -1,0 +1,103 @@
+\chapter{Support Vector Machine}
+\section{Introduction}
+
+\subsection{Orthogonal Projection}
+Given two vectors $x$ and $y$, we would like to find the orthogonal projection of $x$ onto $y$.
+
+By definition:
+$$||z|| = ||x||cos(\theta).$$
+Note that the dot product of $x$ and $y$ is 
+$$cos(\theta)= \frac{x\cdot y}{||x||\cdot||y||}.$$
+So we can replace the cosine 
+$$||z|| = ||x||\frac{x\cdot y}{||x||\cdot||y||}.$$
+This results in 
+$$||z|| = u\cdot x,$$
+where $u$ is an unit vector of $y$, which has the same direction as $z$. Therefore we can express $z$ as follows: 
+$$z = ||z||\cdot u,$$
+Then, 
+\begin{align*}
+	z &= (u\cdot x)u.
+\end{align*}
+Equivalently, 
+\begin{align*}
+	\textrm{Proj}_yx &= \Bigg(\frac{y\cdot x}{||y||^2}\Bigg)y.
+\end{align*}
+
+\section{Decision Boundary with Margin}
+
+Support vectors are the data points that lie closest to the decision surface(or hyperplane). They are directly related to the optimal hyperplane. The goal of SVM is to find the optimal separating hyperplane which maximizes the margin of the training data. The hyperplane can be written as the set of points $\mathbf{x}$, satisfying 
+$$\mathbf{w}\cdot \mathbf{x}+b=0$$
+Note that the hyperplain is normal to the vector $\mathbf{w}$. 
+$$\mathbf{w}(\mathbf{x}-\mathbf{x}_0)=0,$$
+where $b = \mathbf{w}\cdot\mathbf{x}_0$. However, what is the optimal separating hyperplanes? The optimal hyperplane is the one which maximizes the margin of the training data. SVMs maximize the margin around the separating hyperplane. The decision function is fully specified by a subset of training samples, the support vectors. Let's consider a simple case, where training data is linearly separable, $\mathcal{D} = \left\{ (\mathbf{x}_i, y_i)\mid\mathbf{x}_i \in \mathbb{R}^p,\, y_i \in \{-1,1\}\right\}_{i=1}^n$. Then, we can build two hyperplanes separating the data with no points between them:
+\begin{itemize}
+	\item $H_1:\mathbf{w}\cdot \mathbf{x}+b=1$
+	\item $H_2:\mathbf{w}\cdot \mathbf{x}+b=-1$
+\end{itemize}
+
+There are two constraints:
+\begin{enumerate}
+	\item $\mathbf{w}\cdot \mathbf{x}+b\geq1$
+	\item $\mathbf{w}\cdot \mathbf{x}+b\leq-1$
+\end{enumerate}
+These can be combined as follows:
+$$y(\mathbf{w}\cdot \mathbf{x}+b)\geq 1.$$
+
+To maximize the margin, we can consider a unit vector $\mathbf{u} = \frac{\mathbf{w}}{||\mathbf{w}||}$, which is perpendicular to the hyperplanes and a point $x_0$ on the hyperplane $H_2$. If we scale $u$ from $x_0$, we get $z = x_0+ru$. If we assume $z$ is on $H_1$, then $\mathbf{w}\cdot z +b=1$. This is equivalent to 
+\begin{align*}
+	\mathbf{w}\cdot (x_0+ru)+b=1\\
+	\mathbf{w}x_0+\mathbf{w}r\frac{\mathbf{w}}{||\mathbf{w}||}+b=1\\
+	\mathbf{w}x_0+r||\mathbf{w}||+b=1\\
+	\mathbf{w}x_0+b=1-r||\mathbf{w}||
+\end{align*}
+$x_0$ is on $H_2$, so $\mathbf{w}x_0+b=-1$
+\begin{align*}
+	-1=1-r||\mathbf{w}||\\
+	r=\frac{2}{||\mathbf{w}||}
+\end{align*}
+Note that the scaled unit vector $ru$'s magnitude is $r$. Thus, the maximization of margin is equivalent to maximize $r$. To maximize $r$, it is important to minimize the norm of $\mathbf{w}$. This is equivalent to an optimization problem. 
+\begin{align*}
+	&\min ||w||,\quad \textrm{subject to } \\
+	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1 \quad\forall i.
+\end{align*}
+This minimization problem gives the same result as the following:  
+\begin{align*}
+	&\min \frac{1}{2}||w||^2,\quad \textrm{subject to } \\
+	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1 \quad\forall i.
+\end{align*}
+Now, we now have \textbf{convex quadratic optimization problem}. However, this hard margin cannot tolerate erroneous cases. There could be two solutions:
+\begin{itemize}
+	\item Admits prediction errors. 
+	\item Use non-linearity (complex decision boundary).
+\end{itemize}
+
+\section{Error Handling in SVM}
+Let's first try to solve the issue by allowing some prediction errors. 
+\begin{align*}
+	&\min ||w||+C\cdot N_{e},\quad \textrm{subject to } \\
+	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1 \quad \forall i.
+\end{align*}
+where $N_e$ is the number of errors. It means we consider all errors equally. This penalty approach is \textbf{0-1 loss}. This approach is not popular, since it is hard to solve. Another approach is to use a \textbf{slack variable} with \textbf{hinge loss}, instead of counting the number of errors. 
+\begin{align*}
+	&\min ||w||+C\sum_j\xi_j ,\quad \textrm{subject to } \\
+	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1-\xi_j \quad \forall i,\, \xi_j\geq 0,\, \forall j.
+\end{align*}
+Note that $\xi_j>1$ when mis-classified by its definition: 
+\begin{align*}
+	\xi_j = (1-(\mathbf{w}x_j+b)y_j)_+
+\end{align*}
+Let's look at the new constraint. If some data points are mis-classified, then $\xi_j>1$ and $y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\leq 0$. This approach is called \textbf{soft-margin SVM}. Lastly, how do we set $C$?
+
+\input{./sections/svm/kernel}
+
+
+
+
+
+
+
+
+
+
+
+

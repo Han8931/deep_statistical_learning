@@ -1,0 +1,76 @@
+\section{SVM Optimization: Lagrange Multipliers}
+
+\begin{align*}
+&\min_{\rvx} f(\rvx) \\
+&\textrm{subject to}\quad g(\rvx)=0.\\
+\end{align*}
+The minimum of $f$ is found when its gradient point in the same direction as the gradient of $g$. In other words, when:  
+$$\nabla f(\rvx) = \alpha\nabla g(\rvx)$$
+So if we want to find the minimum of $f$ under the constraint $g$, we just need to solve the following function: 
+$$\mathcal{L}(\rvx, \alpha) = f(\rvx) - \alpha g(\rvx)$$
+Note that the $\alpha$ is called a \textit{Lagrange multiplier}. 
+
+Recall that we want to solve the following convex quadratic optimization problem:
+\begin{align*}
+	&\min \frac{1}{2}||w||^2,\quad \textrm{subject to } \\
+	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1 \quad\forall i.
+\end{align*}
+We can reformulate the above problem as follows:
+\begin{align}
+	\mathcal{L}(\rvw, b, \alpha) = \frac{1}{2}||w||^2 - \sum_i \alpha_i \Big[y_i(\mathbf{w}\cdot \mathbf{x}_i+b)-1\Big]
+	\label{eq:objective_function}
+\end{align}
+We could try to solve the optimization problem, but this problem can only be solved analytically when the number of examples is small. Thus, we will reformulate the problem in the duality principle. 
+
+To get the solution of the primal problem, we need to solve the following \textbf{Lagrangian problem}: 
+\begin{align*}
+	&\max_{\mathbf{w}, b}\min_\alpha \mathcal{L}(\rvw, b, \alpha)\\
+	&\textrm{subject to}\quad \alpha_i\geq 0, \forall i.\\
+\end{align*}
+
+You may have noticed that the method of Lagrange multipliers is used for solving problems with equality constraints, and here we are using them with inequality constraints. This is because the method still works for inequality constraints, provided some additional conditions (the \textbf{KKT conditions}) are met. We will discuss about this soon.
+
+\section{The Wolfe Dual Problem}
+The Lagrangian problem has $m$ inequality constraints (where $m$ is the number of training examples) and is typically solved using its \textit{dual form}. The duality principle tells us that \textbf{an optimization problem can be viewed from two perspectives}: \Ni The first one is the \textit{primal problem}, a minimization problem in our case. \Nii The other one is the \textit{dual problem}, which will be a maximization problem. What is interesting is that the maximum of the dual problem will always be less than or equal to the minimum of the primal problem (we say it \textbf{provides a lower bound to the solution of the primal problem}). 
+
+In our case, we are trying to solve a convex optimization problem, and \textbf{Slater's condition} holds for affine constraints (Gretton, 2016), so Slater’s theorem tells us that strong duality holds. Note that the strong duality denotes that the solutions from the dual and the primal are identical (the maximum of the dual problem is equal to the minimum of the primal problem). 
+
+Solving the minimization problem involves taking the partial derivatives of $\mathcal{L}$ with respect to $\rvw$ and $b$.  
+\begin{align*}
+	&\nabla_\rvw\mathcal{L}(\rvw, b, \alpha) = \rvw - \sum_i \alpha_i y_i \mathbf{x}_i\\
+	& \nabla_b\mathcal{L}(\rvw, b, \alpha) = -\sum_i \alpha_i y_i
+\end{align*}
+The first term gives
+\begin{align*}
+	&\rvw = \sum_{i=1}^m \alpha_i y_i \mathbf{x}_i\\
+\end{align*}
+Let's substitute the objective function \Cref{eq:objective_function} with $\rvw$:
+\begin{align*}
+	\mathbf{W}(\alpha, b) &= \frac{1}{2}\Big(\sum_i \alpha_i y_i \mathbf{x}_i\Big)\cdot \Big(\sum_j \alpha_j y_j \mathbf{x}_j\Big) - \sum_i \alpha_i \Bigg[y_i\Bigg(\Big(\sum_j \alpha_j y_j \mathbf{x}_j\Big)\cdot \mathbf{x}_i+b\Bigg)-1\Bigg]\\
+						  &= \frac{1}{2}\Big(\sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i\cdot \mathbf{x}_j\Big) - \sum_i \alpha_i \Bigg[y_i\Bigg(\Big(\sum_j \alpha_j y_j \mathbf{x}_j\Big)\cdot \mathbf{x}_i+b\Bigg)\Bigg]+\sum_i \alpha_i \\
+						  &= \frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i\cdot \mathbf{x}_j - \sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i \cdot \mathbf{x}_j-\sum_i \alpha_i y_i b+\sum_i \alpha_i \\
+						  &= \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i\cdot \mathbf{x}_j-\sum_i \alpha_i y_i b
+\end{align*}
+There is still $b$, but $b=0$, so we can just remove it. Finally, we get
+\begin{align}
+	 \mathbf{W}(\alpha, b) = \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i\cdot \mathbf{x}_j
+	 \label{eq:dual_form}
+\end{align}
+This is the \textbf{Wolfe dual Lagrangian function}. Note that we transform the problem as a problem with regard to $\alpha$. Also, this is again a quadratic programming problem. The optimization problem is also called the \textbf{Wolfe dual problem}: 
+\begin{align*}
+	 &\max_\alpha \mathbf{W}(\alpha, b) = \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i\cdot \mathbf{x}_j\\
+	 &\textrm{subject to } \alpha_i\geq 0 \textrm{ for any } i=1,\dots,m\\
+	 & \sum_{i=1}^m \alpha_iy_i=0
+\end{align*}
+Once we get the value of $\alpha$, we can get the optimal $\rvw$ and $b$ can be obtained by using $\alpha_i(y_i(\mathbf{w}\cdot \mathbf{x}_i+b)-1=0$. Details will be covered in the following section.
+
+
+\section{Karush-Kuhn-Tucker conditions }
+Because we are dealing with inequality constraints, there is an additional requirement. The solution must also satisfy the \textbf{Karush-Kuhn-Tucker (KKT) conditions}. 
+
+The KKT conditions are first-order necessary conditions for a solution of an optimization problem to be optimal. Moreover, the problem should satisfy some regularity conditions. Luckily for us, one of the regularity conditions is Slater’s condition, and we just saw that it holds for SVMs. Because the primal problem we are trying to solve is a convex problem, the KKT conditions are also sufficient for the point to be primal and dual optimal, and there is zero duality gap. 
+
+To sum up, if a solution satisfies the KKT conditions, we are guaranteed that \textbf{it is the optimal solution}. Note that solving the SVM problem is equivalent to finding a solution to the KKT conditions. 
+
+
+

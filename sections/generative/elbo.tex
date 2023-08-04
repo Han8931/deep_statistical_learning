@@ -1,0 +1,121 @@
+%\section{KL Divergence}
+%\begin{align*}
+%	\textrm{KL}(q(x)||p(x)) = \int q(x)\log \frac{q(x)}{p(x)} = \mathbb{E}_q \Bigg[\log \frac{q(x)}{p(x)}\Bigg]
+%\end{align*}
+
+\section{Latent Variable Modeling}
+
+For each object $x_i$, we establish additional latent variable $z_i$ which denotes the index of gaussian from which $i$-th object was generated. Then our model is
+$$p(X,Z|\theta) = \prod_{i=1}^{n}p(x_i,z_i|\theta) = \prod_{i=1}^{n}p(x_i|z_i,\theta)p(z_i|\theta) = \prod_{i=1}^{n}\mathcal{N}(x_i|\mu_{z_i},\sigma_{z_i}^2)\pi_{z_i},$$
+where $\pi_{j} = p(z_i=j)$ are prior probability of $j$-th gaussian and $\theta = \{\mu_j, \sigma_j, \pi_j\}_{j=1}^K$. If we know both $X$ and $Z$ then we can obtain explicit ML-solution:
+$$\theta_{ML} = \argmax_{\theta}p(X,Z|\theta) = \argmax_{\theta}\log p(X,Z|\theta).$$
+However, in practice, we don't know $Z$, but only know $X$. Thus, we need to maximize w.r.t. $\theta$ the log of incomplete likelihood
+\begin{align}
+	\log p(X|\theta) & = \ln \int  p(X, Z|\theta)dZ\\
+					 & = \ln\int q(Z|X) \frac{p(X, Z|\theta)}{q(Z|X)}dZ\\
+					 & \geq \underbrace{\int q(Z|X) \ln\frac{p(X, Z|\theta)}{q(Z|X)}dZ}_{\textrm{ELBO, } \mathcal{L}(q,\theta)} \quad\textrm{by Jensen's Inequality.}\\
+					 &= \int q(Z|X) \ln p(X, Z|\theta) - q(Z|X)\ln q(Z|X)dZ\\
+					 &= \int q(Z|X)[\ln p(X|Z,\theta) + \ln p(Z|\theta)]  - q(Z|X)\ln q(Z|X)dZ\\
+					 &= \int q(Z|X)\ln p(X|Z,\theta)  - q(Z|X)\ln\frac{q(Z|X)}{p(Z|\theta)}dZ\\
+					 &= \mathbb{E}_{q(Z|X)} \ln p(X|Z,\theta)  - KL(q(Z|X)||p(Z|\theta)) 
+	% & = \int q(Z)\log \frac{p(X,Z|\theta)}{p(Z|X,\theta)}dZ\\
+	% & = \int q(Z)\log \frac{q(Z)p(X,Z|\theta)}{q(Z)p(Z|X,\theta)}dZ\\
+	% & = \int q(Z)\log \frac{p(X,Z|\theta)}{q(Z)}dZ+ \int q(Z)\log \frac{q(Z)}{p(Z|X,\theta)}dZ\\
+	% & = \underbrace{\int q(Z)\log \frac{p(X,Z|\theta)}{q(Z)}dZ}_{\textrm{ELBO, } \mathcal{L}(q,\theta)}+ \textrm{KL}(q(Z)||\log p(Z|X,\theta))
+	\label{eq:elbo}
+\end{align}
+% Note that $\textrm{KL}( \cdot|| \cdot)\geq 0$, thus $\mathcal{L}(q,\theta) \leq \log p(X|\theta)$. In other words, $\mathcal{L}(q,\theta)$ is a \textbf{lower bound} on $\log p(X|\theta)$.
+
+% Let's see ELBO in a different perspective
+% \begin{align*}
+% 	\mathcal{L}(q,\theta) &=  \int q(Z)\log \frac{p(X,Z|\theta)}{q(Z)}dZ\\
+% 	&= \int q(Z)\Big[\log p(X,Z|\theta)- \log q(Z)\Big]dZ\\
+% 	&= \int q(Z)\Big[\log p(Z|X,\theta)+\log p(X|\theta)-\log q(Z)\Big]dZ\\
+% 	&= \int q(Z)\log p(X|\theta)dZ+\int q(Z) \log\frac{ p(Z|X,\theta)}{ q(Z)}dZ\\
+% 	&= \log p(X|\theta)-\textrm{KL}(q(Z)||p(Z|X,\theta))
+% \end{align*}
+To maximize the above equation, we need to minimize KL divergence. 
+
+% Also note that $p$ does not depend of $q$, \textbf{so maximizing ELBO is equal to minimizing the KL divergence}. 
+
+% By using ELBO, we are able to maximize the incomplete likelihood. If you see the KL term, it is trying to minimize the divergence between $q(Z)$ and $p(Z)$ through maximizing ELBO.
+
+
+\subsection{Evidence Lower Bound (ELBO)}
+For any choice of inference model $q_{\phi}(z|x)$, we can represent the marginal probability of data (or model evidence) distribution, since the $z$ is not related to $x$, so the integration does not affect $x$. Thus, we can also derive ELBO as follows:
+\begin{align*}
+	\log p_{\theta}(x) &= \mathbbm{E}_{q_{\phi}(z|x)}[\log p_{\theta}(x)]\\
+	& = \mathbbm{E}_{q_{\phi}(z|x)}\Bigg[\log \frac{p_{\theta}(x,z)}{p_{\theta}(z|x)}\Bigg]\\
+	& = \mathbbm{E}_{q_{\phi}(z|x)}\Bigg[\log \frac{p_{\theta}(x,z)q_{\phi}(z|x)}{q_{\phi}(z|x) p_{\theta}(z|x)}\Bigg]\\
+	& = \underbrace{\mathbbm{E}_{q_{\phi}(z|x)}\Bigg[\log \frac{p_{\theta}(x,z)}{q_{\phi}(z|x) }\Bigg]}_{=\mathcal{L}(\phi,\theta)(x)}+\underbrace{ \mathbbm{E}_{q_{\phi}(z|x)}\Bigg[\log \frac{q_{\phi}(z|x)}{p_{\theta}(z|x)}\Bigg]}_{=D_{KL}(q_{\phi}(z|x)||p_{\theta}(z|x))}
+\end{align*}
+
+To get more intuition about ELBO, we can express ELBO as follows:
+\begin{align*}
+	\mathcal{L}(\phi,\theta) & = \mathbbm{E}_{q_{\phi}(z|x)}\Bigg[\log \frac{p_{\theta}(x,z)}{q_{\phi}(z|x) }\Bigg]\\
+	& = \mathbbm{E}_{q_{\phi}(z|x)}\Bigg[\log p_{\theta}(x,z)-\log q_{\phi}(z|x)\Bigg]\\
+	& = \mathbbm{E}_{q_{\phi}(z|x)}\Bigg[\log p_{\theta}(x)+\log p_{\theta}(z|x)-\log q_{\phi}(z|x)\Bigg]\\
+	& = \log p_{\theta}(x) - D_{\textrm{KL}}(q_{\phi}(z|x)||p_{\theta}(z|x))\\
+	& \leq \log p_{\theta}(x)
+\end{align*}
+
+ELBO can be also written as follows:
+\begin{align*}
+\mathcal{L}(\phi,\theta) & = \mathbbm{E}_{q_{\phi}(z|x)}\Bigg[\log \frac{p_{\theta}(x,z)}{q_{\phi}(z|x) }\Bigg]\\
+& = \mathbbm{E}_{q_{\phi}(z|x)}\Bigg[\log p_{\theta}(x,z)-\log q_{\phi}(z|x)\Bigg]\\
+& = \mathbbm{E}_{q_{\phi}(z|x)}\Bigg[\log p_{\theta}(z)+\log p_{\theta}(x|z)-\log q_{\phi}(z|x)\Bigg]\\
+& = \mathbbm{E}_{q_{\phi}(z|x)}[\log p_{\theta}(x|z)] - D_{\textrm{KL}}(q_{\phi}(z|x)||p_{\theta}(z))\\
+\end{align*}
+
+We can get a conclusion that maximizing ELBO is equivalent to minimizing the KL divergence through the above equation. Fianlly, the log-likelihood can be rewritten as follows:
+\begin{align*}
+	\log p_{\theta}(x) = \mathcal{L}(\phi,\theta) + D_{\textrm{KL}}(q_{\phi}(z|x)||p_{\theta}(z|x))
+\end{align*}
+
+
+%\section{Variational Lower Bound}
+%Function $g(\xi, x)$ is called variational lower bound for function $f(x)$ iff
+%\begin{itemize}
+%	\item For all $\xi$ for all $x$ if follows $f(x)\geq g(\xi, x)$
+%	\item For any $x_0$ there exists $\xi(x_0)$ such that $f(x_0)=g(\xi(x_0), x_0)$
+%\end{itemize} 
+
+\subsection{Expectation Maximization}
+We want to maximize ELBO, $\mathcal{L}(q,\theta)$ to minimize KL divergence between $q(Z)$ and $\log p(Z|X,\theta)$.
+$$\max_{q,\theta}\mathcal{L}(q,\theta) = \max_{q,\theta}\int q(Z)\log \frac{p(X,Z|\theta)}{q(Z)}dZ.$$
+We start from initial point $\theta_0$ and iteratively repeat \Ni E-step and \Nii M-step, iteratively:
+\begin{itemize}
+	\item E-Step: $\theta_0$ is fixed. 
+		$$q(Z) = \argmax_{q}\mathcal{L}(q,\theta) = \argmin_{q}\textrm{KL}(q(Z)|p(Z|X,\theta)) = p(Z|X,\theta_0).$$ 
+		\begin{itemize}
+			\item This is because, maximizing ELBO is equal to minimizing KL divergence and the minimum $q$ can be achieved when $q$ is equal to $p(Z|X,\theta_0)$.
+			\item Now, we just have to evaluate $p(Z|X,\theta_0)$.
+		\end{itemize}
+	\item M-Step: $q$ is fixed.
+		$$\theta_* = \argmax_{\theta}\mathcal{L}(q,\theta) = \argmax_{\theta}\mathbb{E}_{q(Z)}[\log p(X,Z|\theta)]$$
+		\begin{itemize}
+			\item Can be accomplished by taking derivatives
+			\item Set $\theta_0=\theta_*$ and go to the E-Step until convergence
+		\end{itemize}
+	
+\end{itemize}
+
+\subsection{Categorical Latent Variables}
+$z_i \in \{1,...,K\}$
+$$p(x_i|\theta) = \sum_{k=1}^{K}p(x_i|k,\theta)p(z_i=k|\theta)$$
+is simply a finite mixture of distributions. 
+
+E-Step:
+$$q(z_i=k) = p(z_i=k|x_i,\theta) = \frac{p(x_k|z_i=k,\theta)p(z_i=k|\theta)}{\sum_{l=1}^{K}p(x_i|z_i=l,\theta)p(z_i=l|\theta)}$$
+M-Step:
+$$\argmax_{\theta}\mathbb{E}_{q(Z)}[\log p(X,Z|\theta)] = \sum_{i=1}^{n}\mathbb{E}_{q(z_i)}[\log p(x_i,z_i|\theta)] = \sum_{i=1}^{n}\sum_{k=1}^{K}q(z_i=k)\log p(x_i,k|\theta)$$
+
+For GMM, we model $p(x|z)$ as Gaussian.
+
+%\subsection{Continous Latent Variables}
+%Continuous latent variables can be regarded as a mixture model of continous distributions. 
+%$$p(x_i|\theta) = \int p(z_i|x_i,\theta) dz_i = \int p(x_i|z_i,\theta)p(z_i|\theta) dz_i$$
+%E-step can be done in a closed from only in case of conjugate distributions, otherwise the true posterior is intractadble.
+%$$q(z_i) = p(z_i|x_i,\theta) = \frac{p(x_k|z_i,\theta)p(z_i|\theta)}{\int p(x_i|z_i,\theta)p(z_i|\theta)dz_i}$$
+%
+%Typically, continuous latent variables are used for dimension reduction techniques also known as \textbf{representation learning.}

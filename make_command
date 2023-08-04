@@ -1,0 +1,1 @@
+find -name "*.tex" -o -name "*.sty" | entr make
