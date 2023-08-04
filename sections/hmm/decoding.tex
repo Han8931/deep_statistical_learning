@@ -1,0 +1,72 @@
+\section{Decoding: Viterbi Algorithm}
+For any model, such as an HMM, that contains hidden variables, \textbf{the task of determining which sequence of variables is the underlying source of some sequence of observations is called the decoding task}.
+
+We might propose to find the best sequence as follows: 
+\begin{enumerate}
+	\item For each possible hidden state sequence (HHH, HHC, HCH, etc.), we could run the forward algorithm and compute the likelihood of the observation sequence given that hidden state sequence.
+	\item Then, we could choose the hidden state sequence with the maximum observation likelihood.
+\end{enumerate}  
+However, this is not a feasible solution, because there are an exponentially large number of state sequences.
+
+Instead, the most common decoding algorithms for HMMs is the \textbf{Viterbi algorithm}. Like the forward algorithm, \textbf{Viterbi} is a kind of \textbf{dynamic programming algorithm.}
+
+Note that the Viterbi algorithm is identical to the forward algorithm except that it takes the \textbf{max} over the previous path probabilities whereas the forward algorithm takes the \textbf{sum}. This is because, we want to obtain \textbf{the most probable latent variable sequence}. Note also that the Viterbi algorithm has one component that the forward algorithm doesn't have: \textbf{backpointers}. The reason is that while the forward algorithm needs to produce an observation likelihood, the Viterbi algorithm must produce a probability and also the most likely state sequence. We compute this best state sequence by keeping track of the path of hidden states that led to each state and then at the end backtracing the best path to the beginning (the Viterbi backtrace).
+
+We can leverage the forward-backward probabilities:
+\begin{itemize}
+	\item $k^* = \argmax_{k}p(z_t^k=1|X) = \argmax_{k}p(z^k_t=1,X) = \argmax_{k}\alpha_{t}^k\beta_{t}^k$
+\end{itemize}
+We will use a forward approach:
+% \setcounter{equation}{0}
+\begin{align}
+	V_t^k &= \max_{z_1,\dots,z_{t-1}}p(x_1,\dots,x_{t-1},z_1,\dots,z_{t-1},x_t,z_t^k=1)\\ 
+	& = \max_{z_1,\dots,z_{t-1}}p(x_t,z_t^k=1|x_1,\dots,x_{t-1},z_1,\dots,z_{t-1})p(x_1,\dots,x_{t-1},z_1,\dots,z_{t-1})\\
+	& = \max_{z_1,\dots,z_{t-1}}p(x_t,z_t^k=1|z_{t-1})p(x_1,\dots,x_{t-2},z_1,\dots,z_{t-2}, x_{t-1}, z_{t-1})\\
+	& = \max_{z_{t-1}}p(x_t,z_t^k=1|z_{t-1})\max_{z_1,\dots,z_{t-2}}p(x_1,\dots,x_{t-2},z_1,\dots,z_{t-2}, x_{t-1}, z_{t-1})\\
+	& = \max_{i\in z_{t-1}}p(x_t,z_t^k=1|z_{t-1}^i=1)V_{t-1}^i\\
+	& = \max_{i\in z_{t-1}}p(x_t|z_t^k=1)p(z_t^k=1|z_{t-1}^i=1)V_{t-1}^i\\
+	& = p(x_t|z_t^k=1)\max_{i\in z_{t-1}}p(z_t^k=1|z_{t-1}^i=1)V_{t-1}^i\\
+	& = b_{k,x_t}\max_{i\in z_{t-1}}a_{i,k}V_{t-1}^i
+\end{align}
+\begin{itemize}
+	\item $V_{t}^k$ is Viterbi variable which denotes the probability that the HMM is in state $k$ at $t$ after observing the first $t$ observations and $t-1$ latent variables. In another words, this is the probability of most likely sequence of states ending at state $z_t=k$.
+	\item The first line assumes that the observation at time $t$ and the latent variable are fixed and also the fourth line has the recursive structure.
+	\item The third step, only $z_{t-1}$ can affect the $z_{t}$, so we can remove all other unnecessary variables.
+	\item The step six can be derived by the HMM structure. 
+	\item $i\in z_{t-1}$ simply denotes the index of potential cluster at $t-1$.
+	\item We have already computed the backward and the forward probabilities. So we just need to apply the Viterbi algorithm. 
+	% \item $\textrm{idx}(x_t)$
+\end{itemize}
+
+Note that  Also note that we present the most probable path by taking the maximum over all possible previous state sequences $\max_{z_1,\dots,z_{t-1}}$. Like other DP-algorithm, Viterbi fills each cell recursively. 
+
+%\LinesNumberedHidden
+\begin{algorithm}
+	$V_t^k = viterbi[M,T]$, where $M$ is the number states\\
+	% Initialization: $\pi$ is the initial probability of being state $k$\\
+	\For{k=1,\dots,M}{
+		$V_1^k \leftarrow \pi_{z_k}b_{k,x_1}$\\
+		$backpointer[k,1]\leftarrow 0$
+	}
+	\For{t=2,\dots,T}{
+		\For{k=1,\dots,M}{
+			$V_t^k \leftarrow b_{k,x_t}\max_{k'} V_t^{k'}a_{k',k}$, where $k'$ is the previous state.\\
+			$backpointer[k,t]\leftarrow b_{k,x_t}\argmax_{k'} V_t^{k'}a_{k',k}$
+		}
+	}
+	$bestpathprob \leftarrow \max_{k}V_T^{k}$ \quad //termination step
+	
+	$bestpathpointer \leftarrow \argmax_{k}V_T^{k}$ \quad//termination step
+	
+	$bestpath \leftarrow $ the path starting at state $bestpathpointer$, that follows backpointer[] to states back in time
+	
+	Return $bestpathpointer$, $bestpathprob$
+
+	\caption{Viterbi Algorithm}
+	\label{algo:viterbi}
+\end{algorithm}
+
+Viterbi algorithm typically shows some technical issues:
+\begin{itemize}
+	\item Underflow problems $\to$ log $V$.
+\end{itemize}

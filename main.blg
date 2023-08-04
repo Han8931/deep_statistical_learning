@@ -15,6 +15,11 @@ A level-1 auxiliary file: ./sections/generative/vae.aux
 A level-1 auxiliary file: ./sections/generative/gan/gan.aux
 A level-1 auxiliary file: ./sections/generative/gan/wasserstein.aux
 A level-1 auxiliary file: ./sections/generative/gan/infogan.aux
+A level-1 auxiliary file: ./sections/hmm/intro.aux
+A level-1 auxiliary file: ./sections/hmm/evaluation.aux
+A level-1 auxiliary file: ./sections/hmm/decoding.aux
+A level-1 auxiliary file: ./sections/hmm/learning.aux
+A level-1 auxiliary file: ./sections/hmm/summary.aux
 A level-1 auxiliary file: ./sections/diffusion/intro.aux
 A level-1 auxiliary file: ./sections/diffusion/distribution.aux
 A level-1 auxiliary file: ./sections/diffusion/summary.aux
@@ -24,7 +29,7 @@ Database file #1: references.bib
 Warning--I didn't find a database entry for "sgld2011"
 You've used 2 entries,
             1791 wiz_defined-function locations,
-            477 strings with 4315 characters,
+            482 strings with 4448 characters,
 and the built_in function-call counts, 328 in all, are:
 = -- 29
 > -- 8

@@ -1,0 +1,50 @@
+\section{Learning: Baum-Welch Algorithm}
+We have to learn HMM parameters with only $X$. Baum-Welch algorithm or Forward-Backward Algorithm is a standard training algorithm for HMM. The algorithm let us train both the transition and the emission probabilities of the HMM. If we do not have the information about $Z$, then we can assign the most probable $Z$ given $X$.
+
+\begin{itemize}
+	\item Given $X$, estimate parameters $\pi, a, b$.
+		% $$\theta^* = \argmax_\theta \ln \sum_Z P(X,Z|\theta).$$
+	\item Then, find the most probable $Z$ given the parameters. 
+	% \item We don't have $Z, \pi, a, b$, so we need to find out them.
+\end{itemize}
+We will use EM algorithm!
+
+\subsection{EM Algorithm}
+\begin{align*}
+	P(X|\theta) = \sum_Z P(X,Z|\theta) \to \ln P(X|\theta) = \ln \sum_Z P(X,Z|\theta).
+\end{align*}
+We cannot directly estimate the log-likelihood function, so we will estimate the expectation of it. 
+\begin{align*}
+	Q(\theta, \theta^{old}) &= \mathbb{E}_{Z}\ln P(X,Z|\theta) \\
+							&= \sum_Z p(Z|X,\theta^{old})\ln P(X,Z|\theta)\\
+							&= \sum_Z p(Z|X,\pi^t, a^t, b^t)\ln P(X,Z|\pi, a, b).
+\end{align*}
+Note that $p(X,Z) = \pi_{z_{1}}\prod_{t=2}^{T}a_{z_{t-1},z_t}\prod_{t=2}^{T}b_{z_{t},x_t}$. Thus, $\ln p(X,Z) = \ln \pi_{z_{1}}+\sum_{t=2}^{T}\ln a_{z_{t-1},z_t}+\sum_{t=1}^{T}\ln b_{z_{t},x_t}$. Therefore
+$$Q(\theta, \theta^{old}) = \sum_Z p(Z|X, \theta^{old}) \bigg(\ln \pi_{z_{1}}+\sum_{t=2}^{T}\ln a_{z_{t-1},z_t}+\sum_{t=1}^{T}\ln b_{z_{t},x_t}\bigg).$$
+To optimize the above function we will use the Lagrange method as follows: 
+$$\mathcal{L}(\pi, a, b) = Q(\theta, \theta^{old}) - \lambda_\pi \bigg(\sum_{i=1}^K\pi_i-1\bigg) - \sum_i^K\lambda_{a_i} \bigg(\sum_{j=1}^Ka_{i,j}-1\bigg) - \sum_i^K\lambda_{b_i} \bigg(\sum_{j=1}^Kb_{i,j}-1\bigg).$$
+The constraints are for forcing the sum of each probability is equal to 1. 
+
+Now, take a partial derivative for each parameter. Let's take a derivative with regard to $\pi_i$ first. Then, 
+\begin{align*}
+	\frac{\partial \mathcal{L}}{\partial \pi_i} &= \frac{\partial Q(\theta, \theta^{old})}{\partial \pi_i} - \lambda_\pi\\
+												&= \frac{\partial }{\partial \pi_i}\sum_Z p(Z|X, \theta^{old}) \ln \pi_{z_{1}} - \lambda_\pi\\
+												&= \frac{p(z_1^i=1|X, \theta^{old})}{\pi_i} - \lambda_\pi\\
+	\frac{\partial \mathcal{L}}{\partial \lambda_{\pi_i}} &= \sum_{i=1}^K\pi_i - 1 = 0 \to \sum_{i=1}^K\pi_i = 1.
+\end{align*}
+By setting the derivative is equal to zero, 
+\begin{align*}
+ \pi_i = \frac{p(z_1^i=1|X, \theta^{old})}{\lambda_\pi}. 
+\end{align*}
+By using the constraint of $\pi$, the Lagrange multiplier $\lambda_\pi$ must be a normalizer. 
+\begin{align*}
+	\pi_i = \frac{p(z_1^i=1|X, \theta^{old})}{\sum_{j=1}^K p(z_1^j=1|X, \theta^{old})}. 
+\end{align*}
+Similarly, we can compute other parameters too. 
+\begin{align*}
+	a^{t+1}_{i,j} &= \frac{\sum_{t=2}^T p(z_{t-1}^i=1, z_t^j=1|X, \theta^{old})}{\sum_{t=2}^T p(z_{t-1}^i=1|X, \theta^{old})}.\\ 
+	b^{t+1}_{i,j} &= \frac{\sum_{t=1}^T p(z_{t1}^i=1|X, \theta^{old})I(x_t=j)}{\sum_{t=1}^T p(z_{t}^i=1|X, \theta^{old})}, 
+\end{align*}
+where $I(x)$ is an indicator function which returns 1 if $x$ is true and 0, otherwise. 
+
+

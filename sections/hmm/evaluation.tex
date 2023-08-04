@@ -1,0 +1,131 @@
+\section{Evaluation: Forward-Backward Probability}
+% The forward–backward algorithm is an inference algorithm for hidden Markov models which computes the posterior marginals of all hidden state variables given a sequence of observations/emissions
+
+% The term forward–backward algorithm is also used to refer to any algorithm belonging to the general class of algorithms that operate on sequence models in a forward–backward manner.
+
+% In the first pass, the forward–backward algorithm computes a set of forward probabilities which provide, for all $t\in \{1,\dots ,T\}$, the probability of ending up in any particular state given the first $t$ observations in the sequence, i.e. $P(X_{t}\ |\ o_{1:t})$. In the second pass, the algorithm computes a set of backward probabilities which provide the probability of observing the remaining observations given any starting point $t$, i.e. $P(o_{t+1:T}\ |\ X_{t})$. These two sets of probability distributions can then be combined to obtain the distribution over states at any specific point in time given the entire observation sequence:
+
+% These two sets of probability distributions can then be combined to obtain the distribution over states at any specific point in time given the entire observation sequence:
+% $$P(X_{t}\ |\ o_{1:T})=P(X_{t}\ |\ o_{1:t},o_{t+1:T})\propto P(o_{t+1:T}\ |\ X_{t})P(X_{t}|o_{1:t})$$
+% The forward–backward algorithm can be used to find the most likely state for any point in time. However, It cannot be used to find the most likely sequence of states.
+
+\subsection{Joint Probability}
+We can factorize the joint distribution of HMM in \Cref{fig:HMM} by using a Bayesian approach as follows:. 
+
+\begin{align}
+	p(X,Z) = p(x_1,\dots,x_t, z_1,\dots,z_t) = p(z_1)p(x_1|z_1),p(z_2|z_1),\dots,p(x_{t}|z_{t}),p(z_{t}|z_{t-1})
+	\label{eq:hmm_joint}
+\end{align}
+
+As the number of latent factor increases, it is getting harder to decode the latent factors. 
+
+\subsection{Marginal Probability}
+% \subsection{Forward Probability}
+We want to compute the likelihood of sequence $X$ which is given by
+$$p(X|\boldsymbol{\pi}\mathbf{, a, b}) = \sum_Z p(X, Z|\boldsymbol{\pi}\mathbf{, a, b})$$
+The computation can be done as follows:
+\begin{align*}
+	p(X) &= \sum_Z p(X,Z)\\
+	& = \sum_{z_1}\dots\sum_{z_t}p(x_1,\dots,x_t,z_1,\dots,z_t)\\
+	& = \sum_{z_1}\dots\sum_{z_t}\pi_{z_{1}}\prod_{t=2}^{T}a_{z_{t-1},z_t}\prod_{t=1}^{T}b_{z_{t},x_t}
+\end{align*}
+The last step is done by using \Cref{eq:hmm_joint}). The computation of this equation requires lots of computations, so we will change it into a \textbf{recursive form} by using the factorization rule $p(a,b,c) = p(a)p(b|a)p(c|a,b)$. 
+
+\begin{align}
+	p(&x_1,\dots,x_t,z_t^k=1) = \sum_{z_{t-1}}p(x_1,\dots,x_{t-1}, x_t,z_{t-1},z_t^k=1)\\
+	&= \sum_{z_{t-1}} p(\underbrace{x_1,\dots,x_{t-1}, z_{t-1}}_{a}, \underbrace{x_t}_{c}, \underbrace{z_t^k=1}_{b})\\
+	& = \sum_{z_{t-1}} p(x_1,\dots,x_{t-1},z_{t-1}) p(z_t^k=1|x_1,\dots,x_{t-1},z_{t-1})p(x_t|z_t^k=1, x_1,\dots,x_{t-1},z_{t-1}) \\
+	&\hspace{0.5cm} \because p(a,b,c) = p(a)p(b|a)p(c|a,b) \textrm{ or by the structure of HMM}\nonumber\\ 
+	& = \sum_{z_{t-1}} p(x_1,\dots,x_{t-1},z_{t-1}) p(z_t^k=1|z_{t-1}) p(x_t|z_t^k=1)\\
+	& = p(x_t|z_t^k=1) \sum_{z_{t-1}} p(x_1,\dots,x_{t-1},z_{t-1}) p(z_t^k=1|z_{t-1}) \\
+	& = b_{z^k_t,x_t} \sum_{z_{t-1}} p(x_1,\dots,x_{t-1},z_{t-1}) a_{z_{t-1},z_t^k}
+	\label{eq:hmm_eval_fact}
+\end{align}
+
+\begin{itemize}
+	\item In the second line, the $x_{t-1}$ and $z_{t-1}$ are grouped together. 
+	\item Then, we can find the HMM structure by factorizing the equation. 
+	\item In the fourth line, $x$ terms are removed, since $z_t$ only relies on $z_{t-1}$ by the Markov assumption. Similarly, $x_t$ only depends on $z_t$. We can interpret this by using Bayes ball too. 
+\end{itemize}
+% In the fifth step, we assume that $z_t=k$ is given, thus by Markov assumption, we only need $z_{t-1}$. 
+Now we can find a recursive structure of $p(x_1,\dots,x_{t},z_{t}^k=1)$ as follows:
+$$\alpha_t^k = p(x_1,\dots,x_{t},z_{t}^k=1) = b_{k,x_t}\sum_i \alpha_{t-1}^ia_{i,k}$$
+, where \textbf{$\alpha_t^k$ is the probabilities of being in state $k$ after observing the first $t$ observations.} Thus, 
+\begin{align*}
+	p(x_1,\dots,x_{t}) & = \sum_{\mathbf{z}} p(x_1,\dots,x_{t},z)\\
+	& = \sum_{k} \alpha_t^k
+\end{align*}
+% \begin{itemize}
+% 	\item $\alpha_t^k$: \textbf{Forward probability}. Probabilities of being in state $k$ after observing the first $t$ observations.
+% 	% \item $a_{i,k}$: transition probability
+% 	% \item $b_{k,x_t}$: observation (or emission) probability
+% \end{itemize}
+Note that $\alpha_t^k$ is also called \textbf{Forward probability}.
+
+\subsection{Forward Algorithm}
+Forward probability solves the evaluation problem. Essentially, this is a dynamic programming, so it calculates required values in a bottom-up manner. 
+\begin{itemize}
+	\item Forward probability: $\alpha_t^k$, $Time\times States$
+\end{itemize}
+%\LinesNumbered
+\begin{algorithm}
+	Create a probability matrix $forward[M,T] = \alpha_t^k$\\
+	Initialization: \\
+	\For {\textrm{each state} k=1,...,M}{
+		$\alpha_1^k\leftarrow \pi_kb_{k,x_1}$
+	}
+	\For {\textrm{time step} t=2,...,T}{
+		\For {\textrm{each step} k=1,...,M}{
+			$\alpha_t^k = b_{k,x_t}\sum_i \alpha_{t-1}^ia_{i,k}$
+			}
+		
+	}
+	Return $p(X) = \sum_i^M \alpha_T^i$
+	\caption{Forward Algorithm}
+	\label{algo:forward_algorithm}
+\end{algorithm}
+%\begin{algorithm}
+%	Init: $\alpha_1^k = b_{k,x_1}\pi_k$\\
+%	\For{t=1,...,T}{
+%		$\alpha_t^k = b_{k,x_t}\sum_i \alpha_{t-1}^ia_{i,k}$
+%	}
+%	Return $p(X) = \sum_i\alpha_T^i$
+%	\caption{Forward Algorithm}
+%	\label{algo:forward_algorithm}
+%\end{algorithm}
+Note again that 
+$$p(X) = p(x_1,...,x_T) =\sum_i\alpha_T^i = \sum_i p(x_1,...,x_T, z_T^i=1)$$
+Note also that the forward-algorithm returns $p(X)$ and forward probability is the probability of being in state $k$ after observing the first $t$ observations without $Z$. 
+
+\subsection{Backward Probability}
+The forward probability only considers an observation at $t$. To determine the $z_t$, we need to leverage the future observations. \textbf{The backward probability $\beta$ is the probability of seeing the observations from time $t+i$ to the end, given that we are in state $k$ at time $t$.} 
+$$\beta_t^k = p(x_{t+1},\dots,x_T|z_t^k=1)$$
+We want to compute $p(z_t^k=1|X)$ rather than $p(x_1,\dots,x_t, z_t^k=1)$. In other words, we will leverage the whole observations $X$. 
+\begin{align*}
+	p(z_t^k=1,X) &= p(x_1,\dots,x_t, z_t^k=1, x_{t+1},\dots,x_T)\\
+	& = p(x_1,\dots,x_t, z_t^k=1)p(x_{t+1},\dots,x_T|x_1,\dots,x_t, z_t^k=1)\\
+	& = p(x_1,\dots,x_t, z_t^k=1)p(x_{t+1},\dots,x_T|z_t^k=1)\\
+	& = \alpha_{t}^k\beta_{t}^k
+\end{align*}
+We already know that $p(x_1,\dots,x_t, z_t^k=1) = \alpha_t^k$. We just need to compute backward probability as follows:
+\begin{align*}
+	\beta_t^k &= p(x_{t+1},\dots,x_T|z_t^k=1)\\
+	& = \sum_{z_{t+1}}p(\underbrace{z_{t+1}}_{a}, \underbrace{x_{t+1}}_b,\underbrace{x_{t+2},\dots,x_T}_c|z_t^k=1)\\
+	& = \sum_{i} p(z_{t+1}^i=1|z_t^k=1)p(x_{t+1}|z_{t+1}^i=1,z_t^k=1)p(x_{t+2},\dots,x_T|x_{t+1},z_{t+1}^i=1,z_t^k=1)\\
+	& \because p(a,b,c) = p(a)p(b|a)p(c|a,b)\\
+	& = \sum_{i} p(z_{t+1}^i=1|z_t^k=1)p(x_{t+1}|z_{t+1}^i=1)p(x_{t+2},\dots,x_T|z_{t+1}^i=1)\\
+	& = \sum_{i}a_{k,i}b_{i,x_{t+1}} \beta_{t+1}^i
+\end{align*}
+
+Another recursive structure:
+\begin{align*}
+	p(z_t^k=1,X) &= \alpha_{t}^k\beta_{t}^k\\
+	& = b_{k,x_t}\sum_i \alpha_{t-1}^ia_{i,k} \times \sum_{i}a_{k,i}b_{i,x_{t}} \beta_{t+1}^i
+\end{align*}
+This means at time $t$, the latent label is belong to some class $k$ and this can be computed by using the forward probability and the backward probability. Now we can compute
+\begin{align*}
+p(z_t^k=1|X) &= \frac{p(z_t^k=1,X)}{p(X)} = \frac{\alpha_{t}^k\beta_{t}^k}{p(X)}
+\end{align*}
+Then, 
+$$k_t = \argmax_{k}p(z_t^k=1|X)$$
+Note that this is for a single latent variable at a single time step given the whole observation $X$, but we want to decode a sequence of latent variables. Thus, we need some decoding algorithm.

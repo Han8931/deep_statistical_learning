@@ -1,0 +1,28 @@
+\section{Summary}
+
+\begin{itemize}
+	\item Forward-probability: probability of being in state $k$ after observing the first $t$ observations. 
+	$$\alpha_t^k = p(x_1,...,x_t,z_t^k=1)$$
+	\item Backward-probability: probability of observations from time $t+1$ to the end, given that we are in state $k$ 
+	$$\beta_t^k = p(x_{t+1},...,x_T|z_t^k=1)$$
+	\item These two sets of probability distributions can then be combined to obtain the distribution over states at any specific point in time given the entire observation sequence
+	\begin{align*}
+	p(z_t^k=1,X) &= p(x_1,...,x_t, z_t^k=1, x_{t+1},...,x_T)\\
+	& = p(x_1,...,x_t, z_t^k=1)p(x_{t+1},...,x_T|x_1,...,x_t, z_t^k=1)\\
+	& = p(x_1,...,x_t, z_t^k=1)p(x_{t+1},...,x_T|z_t^k=1)\\
+	& = \alpha_{t}^k\beta_{t}^k
+	\end{align*}
+	In short, if we know the forward and backward probability, we could know the cluster of state at time $t$ given our observations. 
+	\item Forward-algorithm: return a marginal likelihood of the observed sequence
+	\item Forward-backward: predict a single hidden state
+	\item Viterbi: predict an entire sequence of hidden states
+	\item Baum-Welch: unsupervised training (EM)
+\end{itemize}
+
+There are two shortcomings of HMM:
+\begin{itemize}
+	\item HMM models capture dependences between each state and only its
+	corresponding observation: Most NLP cases, many tasks needs not only local but also global feature (sentence level).
+	\item Mismatch between learning objective function and prediction
+	objective function: HMM learns a joint distribution of states and observations $p(Y,X)$, but we are more interested in $p(Y|X)$
+\end{itemize}
