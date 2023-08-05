@@ -1,0 +1,18 @@
+\chapter{Kernel Methods}
+\begin{itemize}
+	\item The main idea is to use large set of fixed non-linear basis functions.
+	\item The complexity depends on number of basis functions, but dual trick changes it to a size of dataset. 
+\end{itemize}
+
+Kernel function: Let $\phi(\rvx)$ be a set of basis functions that map inputs $\rvx$ to a feature space. In many algorithms, this feature space only appears in a dot product $\phi(\rvx)^T\phi(\rvx')$ of input pairs $\rvx$ and $\rvx'$. Then, kernel function can be defined as $k(\rvx, \rvx') = \phi(\rvx)^T\phi(\rvx')$. Note that we only need to know $k(\rvx, \rvx')$, not $\phi(\rvx)$.
+
+Recall that the objective of linear regression is:
+$$E =\sum_n (\rvw^T\phi(\rvx_n)-y_n)^2 + \lambda \rvw^T\rvw.$$
+The solution (gradient) is given by
+$$\rvw =-\frac{1}{\lambda}\sum_n (\rvw^T\phi(\rvx_n)-y_n)\phi(\rvx_n).$$
+Thus, $\rvw$ is a linear combination of inputs in a feature space. 
+
+We can rewrite it by $\rvw = \Phi \rva$, where $\Phi = [\phi(\rvx_1),\dots,\phi(\rvx_N)]$, $\rva = [a_1,\dots,a_N]^T$, and $a_n =-\frac{1}{\lambda} (\rvw^T\phi(\rvx_n)-y_n).$. Then, we get a dual objective, which aims to minimize $E$ with respect to $\rva$.
+
+Let $K = \Phi^T\Phi$ be the Gram matrix. 
+

@@ -21,27 +21,27 @@ A level-1 auxiliary file: ./sections/generative/gan/gan.aux
 A level-1 auxiliary file: ./sections/generative/gan/wasserstein.aux
 A level-1 auxiliary file: ./sections/generative/gan/infogan.aux
 Already encountered file ./sections/hmm/intro.aux
----line 36 of file main.aux
+---line 40 of file main.aux
  : \@input{./sections/hmm/intro.aux
  :                                 }
 I'm skipping whatever remains of this command
 Already encountered file ./sections/hmm/evaluation.aux
----line 37 of file main.aux
+---line 41 of file main.aux
  : \@input{./sections/hmm/evaluation.aux
  :                                      }
 I'm skipping whatever remains of this command
 Already encountered file ./sections/hmm/decoding.aux
----line 38 of file main.aux
+---line 42 of file main.aux
  : \@input{./sections/hmm/decoding.aux
  :                                    }
 I'm skipping whatever remains of this command
 Already encountered file ./sections/hmm/learning.aux
----line 39 of file main.aux
+---line 43 of file main.aux
  : \@input{./sections/hmm/learning.aux
  :                                    }
 I'm skipping whatever remains of this command
 Already encountered file ./sections/hmm/summary.aux
----line 40 of file main.aux
+---line 44 of file main.aux
  : \@input{./sections/hmm/summary.aux
  :                                   }
 I'm skipping whatever remains of this command
