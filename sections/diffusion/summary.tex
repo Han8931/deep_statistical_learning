@@ -41,17 +41,15 @@
 
 \newpage
 \begin{algorithm}[t]
-	\begin{algorithmic}[1]
-		\Repeat
-			\State $\rvx_0\sim q(\rvx_0)$
-			\State $t\sim \text{Unif}[\{1,\cdots,T\}]$
-			\State $\epsilon\sim \mathcal{N}(0,I)$
-			\State Take gradient descent step on
-			$\nabla_\theta||\epsilon -\epsilon_\theta(\sqrt{\bar{\alpha}_t}\rvx_0+\sqrt{(1-\bar{\alpha}_t)}\epsilon,t)||^2 $
-		\Until converged
-	\end{algorithmic}
 	\caption{Training}
 	\label{alg:diffusion_training}
+	\Repeat{\textrm{converged}}{
+			$\rvx_0\sim q(\rvx_0)$\\
+			$t\sim \text{Unif}[\{1,\cdots,T\}]$\\
+			$\epsilon\sim \mathcal{N}(0,I)$\\
+			Take gradient descent step on
+			$\nabla_\theta||\epsilon -\epsilon_\theta(\sqrt{\bar{\alpha}_t}\rvx_0+\sqrt{(1-\bar{\alpha}_t)}\epsilon,t)||^2$
+		}
 \end{algorithm}
 
 The training process is given by
@@ -66,16 +64,14 @@ The training process is given by
 
 The sampling process is given by
 \begin{algorithm}[h]
-	\begin{algorithmic}[1]
-		\State $\rvx_T\sim \mathcal{N}(0,I)$
-		\For{$t=T,\cdots,1$}
-			\State $\rvz\sim \mathcal{N}(0,I)$
-			\State $\rvx_{t-1}= \frac{1}{\sqrt{\alpha_t}}\bigg(\rvx_t-\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}}\boldsymbol{\epsilon}_\theta(\rvx_t,t)\bigg)+\Sigma_t\rvz$
-		\EndFor
-		\State \textbf{return} $\rvx_0$
-	\end{algorithmic}
 	\caption{Sampling}
 	\label{alg:diffusion_sampling}
+		$\rvx_T\sim \mathcal{N}(0,I)$\\
+		\For{$t=T,\cdots,1$}{
+			$\rvz\sim \mathcal{N}(0,I)$\\
+			\State $\rvx_{t-1}= \frac{1}{\sqrt{\alpha_t}}\bigg(\rvx_t-\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}}\boldsymbol{\epsilon}_\theta(\rvx_t,t)\bigg)+\Sigma_t\rvz$
+		}
+		\textbf{return} $\rvx_0$
 \end{algorithm*}
 \begin{itemize}
 	\item Ancestral sampling.

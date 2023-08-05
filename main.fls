@@ -1449,8 +1449,6 @@ INPUT ./sections/diffusion/summary.tex
 INPUT ./sections/diffusion/summary.tex
 INPUT ./sections/diffusion/summary.tex
 INPUT ./sections/diffusion/summary.tex
-INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/ecti0800.tfm
-INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/ecti0600.tfm
 INPUT ./sections/diffusion/score_matching.tex
 INPUT ./sections/diffusion/score_matching.tex
 INPUT ./sections/diffusion/score_matching.tex

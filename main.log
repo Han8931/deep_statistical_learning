@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.4.17)  5 AUG 2023 11:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.4.17)  5 AUG 2023 11:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2677,287 +2677,25 @@ might try typing `S' now just to see what is salvageable.
 
 
 ]
-
-! LaTeX Error: Environment algorithmic undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.44 	\begin{algorithmic}
-                         [1]
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-! Extra }, or forgotten $.
-<recently read> }
-                 
-l.46 			\State $
-                \rvx_0\sim q(\rvx_0)$
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-! Extra }, or forgotten $.
-\algocf@Vsline ...\vtop {\algocf@addskiptotal #1}}
-                                                  }\algocf@pop {\skiprule }\...
-l.46 			\State $
-                \rvx_0\sim q(\rvx_0)$
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-! Extra }, or forgotten $.
-\algocf@Vsline ...vtop {\algocf@addskiptotal #1}}}
-                                                  \algocf@pop {\skiprule }\a...
-l.46 			\State $
-                \rvx_0\sim q(\rvx_0)$
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
 ! Undefined control sequence.
 <recently read> \State 
                        
-l.46 			\State $
-                \rvx_0\sim q(\rvx_0)$
+l.74 		\textbf
+              {return} $\rvx_0$
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-! Undefined control sequence.
-<recently read> \State 
-                       
-l.46 			\State $
-                \rvx_0\sim q(\rvx_0)$
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
 
-! Undefined control sequence.
-<recently read> \State 
-                       
-l.46 			\State $
-                \rvx_0\sim q(\rvx_0)$
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-<recently read> \State 
-                       
-l.46 			\State $
-                \rvx_0\sim q(\rvx_0)$
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.46 			\State $\rvx
-                    _0\sim q(\rvx_0)$
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-
-! LaTeX Error: \mathbf allowed only in math mode.
+! LaTeX Error: \begin{algorithm} on input line 66 ended by \end{algorithm*}.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.46 			\State $\rvx
-                    _0\sim q(\rvx_0)$
-You're in trouble here.  Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.46 			\State $\rvx_
-                     0\sim q(\rvx_0)$
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Undefined control sequence.
-l.47 			\State
-               $t\sim \text{Unif}[\{1,\cdots,T\}]$
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-l.48 			\State
-               $\epsilon\sim \mathcal{N}(0,I)$
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-l.49 			\State
-               Take gradient descent step on
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-l.51 		\Until
-              converged
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
-! LaTeX Error: \begin{lrbox} on input line 43 ended by \end{algorithmic}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.52 	\end{algorithmic}
-                       
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.52 	\end{algorithmic}
-                       
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.52 	\end{algorithmic}
-                       
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.52 	\end{algorithmic}
-                       
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-
-! LaTeX Error: Environment algorithmic undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.69 	\begin{algorithmic}
-                         [1]
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-! Undefined control sequence.
-l.70 		\State
-              $\rvx_T\sim \mathcal{N}(0,I)$
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-<argument> \State 
-                  
-l.72 			\State $
-                \rvz\sim \mathcal{N}(0,I)$
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-l.73 			\State
-               $\rvx_{t-1}= \frac{1}{\sqrt{\alpha_t}}\bigg(\rvx_t-\frac{1-\a...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-l.74 		\EndFor
-              
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-l.75 		\State
-              \textbf{return} $\rvx_0$
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
-! LaTeX Error: \begin{lrbox} on input line 68 ended by \end{algorithmic}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.76 	\end{algorithmic}
-                       
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-! LaTeX Error: \begin{algorithm} on input line 68 ended by \end{algorithm*}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.79 \end{algorithm*}
+l.75 \end{algorithm*}
                      
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3004,11 +2742,11 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: CE3F1F0317A89FD83B33CBFDA09F7A92;18510.
  ) 
 Here is how much of TeX's memory you used:
- 20340 strings out of 476017
- 343996 string characters out of 5767818
+ 20325 strings out of 476017
+ 343808 string characters out of 5767818
  1880666 words of memory out of 5000000
- 39534 multiletter control sequences out of 15000+600000
- 551545 words of font info for 267 fonts, out of 8000000 for 9000
+ 39529 multiletter control sequences out of 15000+600000
+ 549694 words of font info for 261 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,19n,76p,1001b,675s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
@@ -3052,10 +2790,10 @@ per/sfrm1095.pfb></opt/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm
 ></opt/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfti1095.pfb></opt/t
 exlive/2023/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb></opt/texlive/2
 023/texmf-dist/fonts/type1/public/cm-super/sftt1440.pfb>
-Output written on main.pdf (95 pages, 3405252 bytes).
+Output written on main.pdf (95 pages, 3405284 bytes).
 PDF statistics:
  1603 PDF objects out of 1728 (max. 8388607)
  1361 compressed objects within 14 object streams
  404 named destinations out of 1000 (max. 500000)
- 65511 words of extra memory for PDF output out of 74296 (max. 10000000)
+ 61415 words of extra memory for PDF output out of 61914 (max. 10000000)
 
