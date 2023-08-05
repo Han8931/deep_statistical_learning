@@ -50,23 +50,23 @@
 \contentsline {subsection}{\numberline {8.4.1}Evidence Lower Bound (ELBO)}{33}{subsection.8.4.1}%
 \contentsline {subsection}{\numberline {8.4.2}Expectation Maximization}{34}{subsection.8.4.2}%
 \contentsline {subsection}{\numberline {8.4.3}Categorical Latent Variables}{35}{subsection.8.4.3}%
-\contentsline {chapter}{\numberline {12}Hidden Markov Models}{62}{chapter.12}%
-\contentsline {section}{\numberline {12.1}Introduction}{62}{section.12.1}%
-\contentsline {subsection}{\numberline {12.1.1}Conditional Independence}{62}{subsection.12.1.1}%
-\contentsline {subsection}{\numberline {12.1.2}Notation}{62}{subsection.12.1.2}%
-\contentsline {section}{\numberline {12.2}Bayesian Network}{63}{section.12.2}%
-\contentsline {subsection}{\numberline {12.2.1}Bayes Ball}{63}{subsection.12.2.1}%
-\contentsline {subsection}{\numberline {12.2.2}Potential Function}{63}{subsection.12.2.2}%
-\contentsline {section}{\numberline {12.3}Hidden Markov Models}{65}{section.12.3}%
-\contentsline {section}{\numberline {12.4}Evaluation: Forward-Backward Probability}{66}{section.12.4}%
-\contentsline {subsection}{\numberline {12.4.1}Joint Probability}{66}{subsection.12.4.1}%
-\contentsline {subsection}{\numberline {12.4.2}Marginal Probability}{66}{subsection.12.4.2}%
-\contentsline {subsection}{\numberline {12.4.3}Forward Algorithm}{67}{subsection.12.4.3}%
-\contentsline {subsection}{\numberline {12.4.4}Backward Probability}{68}{subsection.12.4.4}%
-\contentsline {section}{\numberline {12.5}Decoding: Viterbi Algorithm}{69}{section.12.5}%
-\contentsline {section}{\numberline {12.6}Learning: Baum-Welch Algorithm}{71}{section.12.6}%
-\contentsline {subsection}{\numberline {12.6.1}EM Algorithm}{71}{subsection.12.6.1}%
-\contentsline {section}{\numberline {12.7}Summary}{73}{section.12.7}%
+\contentsline {chapter}{\numberline {9}Hidden Markov Models}{36}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Introduction}{36}{section.9.1}%
+\contentsline {subsection}{\numberline {9.1.1}Conditional Independence}{36}{subsection.9.1.1}%
+\contentsline {subsection}{\numberline {9.1.2}Notation}{36}{subsection.9.1.2}%
+\contentsline {section}{\numberline {9.2}Bayesian Network}{37}{section.9.2}%
+\contentsline {subsection}{\numberline {9.2.1}Bayes Ball}{37}{subsection.9.2.1}%
+\contentsline {subsection}{\numberline {9.2.2}Potential Function}{37}{subsection.9.2.2}%
+\contentsline {section}{\numberline {9.3}Hidden Markov Models}{39}{section.9.3}%
+\contentsline {section}{\numberline {9.4}Evaluation: Forward-Backward Probability}{40}{section.9.4}%
+\contentsline {subsection}{\numberline {9.4.1}Joint Probability}{40}{subsection.9.4.1}%
+\contentsline {subsection}{\numberline {9.4.2}Marginal Probability}{40}{subsection.9.4.2}%
+\contentsline {subsection}{\numberline {9.4.3}Forward Algorithm}{41}{subsection.9.4.3}%
+\contentsline {subsection}{\numberline {9.4.4}Backward Probability}{42}{subsection.9.4.4}%
+\contentsline {section}{\numberline {9.5}Decoding: Viterbi Algorithm}{43}{section.9.5}%
+\contentsline {section}{\numberline {9.6}Learning: Baum-Welch Algorithm}{45}{section.9.6}%
+\contentsline {subsection}{\numberline {9.6.1}EM Algorithm}{45}{subsection.9.6.1}%
+\contentsline {section}{\numberline {9.7}Summary}{47}{section.9.7}%
 \contentsline {chapter}{\numberline {10}Explicit Generative Models}{48}{chapter.10}%
 \contentsline {section}{\numberline {10.1}Variational Autoencoder}{48}{section.10.1}%
 \contentsline {subsection}{\numberline {10.1.1}VAE Optimization}{50}{subsection.10.1.1}%
@@ -88,29 +88,12 @@
 \contentsline {subsection}{\numberline {11.5.1}Joint Entropy}{60}{subsection.11.5.1}%
 \contentsline {subsection}{\numberline {11.5.2}Conditional Entropy}{60}{subsection.11.5.2}%
 \contentsline {subsection}{\numberline {11.5.3}Variational Mutual Information Maximization}{60}{subsection.11.5.3}%
-\contentsline {chapter}{\numberline {12}Hidden Markov Models}{62}{chapter.12}%
+\contentsline {chapter}{\numberline {12}Diffusion Model}{62}{chapter.12}%
 \contentsline {section}{\numberline {12.1}Introduction}{62}{section.12.1}%
-\contentsline {subsection}{\numberline {12.1.1}Conditional Independence}{62}{subsection.12.1.1}%
-\contentsline {subsection}{\numberline {12.1.2}Notation}{62}{subsection.12.1.2}%
-\contentsline {section}{\numberline {12.2}Bayesian Network}{63}{section.12.2}%
-\contentsline {subsection}{\numberline {12.2.1}Bayes Ball}{63}{subsection.12.2.1}%
-\contentsline {subsection}{\numberline {12.2.2}Potential Function}{63}{subsection.12.2.2}%
-\contentsline {section}{\numberline {12.3}Hidden Markov Models}{65}{section.12.3}%
-\contentsline {section}{\numberline {12.4}Evaluation: Forward-Backward Probability}{66}{section.12.4}%
-\contentsline {subsection}{\numberline {12.4.1}Joint Probability}{66}{subsection.12.4.1}%
-\contentsline {subsection}{\numberline {12.4.2}Marginal Probability}{66}{subsection.12.4.2}%
-\contentsline {subsection}{\numberline {12.4.3}Forward Algorithm}{67}{subsection.12.4.3}%
-\contentsline {subsection}{\numberline {12.4.4}Backward Probability}{68}{subsection.12.4.4}%
-\contentsline {section}{\numberline {12.5}Decoding: Viterbi Algorithm}{69}{section.12.5}%
-\contentsline {section}{\numberline {12.6}Learning: Baum-Welch Algorithm}{71}{section.12.6}%
-\contentsline {subsection}{\numberline {12.6.1}EM Algorithm}{71}{subsection.12.6.1}%
-\contentsline {section}{\numberline {12.7}Summary}{73}{section.12.7}%
-\contentsline {chapter}{\numberline {13}Diffusion Model}{74}{chapter.13}%
-\contentsline {section}{\numberline {13.1}Introduction}{74}{section.13.1}%
-\contentsline {section}{\numberline {13.2}Forward Diffusion}{75}{section.13.2}%
-\contentsline {section}{\numberline {13.3}Backward Process}{76}{section.13.3}%
-\contentsline {section}{\numberline {13.4}Distribution Modeling}{78}{section.13.4}%
-\contentsline {section}{\numberline {13.5}Summary}{84}{section.13.5}%
-\contentsline {section}{\numberline {13.6}Score Matching}{86}{section.13.6}%
-\contentsline {subsection}{\numberline {13.6.1}Fisher Divergence}{87}{subsection.13.6.1}%
-\contentsline {subsection}{\numberline {13.6.2}Langevin Dynamics}{88}{subsection.13.6.2}%
+\contentsline {section}{\numberline {12.2}Forward Diffusion}{63}{section.12.2}%
+\contentsline {section}{\numberline {12.3}Backward Process}{64}{section.12.3}%
+\contentsline {section}{\numberline {12.4}Distribution Modeling}{66}{section.12.4}%
+\contentsline {section}{\numberline {12.5}Summary}{72}{section.12.5}%
+\contentsline {section}{\numberline {12.6}Score Matching}{74}{section.12.6}%
+\contentsline {subsection}{\numberline {12.6.1}Fisher Divergence}{75}{subsection.12.6.1}%
+\contentsline {subsection}{\numberline {12.6.2}Langevin Dynamics}{76}{subsection.12.6.2}%
