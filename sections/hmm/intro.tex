@@ -1,4 +1,4 @@
-\chapter{Introduction}
+\chapter{Hidden Markov Models}
 \section{Introduction}
 The HMM is based on the Markov chain assumption. A Markov chain is a model
 that tells us something about the probabilities of sequences of random variables,
@@ -72,9 +72,10 @@ An effect of an observation propagates through the clique graph $\to$ \textbf{Be
 
 Let's say we have some new observations about $A$, then it affects the clique $\Psi(a,b)$. The updated clique is now $\Psi^*(a,b)$. Similarly, $\phi^*(b) = \sum_A\Psi^*(a,b)$. Subsequently, $\Psi^*(b,c) = \Psi^(b,c)\frac{\phi^*(b)}{\phi(b)}$.
 
+\newpage
+\section{Hidden Markov Models}
+\label{sec:hmm}
 
-
-\chapter{Hidden Markov Model}
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[scale=0.7]{./images/hmm/hmm_figure.pdf}

@@ -11,15 +11,40 @@ A level-1 auxiliary file: ./sections/lda/topic_modeling.aux
 A level-1 auxiliary file: ./sections/generative/intro.aux
 A level-1 auxiliary file: ./sections/generative/clustering.aux
 A level-1 auxiliary file: ./sections/generative/elbo.aux
-A level-1 auxiliary file: ./sections/generative/vae.aux
-A level-1 auxiliary file: ./sections/generative/gan/gan.aux
-A level-1 auxiliary file: ./sections/generative/gan/wasserstein.aux
-A level-1 auxiliary file: ./sections/generative/gan/infogan.aux
 A level-1 auxiliary file: ./sections/hmm/intro.aux
 A level-1 auxiliary file: ./sections/hmm/evaluation.aux
 A level-1 auxiliary file: ./sections/hmm/decoding.aux
 A level-1 auxiliary file: ./sections/hmm/learning.aux
 A level-1 auxiliary file: ./sections/hmm/summary.aux
+A level-1 auxiliary file: ./sections/generative/vae.aux
+A level-1 auxiliary file: ./sections/generative/gan/gan.aux
+A level-1 auxiliary file: ./sections/generative/gan/wasserstein.aux
+A level-1 auxiliary file: ./sections/generative/gan/infogan.aux
+Already encountered file ./sections/hmm/intro.aux
+---line 36 of file main.aux
+ : \@input{./sections/hmm/intro.aux
+ :                                 }
+I'm skipping whatever remains of this command
+Already encountered file ./sections/hmm/evaluation.aux
+---line 37 of file main.aux
+ : \@input{./sections/hmm/evaluation.aux
+ :                                      }
+I'm skipping whatever remains of this command
+Already encountered file ./sections/hmm/decoding.aux
+---line 38 of file main.aux
+ : \@input{./sections/hmm/decoding.aux
+ :                                    }
+I'm skipping whatever remains of this command
+Already encountered file ./sections/hmm/learning.aux
+---line 39 of file main.aux
+ : \@input{./sections/hmm/learning.aux
+ :                                    }
+I'm skipping whatever remains of this command
+Already encountered file ./sections/hmm/summary.aux
+---line 40 of file main.aux
+ : \@input{./sections/hmm/summary.aux
+ :                                   }
+I'm skipping whatever remains of this command
 A level-1 auxiliary file: ./sections/diffusion/intro.aux
 A level-1 auxiliary file: ./sections/diffusion/distribution.aux
 A level-1 auxiliary file: ./sections/diffusion/summary.aux
@@ -68,4 +93,4 @@ warning$ -- 0
 while$ -- 2
 width$ -- 3
 write$ -- 24
-(There was 1 warning)
+(There were 5 error messages)
