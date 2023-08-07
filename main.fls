@@ -1,4 +1,4 @@
-PWD /home/han/Han/MEGASync/Study/StudyNotes/Deep_Statistical_Learning
+PWD /home/han/Han/StudyNotes/Deep_Statistical_Learning
 INPUT /opt/texlive/2023/texmf.cnf
 INPUT /opt/texlive/2023/texmf-dist/web2c/texmf.cnf
 INPUT /opt/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt
@@ -944,6 +944,8 @@ INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmmib6.tfm
 INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/public/cm/cmbsy10.tfm
 INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy8.tfm
 INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy6.tfm
+INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/ecrm1200.tfm
+INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/ecbx1200.tfm
 INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/ecsl1095.tfm
 OUTPUT main.toc
 INPUT ./sections/intro.tex
@@ -1021,8 +1023,6 @@ INPUT ./sections/learning.tex
 INPUT ./sections/learning.tex
 INPUT ./sections/learning.tex
 INPUT ./sections/learning.tex
-INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/ecrm1200.tfm
-INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/ecbx1200.tfm
 INPUT ./sections/svm/svm.tex
 INPUT ./sections/svm/svm.tex
 INPUT ./sections/svm/svm.tex

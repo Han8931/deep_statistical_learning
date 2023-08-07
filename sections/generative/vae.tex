@@ -53,7 +53,7 @@ Subsequently, marginal distributions can be expressed as follows under i.i.d. as
 	\item Again, $\mu$ and $\sigma$ is non-linear function of $z$ modeled by some non-linear neural network. The neural network works as a powerful non-linear parameter approximator (based on universal approximation theorem). 
 	\item Simple prior is used. Let's consider the data $x$ is an image of $100\times 100$ pixels. Then the covariance matrix has to be $10000\times 10000$. Thus, it is common to set a simple prior such as the standard Gaussian (covariance matrix is diagonal matrix). However, even if we set a simple distribution, with the infinite mixture of Gaussian, we can model any distribution.
 	\item VAE uses a global parametric model to predict the local
-		variational parameters for each data point (amortized inference). 
+		variational parameters for each data point (\textbf{amortized inference}). 
 %	\item Under the simple standard Gaussian prior assumption, the generator, $p(x_i|z_i,\theta)$, returns factorized Gaussian whose mean and variance are non-linear functions of latent variable modelled by deep neural network parameterized by $\theta$.
 %	$$p(x_i|z_i,\theta) = \mathcal{N}(x_{i}|\mu(z_i), \sigma^2(z_i))$$
 %	\item VAEs uses a simple prior over latent variables and complicated and powerful generator (neural network).
