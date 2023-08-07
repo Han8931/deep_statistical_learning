@@ -1,0 +1,52 @@
+\chapter{Natural Language Processing}
+\section{Evaluation Metrics}
+\label{sec:nlp_eval_metrics}
+
+\begin{itemize}
+	\item Recall: TP/(TP+FN). Find all relevant cases whithin a dataset.
+	\item Precision: TP/(TP+FP): While recall expresses the ability to find all relevant instances in a dataset, precision expresses the proportion of the data points our model says was relevant actually were relevant.
+	\item The F1 score is the harmonic mean of precision and recall taking both metrics into account in the following equation:
+\end{itemize}
+
+\subsection{Perplexity}
+
+Intuitively, perplexity can be understood as a \textit{measure of uncertainty}. The perplexity of a language model can be seen as the level of perplexity. Consider a language model with an entropy of three bits, in which each bit encodes two possible outcomes of equal probability. This means that when predicting a symbol, that language model has to choose among $2^3=8$ possible options. Thus, we can argue that this language model has a perplexity of 8.
+
+It can be modeled as $2^H(P,Q)$:
+\begin{align*}
+	PPL(W) &= P(w_1,\cdots, w_N)^{-\frac{1}{N}}\\
+	&\approx \Bigg(\prod_{i=1}^N P(w_i|w_{<i})\Bigg)^{-\frac{1}{N}}\\
+	&= \sqrt[n]{\frac{1}{\prod_{i=1}^{N} P(w_{i}|w_{<i})}}
+\end{align*}
+
+% Let's assume a language distribution $p(x)$ is given and we sample a sentence of length $n$, $w_{1:n}$, we can express entropy of as follows:
+% $$H = -\sum P(w_{1:n})\log P(w_{1:n})$$
+% We can approximate the equation using Monte-Carlo method as follows:
+% \begin{align}
+% 	H &= -\sum P(w_{1:n})\log P(w_{1:n}) = \mathbb{E}_{P(w_{1:n})}[-\log P(w_{1:n})]\\
+% 	& \approx - \frac{1}{k} \sum_{i=1}^{k} \log P(w_{1:n})\\
+% 	& \approx - \log P(w_{1:n}), \quad \textrm{if } k=1\\
+% 	&= -\sum_{i=1}^{N} \log P(w_{i}|w_{<i})
+% 	\label{eq:ppl_entropy}
+% \end{align}
+
+Let's derive it from a cross-entropy. We want to optimize $P_\theta$ instead of the true distribution $P$:
+\begin{align}
+	% H & \approx -\sum_{i=1}^{N} \log P(w_{i}|w_{<i})\\
+	\mathcal{L}_{CE} &= -\mathbb{E}_{w\sim P} [P_\theta(w_{i}|w_{<i})]\\
+	&\approx -\frac{1}{N} \sum_{i=1}^{N} \log P_\theta(w_{i}|w_{<i})\\
+	&= -\frac{1}{N} \log \prod_{i=1}^{N} P_\theta(w_{i}|w_{<i})\\
+	&=  \log \Bigg(\prod_{i=1}^{N} P_\theta(w_{i}|w_{<i}) \Bigg)^{-\frac{1}{N}}\\
+	&=  \log \sqrt[N]{\frac{1}{\prod_{i=1}^{N} P_\theta(w_{i}|w_{<i})}}\\
+	\label{eq:ppl_entropy}
+\end{align}
+Thus, $PPL(W) = \exp\Big(\mathcal{L}_{CE}\Big).$
+
+\subsection{Cross-Entropy and Perplexity}
+\begin{align*}
+	H(P,Q) &= -\sum_{x}P(x)\log Q(x) \\
+	&= -\sum_{x}P(x) [\log P(x) + \log Q(x) - \log P(x)] \\
+	&= -\sum_{x}P(x)\Bigg[\log P(x) + \log\frac{Q(x)}{P(x)}\Bigg] \\
+	&= H(P) + D_{KL}(P||Q)
+\end{align*}
+It should be noted that since the empirical entropy $H(P)$ is unoptimizable, when we train a language model with the objective of minimizing the cross entropy loss, the true objective is to minimize the $KL$-divergence of the distribution, which was learned by our language model from the empirical distribution of the language.

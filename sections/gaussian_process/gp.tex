@@ -1,0 +1,9 @@
+\section{Gaussian Process}
+\label{sec:gaussian_process}
+Gaussian processes are distributions over functions $f(x)$ of which the distribution is defined by a mean function $m(x)$ and positive definite covariance function $k(x,x')$:
+$$f(x) \sim \mathcal{GP}(m(x),k(x,x')).$$
+
+Let $f(x) = \phi(x)^Tw$, with $w\sim \mathcal{N}(0, \alpha^{-1}\mathbf{I})$. Then, $m(x) = \mathbb{E}[f(x)] = \mathbb{E}[w]^T\phi(x) = 0$
+
+$k(x, x') = \mathbb{E}[(f(x)-m(x))(f(x')-m(x'))] =\mathbb{E}[f(x)(f(x')] $
+

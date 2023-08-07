@@ -1015,6 +1015,13 @@ INPUT ./sections/kernel/kernel_methods.tex
 INPUT ./sections/kernel/kernel_methods.tex
 INPUT ./sections/kernel/kernel_methods.tex
 INPUT ./sections/kernel/kernel_methods.tex
+INPUT ./sections/gaussian_process/gp.tex
+INPUT ./sections/gaussian_process/gp.tex
+INPUT ./sections/gaussian_process/gp.tex
+INPUT ./sections/gaussian_process/gp.tex
+INPUT ./sections/gaussian_process/gp.tex
+INPUT ./sections/gaussian_process/gp.tex
+INPUT ./sections/gaussian_process/gp.tex
 INPUT ./sections/svm/svm.tex
 INPUT ./sections/svm/svm.tex
 INPUT ./sections/svm/svm.tex
@@ -1382,6 +1389,13 @@ INPUT ./sections/diffusion/score_matching.tex
 INPUT ./sections/diffusion/score_matching.tex
 INPUT ./sections/diffusion/score_matching.tex
 INPUT ./sections/diffusion/score_matching.tex
+INPUT ./sections/nlp/nlp.tex
+INPUT ./sections/nlp/nlp.tex
+INPUT ./sections/nlp/nlp.tex
+INPUT ./sections/nlp/nlp.tex
+INPUT ./sections/nlp/nlp.tex
+INPUT ./sections/nlp/nlp.tex
+INPUT ./sections/nlp/nlp.tex
 INPUT ./main.bbl
 INPUT main.bbl
 INPUT ./main.bbl
