@@ -1,111 +1,115 @@
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Probability}{1}{section.1.1}%
-\contentsline {section}{\numberline {1.2}Naive Bayes}{1}{section.1.2}%
-\contentsline {section}{\numberline {1.3}Logistic Regression}{3}{section.1.3}%
-\contentsline {chapter}{\numberline {2}Training, Testing, and Regularization}{5}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Sources of Error in ML}{5}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}Alternative Derivation}{6}{subsection.2.1.1}%
-\contentsline {part}{I\hspace {1em}Kernel Methods}{8}{part.1}%
-\contentsline {chapter}{\numberline {3}Introduction to Kernel Methods}{9}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Gaussian Process}{11}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Introduction}{11}{section.4.1}%
-\contentsline {chapter}{\numberline {5}Support Vector Machine}{12}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Introduction}{12}{section.5.1}%
-\contentsline {subsection}{\numberline {5.1.1}Orthogonal Projection}{12}{subsection.5.1.1}%
-\contentsline {section}{\numberline {5.2}Decision Boundary with Margin}{12}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Error Handling in SVM}{14}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Kernel Trick}{14}{section.5.4}%
-\contentsline {section}{\numberline {5.5}SVM Optimization: Lagrange Multipliers}{15}{section.5.5}%
-\contentsline {section}{\numberline {5.6}The Wolfe Dual Problem}{15}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Karush-Kuhn-Tucker conditions }{17}{section.5.7}%
-\contentsline {part}{II\hspace {1em}Generative Modeling}{18}{part.2}%
-\contentsline {chapter}{\numberline {6}Sampling Based Inference}{19}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Basic Sampling Methods}{19}{section.6.1}%
-\contentsline {subsection}{\numberline {6.1.1}Inverse Transform Sampling}{19}{subsection.6.1.1}%
-\contentsline {subsection}{\numberline {6.1.2}Ancestral Sampling}{19}{subsection.6.1.2}%
-\contentsline {subsection}{\numberline {6.1.3}Rejection Sampling}{20}{subsection.6.1.3}%
-\contentsline {subsection}{\numberline {6.1.4}Importance Sampling}{21}{subsection.6.1.4}%
-\contentsline {section}{\numberline {6.2}Gibbs Sampling}{23}{section.6.2}%
-\contentsline {subsection}{\numberline {6.2.1}Markov Chain}{23}{subsection.6.2.1}%
-\contentsline {subsection}{\numberline {6.2.2}Stationary Distribution}{24}{subsection.6.2.2}%
-\contentsline {paragraph}{Limit theorem of Markov chain}{24}{section*.2}%
-\contentsline {paragraph}{Reversible MC}{24}{section*.3}%
-\contentsline {section}{\numberline {6.3}Markov Chain Monte Carlo}{24}{section.6.3}%
-\contentsline {subsection}{\numberline {6.3.1}Metropolis-Hasting Algorithm}{25}{subsection.6.3.1}%
-\contentsline {chapter}{\numberline {7}Topic Modeling}{26}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Latent Dirichlet Allocation}{26}{section.7.1}%
-\contentsline {subsection}{\numberline {7.1.1}LDA Inference}{27}{subsection.7.1.1}%
-\contentsline {subsection}{\numberline {7.1.2}Dirichlet Distribution}{27}{subsection.7.1.2}%
-\contentsline {chapter}{\numberline {8}Latent Variable Models}{28}{chapter.8}%
-\contentsline {section}{\numberline {8.1}Introduction}{28}{section.8.1}%
-\contentsline {subsection}{\numberline {8.1.1}Motivation of Latent Variable Models}{28}{subsection.8.1.1}%
-\contentsline {chapter}{\numberline {9}Clustering}{29}{chapter.9}%
-\contentsline {section}{\numberline {9.1}K-Means Clustering}{29}{section.9.1}%
-\contentsline {section}{\numberline {9.2}Gaussian Mixture Models}{31}{section.9.2}%
-\contentsline {subsection}{\numberline {9.2.1}Multinomial Distribution}{31}{subsection.9.2.1}%
-\contentsline {subsection}{\numberline {9.2.2}Multivariate Gaussian Distribution}{31}{subsection.9.2.2}%
-\contentsline {subsection}{\numberline {9.2.3}Gaussian Mixture Models}{32}{subsection.9.2.3}%
-\contentsline {subsection}{\numberline {9.2.4}Maximum Likelihood}{33}{subsection.9.2.4}%
-\contentsline {paragraph}{Singularity}{34}{section*.4}%
-\contentsline {paragraph}{Identifiability}{34}{section*.5}%
-\contentsline {subsection}{\numberline {9.2.5}Expectation Maximization for GMM}{34}{subsection.9.2.5}%
-\contentsline {section}{\numberline {9.3}Alternative View of EM}{36}{section.9.3}%
-\contentsline {section}{\numberline {9.4}Latent Variable Modeling}{37}{section.9.4}%
-\contentsline {subsection}{\numberline {9.4.1}Evidence Lower Bound (ELBO)}{37}{subsection.9.4.1}%
-\contentsline {subsection}{\numberline {9.4.2}Expectation Maximization}{38}{subsection.9.4.2}%
-\contentsline {subsection}{\numberline {9.4.3}Categorical Latent Variables}{39}{subsection.9.4.3}%
-\contentsline {chapter}{\numberline {10}Hidden Markov Models}{40}{chapter.10}%
-\contentsline {section}{\numberline {10.1}Introduction}{40}{section.10.1}%
-\contentsline {subsection}{\numberline {10.1.1}Conditional Independence}{40}{subsection.10.1.1}%
-\contentsline {subsection}{\numberline {10.1.2}Notation}{40}{subsection.10.1.2}%
-\contentsline {section}{\numberline {10.2}Bayesian Network}{41}{section.10.2}%
-\contentsline {subsection}{\numberline {10.2.1}Bayes Ball}{41}{subsection.10.2.1}%
-\contentsline {subsection}{\numberline {10.2.2}Potential Function}{41}{subsection.10.2.2}%
-\contentsline {section}{\numberline {10.3}Hidden Markov Models}{43}{section.10.3}%
-\contentsline {section}{\numberline {10.4}Evaluation: Forward-Backward Probability}{44}{section.10.4}%
-\contentsline {subsection}{\numberline {10.4.1}Joint Probability}{44}{subsection.10.4.1}%
-\contentsline {subsection}{\numberline {10.4.2}Marginal Probability}{44}{subsection.10.4.2}%
-\contentsline {subsection}{\numberline {10.4.3}Forward Algorithm}{45}{subsection.10.4.3}%
-\contentsline {subsection}{\numberline {10.4.4}Backward Probability}{46}{subsection.10.4.4}%
-\contentsline {section}{\numberline {10.5}Decoding: Viterbi Algorithm}{47}{section.10.5}%
-\contentsline {section}{\numberline {10.6}Learning: Baum-Welch Algorithm}{49}{section.10.6}%
-\contentsline {subsection}{\numberline {10.6.1}EM Algorithm}{49}{subsection.10.6.1}%
-\contentsline {section}{\numberline {10.7}Summary}{51}{section.10.7}%
-\contentsline {chapter}{\numberline {11}Explicit Generative Models}{52}{chapter.11}%
-\contentsline {section}{\numberline {11.1}Variational Autoencoder}{52}{section.11.1}%
-\contentsline {subsection}{\numberline {11.1.1}VAE Optimization}{54}{subsection.11.1.1}%
-\contentsline {subsection}{\numberline {11.1.2}Conditional VAE}{54}{subsection.11.1.2}%
-\contentsline {subsection}{\numberline {11.1.3}Variational Deep Embedding (VaDE)}{55}{subsection.11.1.3}%
-\contentsline {subsection}{\numberline {11.1.4}Importance Weighted VAE}{55}{subsection.11.1.4}%
-\contentsline {chapter}{\numberline {12}Implicit Generative Models}{56}{chapter.12}%
-\contentsline {section}{\numberline {12.1}Generative Adversarial Networks}{56}{section.12.1}%
-\contentsline {subsection}{\numberline {12.1.1}Discriminator}{56}{subsection.12.1.1}%
-\contentsline {subsection}{\numberline {12.1.2}Generator}{58}{subsection.12.1.2}%
-\contentsline {section}{\numberline {12.2}Some notes}{58}{section.12.2}%
-\contentsline {section}{\numberline {12.3}Wasserstein Generative Adversarial Networks}{60}{section.12.3}%
-\contentsline {subsection}{\numberline {12.3.1}KL Divergence}{60}{subsection.12.3.1}%
-\contentsline {subsection}{\numberline {12.3.2}Jensen-Shannon Divergence}{60}{subsection.12.3.2}%
-\contentsline {subsection}{\numberline {12.3.3}Wasserstein Distance}{61}{subsection.12.3.3}%
-\contentsline {section}{\numberline {12.4}WGAN}{62}{section.12.4}%
-\contentsline {subsection}{\numberline {12.4.1}Lipschitz continuity}{62}{subsection.12.4.1}%
-\contentsline {section}{\numberline {12.5}InfoGAN: Interpretable Representation Learning by Information Maximizing Generative Adversarial Nets}{64}{section.12.5}%
-\contentsline {subsection}{\numberline {12.5.1}Joint Entropy}{64}{subsection.12.5.1}%
-\contentsline {subsection}{\numberline {12.5.2}Conditional Entropy}{64}{subsection.12.5.2}%
-\contentsline {subsection}{\numberline {12.5.3}Variational Mutual Information Maximization}{64}{subsection.12.5.3}%
-\contentsline {chapter}{\numberline {13}Diffusion Model}{66}{chapter.13}%
-\contentsline {section}{\numberline {13.1}Introduction}{66}{section.13.1}%
-\contentsline {section}{\numberline {13.2}Forward Diffusion}{67}{section.13.2}%
-\contentsline {section}{\numberline {13.3}Backward Process}{68}{section.13.3}%
-\contentsline {section}{\numberline {13.4}Distribution Modeling}{70}{section.13.4}%
-\contentsline {section}{\numberline {13.5}Summary}{76}{section.13.5}%
-\contentsline {section}{\numberline {13.6}Score Matching}{78}{section.13.6}%
-\contentsline {subsection}{\numberline {13.6.1}Fisher Divergence}{79}{subsection.13.6.1}%
-\contentsline {subsection}{\numberline {13.6.2}Langevin Dynamics}{80}{subsection.13.6.2}%
-\contentsline {part}{III\hspace {1em}Natural Language Processing}{82}{part.3}%
-\contentsline {chapter}{\numberline {14}Introduction}{83}{chapter.14}%
-\contentsline {section}{\numberline {14.1}Evaluation Metrics}{83}{section.14.1}%
-\contentsline {subsection}{\numberline {14.1.1}Perplexity}{83}{subsection.14.1.1}%
-\contentsline {subsection}{\numberline {14.1.2}Cross-Entropy and Perplexity}{84}{subsection.14.1.2}%
-\contentsline {chapter}{\numberline {15}Transformer}{85}{chapter.15}%
-\contentsline {section}{\numberline {15.1}Attention Mechanism}{85}{section.15.1}%
-\contentsline {section}{\numberline {15.2}Transformer}{86}{section.15.2}%
+\contentsline {section}{\numberline {1.2}Gaussian Distribution}{1}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Naive Bayes}{1}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Logistic Regression}{3}{section.1.4}%
+\contentsline {chapter}{\numberline {2}Bayesian Regression}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Curve Fitting}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Bayesian Curve Fitting}{6}{section.2.2}%
+\contentsline {chapter}{\numberline {3}Training, Testing, and Regularization}{7}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Sources of Error in ML}{7}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Alternative Derivation}{8}{subsection.3.1.1}%
+\contentsline {part}{I\hspace {1em}Kernel Methods}{10}{part.1}%
+\contentsline {chapter}{\numberline {4}Introduction to Kernel Methods}{11}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Gaussian Process}{13}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{13}{section.5.1}%
+\contentsline {chapter}{\numberline {6}Support Vector Machine}{14}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Introduction}{14}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}Orthogonal Projection}{14}{subsection.6.1.1}%
+\contentsline {section}{\numberline {6.2}Decision Boundary with Margin}{14}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Error Handling in SVM}{16}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Kernel Trick}{16}{section.6.4}%
+\contentsline {section}{\numberline {6.5}SVM Optimization: Lagrange Multipliers}{17}{section.6.5}%
+\contentsline {section}{\numberline {6.6}The Wolfe Dual Problem}{17}{section.6.6}%
+\contentsline {section}{\numberline {6.7}Karush-Kuhn-Tucker conditions }{19}{section.6.7}%
+\contentsline {part}{II\hspace {1em}Generative Modeling}{20}{part.2}%
+\contentsline {chapter}{\numberline {7}Sampling Based Inference}{21}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Basic Sampling Methods}{21}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Inverse Transform Sampling}{21}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}Ancestral Sampling}{21}{subsection.7.1.2}%
+\contentsline {subsection}{\numberline {7.1.3}Rejection Sampling}{22}{subsection.7.1.3}%
+\contentsline {subsection}{\numberline {7.1.4}Importance Sampling}{23}{subsection.7.1.4}%
+\contentsline {section}{\numberline {7.2}Gibbs Sampling}{25}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}Markov Chain}{25}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}Stationary Distribution}{26}{subsection.7.2.2}%
+\contentsline {paragraph}{Limit theorem of Markov chain}{26}{section*.2}%
+\contentsline {paragraph}{Reversible MC}{26}{section*.3}%
+\contentsline {section}{\numberline {7.3}Markov Chain Monte Carlo}{26}{section.7.3}%
+\contentsline {subsection}{\numberline {7.3.1}Metropolis-Hasting Algorithm}{27}{subsection.7.3.1}%
+\contentsline {chapter}{\numberline {8}Topic Modeling}{28}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Latent Dirichlet Allocation}{28}{section.8.1}%
+\contentsline {subsection}{\numberline {8.1.1}LDA Inference}{29}{subsection.8.1.1}%
+\contentsline {subsection}{\numberline {8.1.2}Dirichlet Distribution}{29}{subsection.8.1.2}%
+\contentsline {chapter}{\numberline {9}Latent Variable Models}{30}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Introduction}{30}{section.9.1}%
+\contentsline {subsection}{\numberline {9.1.1}Motivation of Latent Variable Models}{30}{subsection.9.1.1}%
+\contentsline {chapter}{\numberline {10}Clustering}{31}{chapter.10}%
+\contentsline {section}{\numberline {10.1}K-Means Clustering}{31}{section.10.1}%
+\contentsline {section}{\numberline {10.2}Gaussian Mixture Models}{33}{section.10.2}%
+\contentsline {subsection}{\numberline {10.2.1}Multinomial Distribution}{33}{subsection.10.2.1}%
+\contentsline {subsection}{\numberline {10.2.2}Multivariate Gaussian Distribution}{33}{subsection.10.2.2}%
+\contentsline {subsection}{\numberline {10.2.3}Gaussian Mixture Models}{34}{subsection.10.2.3}%
+\contentsline {subsection}{\numberline {10.2.4}Maximum Likelihood}{35}{subsection.10.2.4}%
+\contentsline {paragraph}{Singularity}{36}{section*.4}%
+\contentsline {paragraph}{Identifiability}{36}{section*.5}%
+\contentsline {subsection}{\numberline {10.2.5}Expectation Maximization for GMM}{36}{subsection.10.2.5}%
+\contentsline {section}{\numberline {10.3}Alternative View of EM}{38}{section.10.3}%
+\contentsline {section}{\numberline {10.4}Latent Variable Modeling}{39}{section.10.4}%
+\contentsline {subsection}{\numberline {10.4.1}Evidence Lower Bound (ELBO)}{39}{subsection.10.4.1}%
+\contentsline {subsection}{\numberline {10.4.2}Expectation Maximization}{40}{subsection.10.4.2}%
+\contentsline {subsection}{\numberline {10.4.3}Categorical Latent Variables}{41}{subsection.10.4.3}%
+\contentsline {chapter}{\numberline {11}Hidden Markov Models}{42}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Introduction}{42}{section.11.1}%
+\contentsline {subsection}{\numberline {11.1.1}Conditional Independence}{42}{subsection.11.1.1}%
+\contentsline {subsection}{\numberline {11.1.2}Notation}{42}{subsection.11.1.2}%
+\contentsline {section}{\numberline {11.2}Bayesian Network}{43}{section.11.2}%
+\contentsline {subsection}{\numberline {11.2.1}Bayes Ball}{43}{subsection.11.2.1}%
+\contentsline {subsection}{\numberline {11.2.2}Potential Function}{43}{subsection.11.2.2}%
+\contentsline {section}{\numberline {11.3}Hidden Markov Models}{45}{section.11.3}%
+\contentsline {section}{\numberline {11.4}Evaluation: Forward-Backward Probability}{46}{section.11.4}%
+\contentsline {subsection}{\numberline {11.4.1}Joint Probability}{46}{subsection.11.4.1}%
+\contentsline {subsection}{\numberline {11.4.2}Marginal Probability}{46}{subsection.11.4.2}%
+\contentsline {subsection}{\numberline {11.4.3}Forward Algorithm}{47}{subsection.11.4.3}%
+\contentsline {subsection}{\numberline {11.4.4}Backward Probability}{48}{subsection.11.4.4}%
+\contentsline {section}{\numberline {11.5}Decoding: Viterbi Algorithm}{49}{section.11.5}%
+\contentsline {section}{\numberline {11.6}Learning: Baum-Welch Algorithm}{51}{section.11.6}%
+\contentsline {subsection}{\numberline {11.6.1}EM Algorithm}{51}{subsection.11.6.1}%
+\contentsline {section}{\numberline {11.7}Summary}{53}{section.11.7}%
+\contentsline {chapter}{\numberline {12}Explicit Generative Models}{54}{chapter.12}%
+\contentsline {section}{\numberline {12.1}Variational Autoencoder}{54}{section.12.1}%
+\contentsline {subsection}{\numberline {12.1.1}VAE Optimization}{56}{subsection.12.1.1}%
+\contentsline {subsection}{\numberline {12.1.2}Conditional VAE}{56}{subsection.12.1.2}%
+\contentsline {subsection}{\numberline {12.1.3}Variational Deep Embedding (VaDE)}{57}{subsection.12.1.3}%
+\contentsline {subsection}{\numberline {12.1.4}Importance Weighted VAE}{57}{subsection.12.1.4}%
+\contentsline {chapter}{\numberline {13}Implicit Generative Models}{58}{chapter.13}%
+\contentsline {section}{\numberline {13.1}Generative Adversarial Networks}{58}{section.13.1}%
+\contentsline {subsection}{\numberline {13.1.1}Discriminator}{58}{subsection.13.1.1}%
+\contentsline {subsection}{\numberline {13.1.2}Generator}{60}{subsection.13.1.2}%
+\contentsline {section}{\numberline {13.2}Some notes}{60}{section.13.2}%
+\contentsline {section}{\numberline {13.3}Wasserstein Generative Adversarial Networks}{62}{section.13.3}%
+\contentsline {subsection}{\numberline {13.3.1}KL Divergence}{62}{subsection.13.3.1}%
+\contentsline {subsection}{\numberline {13.3.2}Jensen-Shannon Divergence}{62}{subsection.13.3.2}%
+\contentsline {subsection}{\numberline {13.3.3}Wasserstein Distance}{63}{subsection.13.3.3}%
+\contentsline {section}{\numberline {13.4}WGAN}{64}{section.13.4}%
+\contentsline {subsection}{\numberline {13.4.1}Lipschitz continuity}{64}{subsection.13.4.1}%
+\contentsline {section}{\numberline {13.5}InfoGAN: Interpretable Representation Learning by Information Maximizing Generative Adversarial Nets}{66}{section.13.5}%
+\contentsline {subsection}{\numberline {13.5.1}Joint Entropy}{66}{subsection.13.5.1}%
+\contentsline {subsection}{\numberline {13.5.2}Conditional Entropy}{66}{subsection.13.5.2}%
+\contentsline {subsection}{\numberline {13.5.3}Variational Mutual Information Maximization}{66}{subsection.13.5.3}%
+\contentsline {chapter}{\numberline {14}Diffusion Model}{68}{chapter.14}%
+\contentsline {section}{\numberline {14.1}Introduction}{68}{section.14.1}%
+\contentsline {section}{\numberline {14.2}Forward Diffusion}{69}{section.14.2}%
+\contentsline {section}{\numberline {14.3}Backward Process}{70}{section.14.3}%
+\contentsline {section}{\numberline {14.4}Distribution Modeling}{72}{section.14.4}%
+\contentsline {section}{\numberline {14.5}Summary}{78}{section.14.5}%
+\contentsline {section}{\numberline {14.6}Score Matching}{80}{section.14.6}%
+\contentsline {subsection}{\numberline {14.6.1}Fisher Divergence}{81}{subsection.14.6.1}%
+\contentsline {subsection}{\numberline {14.6.2}Langevin Dynamics}{82}{subsection.14.6.2}%
+\contentsline {part}{III\hspace {1em}Natural Language Processing}{84}{part.3}%
+\contentsline {chapter}{\numberline {15}Introduction}{85}{chapter.15}%
+\contentsline {section}{\numberline {15.1}Evaluation Metrics}{85}{section.15.1}%
+\contentsline {subsection}{\numberline {15.1.1}Perplexity}{85}{subsection.15.1.1}%
+\contentsline {subsection}{\numberline {15.1.2}Cross-Entropy and Perplexity}{86}{subsection.15.1.2}%
+\contentsline {chapter}{\numberline {16}Transformer}{87}{chapter.16}%
+\contentsline {section}{\numberline {16.1}Attention Mechanism}{87}{section.16.1}%
+\contentsline {section}{\numberline {16.2}Transformer}{88}{section.16.2}%

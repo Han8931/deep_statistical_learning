@@ -20,6 +20,13 @@ All the dependencies between $X$ and $Y$ are mediated via $Z$. If $X$ and $Y$ ar
 	&=p(X|Z).
 \end{align*}
 
+\section{Gaussian Distribution}
+For a $D$-dimensional vector $\rvx$, the multivariate Gaussian distribution takes the form
+\begin{align*}
+	\mathcal{N}(\mathbf{x}|\boldsymbol{\mu},\boldsymbol{\Sigma}) &= \frac{1}{(2\pi)^{D/2}|\boldsymbol{\Sigma}|^{1/2}}\exp\bigg(-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})\bigg)\\
+\end{align*}
+
+
 \input{./sections/naive_bayes}
 \input{./sections/logistic_reg}
 

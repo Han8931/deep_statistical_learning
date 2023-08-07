@@ -2,6 +2,7 @@ This is BibTeX, Version 0.99d (TeX Live 2023)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 A level-1 auxiliary file: ./sections/intro.aux
+A level-1 auxiliary file: ./sections/bayes/bayes.aux
 A level-1 auxiliary file: ./sections/learning.aux
 A level-1 auxiliary file: ./sections/svm/intro.aux
 A level-1 auxiliary file: ./sections/svm/optimization.aux
@@ -29,7 +30,7 @@ Database file #1: references.bib
 Warning--I didn't find a database entry for "sgld2011"
 You've used 2 entries,
             1791 wiz_defined-function locations,
-            482 strings with 4448 characters,
+            483 strings with 4474 characters,
 and the built_in function-call counts, 328 in all, are:
 = -- 29
 > -- 8

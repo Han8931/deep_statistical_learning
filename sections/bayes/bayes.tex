@@ -1,0 +1,77 @@
+\chapter{Bayesian Regression}
+
+% \chapter{Introduction}
+\section{Curve Fitting}
+We can assume that a target variable has a Gaussian distribution with a mean equal to the value $y(x,\mathbf{w})$ of the polynomial curven given by
+\begin{equation}
+	p(t|x, \mathbf{w}, \beta) = \mathcal{N}(t|y(x,\mathbf{w}), \beta^{-1}),
+	\label{eq:curve}
+\end{equation}
+\begin{itemize}
+	\item $t$: target variable
+		$$t = y(\rvx, \rvw) +\epsilon,$$
+	where $\epsilon$ is a zero mean Gaussian noise with precision (inverse variance) $\beta$. 
+	% \item $x$: input
+	% \item $\beta$: an inverse variance of the distribution.
+\end{itemize}
+
+We not use the training data $\{\mathbf{x,y}\}$ to determine the values of the unknown parameters $\mathbf{w}$ and $\beta$ by maximum likelihood. If the data are assumed to be drawn independently from the distribution, then the likelihood function is given by 
+\begin{equation}
+	p(\mathbf{t}|\mathbf{x,w},\beta) = \prod_{n=1}^{N}\mathcal{N}(t_n|y(x_n,\mathbf{w}), \beta^{-1}).
+	\label{eq:curve_ml}
+\end{equation}
+
+We can take a step towards a more Bayesian approach and introduce a prior distribution over the polynomial coefficients $\mathbf{w}$. For simplicity, we can use a Gaussian distribution from
+\begin{equation}
+	p(\mathbf{w}|\alpha) = \mathcal{N}(\mathbf{w|0},\alpha^{-1}\mathbf{I}),
+	\label{eq:prior_hyper}
+\end{equation}
+where $\alpha$ is the precision of the distribution. Using Bayes' theorem, the posterior distribution for $\mathbf{w}$ is proportional to the product of the prior distribution and the likelihood function
+\begin{equation}
+	p(\mathbf{w|x,t},\alpha,\beta)\propto p(\mathbf{w|x,t},\beta)p(\mathbf{w},\alpha).
+	\label{eq:bayes_reg}
+\end{equation}
+We can now determined $\mathbf{w}$ by finding the most probable value of $\mathbf{w}$ given the data, in other words by maximizing the posterior distribution, MAP (maximum posterior). Taking a negative logarithm, then we can find that the maximum of the posterior is given by the minimum of 
+\begin{equation}
+	\frac{\beta}{2}\sum_{n=1}^N \{y(x_n,\mathbf{w})-t_n\}^2+\frac{\alpha}{2}\mathbf{w}^T\mathbf{w}.
+	\label{eq:bayes_}
+\end{equation}
+Thus we see that maximizing the posteiror distribution si equivalent to minimizing the regularized sum of squares error function encountered earler with a regularization parameter given by $\lambda = \alpha/\beta$.
+
+
+
+\section{Bayesian Curve Fitting}
+
+
+% \section{Adding Noise to Regression Predictors is Ridge Regression}
+% In linear regression, we seek a vector $\hat{\beta}$ which solves the following optimization problem:
+% \begin{equation}
+% 	\hat{\beta} = \arg\min_{\beta}|y-X\beta|^2
+% 	\label{eq:linear_regression}
+% \end{equation}
+
+% Ridge regression is
+
+% \begin{equation}
+% 	\hat{\beta} = \arg\min_{\beta}|y-X\beta|^2+\lambda|\beta|^2
+% 	\label{eq:ridge_linear_regression}
+% \end{equation}
+
+% $$\varepsilon_1,\varepsilon_2,\cdots\sim \mathcal{N}(1,\sigma),$$
+% We can add a multiplicitive random noise to $\mathbf{X}$.
+% $$x_{ij}\to \varepsilon_{ij}x_{ij}$$
+
+% $$\hat{\beta} \sim \arg\min_{\beta} E_{G}[|y-G\cdot X\beta|^2]$$
+% where $G$ is a matrix of random Gaussian noise. 
+
+% \begin{align*}
+% 	\mathbb{E} \left[ \left| y - (G * X) \beta  \right|^2 \right] &= E \left[ y^t y - 2 y^t (G * X) \beta + \beta^t (G * X)^t (G * X) \right] \\
+% &= y^t y - 2 y^t (E[G] * X) \beta + \beta^t E \left[ M \right] \beta \\
+% &= y^t y - 2 y^t X \beta + \beta^t X^t X \beta + \beta^t diag(\sigma^2) X^t X \beta \\
+% &= \left| y - X \beta \right|^2 + \beta^t diag(\sigma^2) X^t X \beta \\
+% &= \left| y - X \beta \right|^2 + \sigma^2 \left| \Gamma \beta \right|^2
+% \end{align*}
+% where $M = (G\cdot X)^T(G\cdot X)$
+% $$m_{ij} = \sum_k e_{ki}e_{kj}x_{ki}x_{kj}$$
+
+	

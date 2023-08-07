@@ -738,6 +738,9 @@ INPUT main.aux
 INPUT ./sections/intro.aux
 INPUT ./sections/intro.aux
 INPUT ./sections/intro.aux
+INPUT ./sections/bayes/bayes.aux
+INPUT ./sections/bayes/bayes.aux
+INPUT ./sections/bayes/bayes.aux
 INPUT ./sections/learning.aux
 INPUT ./sections/learning.aux
 INPUT ./sections/learning.aux
@@ -952,7 +955,6 @@ INPUT ./images/conditional_independence.pdf
 INPUT ./images/conditional_independence.pdf
 INPUT ./images/conditional_independence.pdf
 INPUT ./images/conditional_independence.pdf
-INPUT /opt/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 INPUT /opt/texlive/2023/texmf-dist/tex/latex/doublestroke/Udsrom.fd
 INPUT /opt/texlive/2023/texmf-dist/tex/latex/doublestroke/Udsrom.fd
 INPUT /opt/texlive/2023/texmf-dist/tex/latex/doublestroke/Udsrom.fd
@@ -967,6 +969,7 @@ INPUT ./sections/logistic_reg.tex
 INPUT ./sections/logistic_reg.tex
 INPUT ./sections/logistic_reg.tex
 INPUT ./sections/logistic_reg.tex
+INPUT /opt/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/ecbi1095.tfm
 INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/ecrm0900.tfm
 INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/public/cm/cmr9.tfm
@@ -986,6 +989,16 @@ INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmmib9.tfm
 INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmmib5.tfm
 INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy9.tfm
 INPUT /opt/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy5.tfm
+INPUT ./sections/bayes/bayes.tex
+INPUT ./sections/bayes/bayes.tex
+INPUT ./sections/bayes/bayes.tex
+OUTPUT ./sections/bayes/bayes.aux
+INPUT ./sections/bayes/bayes.tex
+INPUT ./sections/bayes/bayes.tex
+INPUT ./sections/bayes/bayes.tex
+INPUT ./sections/bayes/bayes.tex
+INPUT ./sections/bayes/bayes.tex
+INPUT ./sections/bayes/bayes.tex
 INPUT ./sections/learning.tex
 INPUT ./sections/learning.tex
 INPUT ./sections/learning.tex
@@ -1416,6 +1429,9 @@ INPUT main.aux
 INPUT ./sections/intro.aux
 INPUT ./sections/intro.aux
 INPUT ./sections/intro.aux
+INPUT ./sections/bayes/bayes.aux
+INPUT ./sections/bayes/bayes.aux
+INPUT ./sections/bayes/bayes.aux
 INPUT ./sections/learning.aux
 INPUT ./sections/learning.aux
 INPUT ./sections/learning.aux
