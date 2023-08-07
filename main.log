@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.4.17)  5 AUG 2023 18:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.4.17)  7 AUG 2023 11:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -673,54 +673,9 @@ File: l3backend-pdftex.def 2023-03-30 L3 backend support: PDF output (pdfTeX)
 (./sections/hmm/decoding.aux) (./sections/hmm/learning.aux)
 (./sections/hmm/summary.aux) (./sections/generative/vae.aux)
 (./sections/generative/gan/gan.aux) (./sections/generative/gan/wasserstein.aux)
-(./sections/generative/gan/infogan.aux) (./sections/hmm/intro.aux
-
-LaTeX Warning: Label `fig:bayes' multiply defined.
-
-
-LaTeX Warning: Label `fig:bayes@cref' multiply defined.
-
-
-LaTeX Warning: Label `sec:hmm' multiply defined.
-
-
-LaTeX Warning: Label `sec:hmm@cref' multiply defined.
-
-
-LaTeX Warning: Label `fig:HMM' multiply defined.
-
-
-LaTeX Warning: Label `fig:HMM@cref' multiply defined.
-
-) (./sections/hmm/evaluation.aux
-
-LaTeX Warning: Label `eq:hmm_joint' multiply defined.
-
-
-LaTeX Warning: Label `eq:hmm_joint@cref' multiply defined.
-
-
-LaTeX Warning: Label `eq:hmm_eval_fact' multiply defined.
-
-
-LaTeX Warning: Label `eq:hmm_eval_fact@cref' multiply defined.
-
-
-LaTeX Warning: Label `algo:forward_algorithm' multiply defined.
-
-
-LaTeX Warning: Label `algo:forward_algorithm@cref' multiply defined.
-
-) (./sections/hmm/decoding.aux
-
-LaTeX Warning: Label `algo:viterbi' multiply defined.
-
-
-LaTeX Warning: Label `algo:viterbi@cref' multiply defined.
-
-) (./sections/hmm/learning.aux) (./sections/hmm/summary.aux)
-(./sections/diffusion/intro.aux) (./sections/diffusion/distribution.aux)
-(./sections/diffusion/summary.aux) (./sections/diffusion/score_matching.aux))
+(./sections/generative/gan/infogan.aux) (./sections/diffusion/intro.aux)
+(./sections/diffusion/distribution.aux) (./sections/diffusion/summary.aux)
+(./sections/diffusion/score_matching.aux))
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 69.
@@ -834,7 +789,7 @@ File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman
 (RS)
 )
 \c@lstlisting=\count335
-<./logo/ntunlp_logo.png, id=454, 233.4321pt x 144.54pt>
+<./logo/ntunlp_logo.png, id=389, 233.4321pt x 144.54pt>
 File: ./logo/ntunlp_logo.png Graphic file (type png)
 <use ./logo/ntunlp_logo.png>
 Package pdftex.def Info: ./logo/ntunlp_logo.png  used on input line 76.
@@ -875,21 +830,21 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.23 ...line {4.2}Gibbs Sampling}{18}{section.4.2}
+l.22 ...}Rejection Sampling}{17}{subsection.5.1.3}
                                                   % [1
 
-] [2] [3] [4])
+] [2] [3])
 \tf@toc=\write4
 \openout4 = `main.toc'.
 
- [5]
+ [4]
 \openout2 = `./sections/intro.aux'.
 
 
 (./sections/intro.tex
 Chapter 1.
 (./sections/naive_bayes.tex
-<./images/conditional_independence.pdf, id=603, 218.06673pt x 172.89798pt>
+<./images/conditional_independence.pdf, id=519, 218.06673pt x 172.89798pt>
 File: ./images/conditional_independence.pdf Graphic file (type pdf)
 <use ./images/conditional_independence.pdf>
 Package pdftex.def Info: ./images/conditional_independence.pdf  used on input l
@@ -948,88 +903,85 @@ l.97 \include{./sections/intro}
 
  (./sections/learning.tex
 Chapter 2.
-
-pdfTeX warning (ext4): destination with the same identifier (name{page.5}) has 
-been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.33 \end{align*}
-                  [5
+[5
 
 
 
 
-] [6]) [7] (./sections/svm/svm.tex
-\openout2 = `./sections/svm/intro.aux'.
-
-
-(./sections/svm/intro.tex
+] [6]) [7] (./sections/kernel/kernel_methods.tex
 Chapter 3.
 [8
 
 
 
+]) (./sections/svm/svm.tex [9]
+\openout2 = `./sections/svm/intro.aux'.
 
-] [9] (./sections/svm/kernel.tex)) [10]
+ (./sections/svm/intro.tex
+Chapter 4.
+[10
+
+
+] [11] (./sections/svm/kernel.tex)) [12]
 \openout2 = `./sections/svm/optimization.aux'.
 
  (./sections/svm/optimization.tex
-[11
+[13
 
 
 
-] [12]) [13])
+] [14]) [15])
 \openout2 = `./sections/sampling.aux'.
 
  (./sections/sampling.tex
-Chapter 4.
-<./images/sampling/inverse.jpg, id=705, 401.5pt x 319.1925pt>
+Chapter 5.
+<./images/sampling/inverse.jpg, id=646, 401.5pt x 319.1925pt>
 File: ./images/sampling/inverse.jpg Graphic file (type jpg)
 <use ./images/sampling/inverse.jpg>
 Package pdftex.def Info: ./images/sampling/inverse.jpg  used on input line 27.
 (pdftex.def)             Requested size: 240.90184pt x 191.51697pt.
-<./images/sampling/cdf.pdf, id=706, 127.2982pt x 135.44702pt>
+<./images/sampling/cdf.pdf, id=647, 127.2982pt x 135.44702pt>
 File: ./images/sampling/cdf.pdf Graphic file (type pdf)
 <use ./images/sampling/cdf.pdf>
 Package pdftex.def Info: ./images/sampling/cdf.pdf  used on input line 34.
 (pdftex.def)             Requested size: 152.75705pt x 162.5356pt.
-[14
+[16
 
 
 
 
-] [15 <./images/sampling/inverse.jpg> <./images/sampling/cdf.pdf>]
-<./images/sampling/rejection.pdf, id=731, 394.11713pt x 269.34775pt>
+] [17 <./images/sampling/inverse.jpg> <./images/sampling/cdf.pdf>]
+<./images/sampling/rejection.pdf, id=672, 394.11713pt x 269.34775pt>
 File: ./images/sampling/rejection.pdf Graphic file (type pdf)
 <use ./images/sampling/rejection.pdf>
 Package pdftex.def Info: ./images/sampling/rejection.pdf  used on input line 67
 .
 (pdftex.def)             Requested size: 197.05807pt x 134.67354pt.
- [16 <./images/sampling/rejection.pdf>]) [17]
+ [18 <./images/sampling/rejection.pdf>]) [19]
 \openout2 = `./sections/gibbs.aux'.
 
- (./sections/gibbs.tex [18
+ (./sections/gibbs.tex [20
 
 
 
-] [19]) [20]
+] [21]) [22]
 \openout2 = `./sections/lda/topic_modeling.aux'.
 
 
 (./sections/lda/topic_modeling.tex
-Chapter 5.
+Chapter 6.
 (./sections/lda/lda.tex
-<./images/lda/lda.pdf, id=766, 432.12204pt x 108.10841pt>
+<./images/lda/lda.pdf, id=707, 432.12204pt x 108.10841pt>
 File: ./images/lda/lda.pdf Graphic file (type pdf)
 <use ./images/lda/lda.pdf>
 Package pdftex.def Info: ./images/lda/lda.pdf  used on input line 15.
 (pdftex.def)             Requested size: 432.12099pt x 108.10814pt.
- [21
+ [23
 
 
 
 
- <./images/lda/lda.pdf>])) [22] [23
+ <./images/lda/lda.pdf>])) [24] [25
 
 
 
@@ -1038,7 +990,7 @@ Package pdftex.def Info: ./images/lda/lda.pdf  used on input line 15.
 \openout2 = `./sections/generative/intro.aux'.
 
  (./sections/generative/intro.tex
-Chapter 6.
+Chapter 7.
 ! Undefined control sequence.
 l.5 ...r. Imagine, how can we find $z^* = \argmaxE
                                                   _{z} p(\mathbf{x|z})$ for ...
@@ -1048,19 +1000,19 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-<./images/generative/latent.png, id=814, 1107.13625pt x 369.38pt>
+<./images/generative/latent.png, id=754, 1107.13625pt x 369.38pt>
 File: ./images/generative/latent.png Graphic file (type png)
 <use ./images/generative/latent.png>
 Package pdftex.def Info: ./images/generative/latent.png  used on input line 9.
 (pdftex.def)             Requested size: 276.78339pt x 92.34477pt.
-) [24
+) [26
 
 
  <./images/generative/latent.png>]
 \openout2 = `./sections/generative/clustering.aux'.
 
  (./sections/generative/clustering.tex
-Chapter 7.
+Chapter 8.
 (./sections/generative/kmeans.tex
 ! Undefined control sequence.
 l.4 ...imensional variable $\mathbf{x}\in \mathbbm
@@ -1071,13 +1023,13 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[25
+[27
 
 
 
 
-]) [26] (./sections/generative/gmm.tex [27]
-<./images/generative/gmm.png, id=835, 256.96pt x 197.73875pt>
+]) [28] (./sections/generative/gmm.tex [29]
+<./images/generative/gmm.png, id=776, 256.96pt x 197.73875pt>
 File: ./images/generative/gmm.png Graphic file (type png)
 <use ./images/generative/gmm.png>
 Package pdftex.def Info: ./images/generative/gmm.png  used on input line 82.
@@ -1086,7 +1038,7 @@ Package pdftex.def Info: ./images/generative/gmm.png  used on input line 82.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[28]
+[30]
 ! Undefined control sequence.
 l.101 ...bf{x}_1,...,\mathbf{x}_n\}^{T}\in\mathbbm
                                                   {R}^{N\times D}$ and we wa...
@@ -1096,18 +1048,18 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[29 <./images/generative/gmm.png>] [30]
+[31 <./images/generative/gmm.png>] [32]
 Overfull \hbox (33.73181pt too wide) detected at line 177
 [][] 
  []
 
-<./images/generative/em_update.png, id=855, 776.9025pt x 553.06625pt>
+<./images/generative/em_update.png, id=797, 776.9025pt x 553.06625pt>
 File: ./images/generative/em_update.png Graphic file (type png)
 <use ./images/generative/em_update.png>
 Package pdftex.def Info: ./images/generative/em_update.png  used on input line 
 180.
 (pdftex.def)             Requested size: 233.07254pt x 165.92114pt.
-[31 <./images/generative/em_update.png>])) [32]
+[33 <./images/generative/em_update.png>])) [34]
 \openout2 = `./sections/generative/elbo.aux'.
 
  (./sections/generative/elbo.tex
@@ -1287,7 +1239,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[33
+[35
 
 
 
@@ -1380,60 +1332,60 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[34]) [35] (./sections/hmm/hmm.tex
+[36]) [37] (./sections/hmm/hmm.tex
 \openout2 = `./sections/hmm/intro.aux'.
 
  (./sections/hmm/intro.tex
-Chapter 8.
-<./images/hmm/bayes.jpg, id=889, 746.01291pt x 559.50967pt>
+Chapter 9.
+<./images/hmm/bayes.jpg, id=830, 746.01291pt x 559.50967pt>
 File: ./images/hmm/bayes.jpg Graphic file (type jpg)
 <use ./images/hmm/bayes.jpg>
 Package pdftex.def Info: ./images/hmm/bayes.jpg  used on input line 41.
 (pdftex.def)             Requested size: 223.80559pt x 167.8542pt.
-[36
+[38
 
 
 
 
 ]
-<./images/hmm/cascade.pdf, id=895, 480.50157pt x 197.64934pt>
+<./images/hmm/cascade.pdf, id=836, 480.50157pt x 197.64934pt>
 File: ./images/hmm/cascade.pdf Graphic file (type pdf)
 <use ./images/hmm/cascade.pdf>
 Package pdftex.def Info: ./images/hmm/cascade.pdf  used on input line 59.
 (pdftex.def)             Requested size: 240.2502pt x 98.82442pt.
- [37 <./images/hmm/bayes.jpg> <./images/hmm/cascade.pdf>] [38]
-<./images/hmm/hmm_figure.pdf, id=945, 354.6048pt x 188.18106pt>
+ [39 <./images/hmm/bayes.jpg> <./images/hmm/cascade.pdf>] [40]
+<./images/hmm/hmm_figure.pdf, id=886, 354.6048pt x 188.18106pt>
 File: ./images/hmm/hmm_figure.pdf Graphic file (type pdf)
 <use ./images/hmm/hmm_figure.pdf>
 Package pdftex.def Info: ./images/hmm/hmm_figure.pdf  used on input line 81.
 (pdftex.def)             Requested size: 248.22165pt x 131.72583pt.
-) [39 <./images/hmm/hmm_figure.pdf>]
+) [41 <./images/hmm/hmm_figure.pdf>]
 \openout2 = `./sections/hmm/evaluation.aux'.
 
- (./sections/hmm/evaluation.tex [40
+ (./sections/hmm/evaluation.tex [42
 
 
 
-] [41]) [42]
+] [43]) [44]
 \openout2 = `./sections/hmm/decoding.aux'.
 
 
-(./sections/hmm/decoding.tex [43
+(./sections/hmm/decoding.tex [45
 
 
 
-]) [44]
+]) [46]
 \openout2 = `./sections/hmm/learning.aux'.
 
- (./sections/hmm/learning.tex [45
+ (./sections/hmm/learning.tex [47
 
 
 
 ])
-[46]
+[48]
 \openout2 = `./sections/hmm/summary.aux'.
 
- (./sections/hmm/summary.tex) [47
+ (./sections/hmm/summary.tex) [49
 
 
 
@@ -1441,13 +1393,13 @@ Package pdftex.def Info: ./images/hmm/hmm_figure.pdf  used on input line 81.
 \openout2 = `./sections/generative/vae.aux'.
 
  (./sections/generative/vae.tex
-Chapter 9.
-<./images/generative/dgm.pdf, id=1022, 253.89787pt x 116.53172pt>
+Chapter 10.
+<./images/generative/dgm.pdf, id=960, 253.89787pt x 116.53172pt>
 File: ./images/generative/dgm.pdf Graphic file (type pdf)
 <use ./images/generative/dgm.pdf>
 Package pdftex.def Info: ./images/generative/dgm.pdf  used on input line 8.
 (pdftex.def)             Requested size: 126.94862pt x 58.2657pt.
-<./images/generative/encoder.pdf, id=1023, 400.0012pt x 264.34709pt>
+<./images/generative/encoder.pdf, id=961, 400.0012pt x 264.34709pt>
 File: ./images/generative/encoder.pdf Graphic file (type pdf)
 <use ./images/generative/encoder.pdf>
 Package pdftex.def Info: ./images/generative/encoder.pdf  used on input line 27
@@ -1456,12 +1408,12 @@ Package pdftex.def Info: ./images/generative/encoder.pdf  used on input line 27
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[48
+[50
 
 
 
 
- <./images/generative/dgm.pdf>] [49 <./images/generative/encoder.pdf>]
+ <./images/generative/dgm.pdf>] [51 <./images/generative/encoder.pdf>]
 ! Undefined control sequence.
 l.66 $$\mathcal{L}(\phi,\theta) = \mathbbm
                                           {E}_{q_{\phi}(z|x)}[\log p_{\theta...
@@ -1498,12 +1450,12 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[50]) [51]
+[52]) [53]
 \openout2 = `./sections/generative/gan/gan.aux'.
 
  (./sections/generative/gan/gan.tex
-Chapter 10.
-<./images/generative/gan/gan_model.pdf, id=1054, 408.55884pt x 229.16408pt>
+Chapter 11.
+<./images/generative/gan/gan_model.pdf, id=993, 408.55884pt x 229.16408pt>
 File: ./images/generative/gan/gan_model.pdf Graphic file (type pdf)
 <use ./images/generative/gan/gan_model.pdf>
 Package pdftex.def Info: ./images/generative/gan/gan_model.pdf  used on input l
@@ -1545,7 +1497,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[52
+[54
 
 
 
@@ -1631,12 +1583,12 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[53]
+[55]
 Overfull \hbox (42.64665pt too wide) detected at line 96
 []
  []
 
-<./images/generative/gan/gan_algorithm.png, id=1068, 1218.5525pt x 801.99625pt>
+<./images/generative/gan/gan_algorithm.png, id=1007, 1218.5525pt x 801.99625pt>
 
 File: ./images/generative/gan/gan_algorithm.png Graphic file (type png)
 <use ./images/generative/gan/gan_algorithm.png>
@@ -1646,18 +1598,18 @@ ut line 105.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[54]) [55 <./images/generative/gan/gan_algorithm.png>]
+[56]) [57 <./images/generative/gan/gan_algorithm.png>]
 \openout2 = `./sections/generative/gan/wasserstein.aux'.
 
 
 (./sections/generative/gan/wasserstein.tex
-<./images/generative/gan/twodist.pdf, id=1081, 480.49297pt x 174.57538pt>
+<./images/generative/gan/twodist.pdf, id=1020, 480.49297pt x 174.57538pt>
 File: ./images/generative/gan/twodist.pdf Graphic file (type pdf)
 <use ./images/generative/gan/twodist.pdf>
 Package pdftex.def Info: ./images/generative/gan/twodist.pdf  used on input lin
 e 22.
 (pdftex.def)             Requested size: 240.2459pt x 87.28748pt.
-<./images/generative/gan/wassersteinexample.png, id=1083, 1046.91125pt x 657.45
+<./images/generative/gan/wassersteinexample.png, id=1022, 1046.91125pt x 657.45
 625pt>
 File: ./images/generative/gan/wassersteinexample.png Graphic file (type png)
 <use ./images/generative/gan/wassersteinexample.png>
@@ -1668,7 +1620,7 @@ n input line 43.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[56
+[58
 
 
 
@@ -1693,7 +1645,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[57 <./images/generative/gan/wassersteinexample.png>]
+[59 <./images/generative/gan/wassersteinexample.png>]
 ! Undefined control sequence.
 l.76 ...rac{1}{K} \sup_{\| f \|_L \leq K} \mathbbm
                                                   {E}_{x \sim p_r}[f(x)] - \...
@@ -1766,7 +1718,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-<./images/generative/gan/wgan.jpeg, id=1097, 1606.0pt x 545.03625pt>
+<./images/generative/gan/wgan.jpeg, id=1036, 1606.0pt x 545.03625pt>
 File: ./images/generative/gan/wgan.jpeg Graphic file (type jpg)
 <use ./images/generative/gan/wgan.jpeg>
 Package pdftex.def Info: ./images/generative/gan/wgan.jpeg  used on input line 
@@ -1775,7 +1727,7 @@ Package pdftex.def Info: ./images/generative/gan/wgan.jpeg  used on input line
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<./images/generative/gan/wgan_2.jpeg, id=1098, 1573.88pt x 386.44376pt>
+<./images/generative/gan/wgan_2.jpeg, id=1037, 1573.88pt x 386.44376pt>
 File: ./images/generative/gan/wgan_2.jpeg Graphic file (type jpg)
 <use ./images/generative/gan/wgan_2.jpeg>
 Package pdftex.def Info: ./images/generative/gan/wgan_2.jpeg  used on input lin
@@ -1784,7 +1736,7 @@ e 107.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-) [58] [59 <./images/generative/gan/wgan.jpeg> <./images/generative/gan/wgan_2.
+) [60] [61 <./images/generative/gan/wgan.jpeg> <./images/generative/gan/wgan_2.
 jpeg>]
 \openout2 = `./sections/generative/gan/infogan.aux'.
 
@@ -2181,7 +2133,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[60
+[62
 
 
 
@@ -2485,92 +2437,38 @@ Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
-) [61]) (./sections/hmm/hmm.tex
-\openout2 = `./sections/hmm/intro.aux'.
-
- (./sections/hmm/intro.tex
-Chapter 11.
-File: ./images/hmm/bayes.jpg Graphic file (type jpg)
-<use ./images/hmm/bayes.jpg>
-Package pdftex.def Info: ./images/hmm/bayes.jpg  used on input line 41.
-(pdftex.def)             Requested size: 223.80559pt x 167.8542pt.
-[62
-
-
-
-
-]
-File: ./images/hmm/cascade.pdf Graphic file (type pdf)
-<use ./images/hmm/cascade.pdf>
-Package pdftex.def Info: ./images/hmm/cascade.pdf  used on input line 59.
-(pdftex.def)             Requested size: 240.2502pt x 98.82442pt.
- [63] [64]
-File: ./images/hmm/hmm_figure.pdf Graphic file (type pdf)
-<use ./images/hmm/hmm_figure.pdf>
-Package pdftex.def Info: ./images/hmm/hmm_figure.pdf  used on input line 81.
-(pdftex.def)             Requested size: 248.22165pt x 131.72583pt.
-) [65]
-\openout2 = `./sections/hmm/evaluation.aux'.
-
- (./sections/hmm/evaluation.tex [66
-
-
-
-] [67]) [68]
-\openout2 = `./sections/hmm/decoding.aux'.
-
-
-(./sections/hmm/decoding.tex [69
-
-
-
-]) [70]
-\openout2 = `./sections/hmm/learning.aux'.
-
- (./sections/hmm/learning.tex [71
-
-
-
-])
-[72]
-\openout2 = `./sections/hmm/summary.aux'.
-
- (./sections/hmm/summary.tex) [73
-
-
-
-])
-(./sections/diffusion/diffusion_model.tex
+) [63]) (./sections/diffusion/diffusion_model.tex
 \openout2 = `./sections/diffusion/intro.aux'.
 
- (./sections/diffusion/intro.tex
+
+(./sections/diffusion/intro.tex
 Chapter 12.
-<./images/diffusion/diffusion_model.png, id=1202, 1488.56125pt x 318.18875pt>
+<./images/diffusion/diffusion_model.png, id=1064, 1488.56125pt x 318.18875pt>
 File: ./images/diffusion/diffusion_model.png Graphic file (type png)
 <use ./images/diffusion/diffusion_model.png>
 Package pdftex.def Info: ./images/diffusion/diffusion_model.png  used on input 
 line 33.
 (pdftex.def)             Requested size: 416.79431pt x 89.09224pt.
-[74
+[64
 
 
 
 
-] [75 <./images/diffusion/diffusion_model.png>] [76]
-<./images/diffusion/reverse.png, id=1238, 1351.0475pt x 341.275pt>
+] [65 <./images/diffusion/diffusion_model.png>] [66]
+<./images/diffusion/reverse.png, id=1100, 1351.0475pt x 341.275pt>
 File: ./images/diffusion/reverse.png Graphic file (type png)
 <use ./images/diffusion/reverse.png>
 Package pdftex.def Info: ./images/diffusion/reverse.png  used on input line 177
 .
 (pdftex.def)             Requested size: 405.31738pt x 102.38329pt.
-) [77 <./images/diffusion/reverse.png>]
+) [67 <./images/diffusion/reverse.png>]
 \openout2 = `./sections/diffusion/distribution.aux'.
 
- (./sections/diffusion/distribution.tex [78
+ (./sections/diffusion/distribution.tex [68
 
 
 
-] [79]
+] [69]
 ! Double subscript.
 <argument> ...}[\log p(\rvx _0|\rvx _{1})]-D_{KL}_
                                                   (q(\rvx _{T}|\rvx _0)||p(\...
@@ -2590,7 +2488,7 @@ Overfull \hbox (15.61081pt too wide) detected at line 71
 []
  []
 
-[80]
+[70]
 ! Double subscript.
 l.75 	\item $D_{KL}_
                     (q(\rvx_{T}|\rvx_0)||p(\rvx_T))$: Prior matching term.
@@ -2638,7 +2536,7 @@ l.81 ...t−1}|\rvx_t, \rvx_0)$. The $q(\rvx_{t−
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
-[81]
+[71]
 Overfull \hbox (15.16049pt too wide) in paragraph at lines 115--116
 []\T1/cmr/m/n/10.95 (-20) We can use the []Eq. (12.45)[] to com-pute the op-ti-
 mal $\OML/cmm/m/it/10.95 ^^R$ \T1/cmr/m/n/10.95 (-20) by solv-ing $[][] \OML/cm
@@ -2650,7 +2548,7 @@ OT1/cmr/bx/n/10.95 (-20) x[]\OMS/cmsy/m/n/10.95 j\OT1/cmr/bx/n/10.95 (-20) x[]\
 OT1/cmr/m/n/10.95 (-20) ))$\T1/cmr/m/n/10.95 (-20) ,
  []
 
-[82]
+[72]
 ! Extra }, or forgotten $.
 l.144 ...0 \sim \mathcal{N}(\boldsymbol{\epsilon}}
                                                   ; \mathbf{0}, \mathbf{I})$...
@@ -2660,7 +2558,7 @@ you forgot something else, as in `\hbox{$x}'. In such cases
 the way to recover is to insert both the forgotten and the
 deleted material, e.g., by typing `I$}'.
 
-) [83]
+) [73]
 \openout2 = `./sections/diffusion/summary.aux'.
 
  (./sections/diffusion/summary.tex
@@ -2674,7 +2572,7 @@ up above has ended a previous alignment prematurely,
 you're probably due for more error messages, and you
 might try typing `S' now just to see what is salvageable.
 
-[84
+[74
 
 
 
@@ -2703,18 +2601,18 @@ Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
-) [85]
+) [75]
 \openout2 = `./sections/diffusion/score_matching.aux'.
 
- (./sections/diffusion/score_matching.tex [86
+ (./sections/diffusion/score_matching.tex [76
 
 
 
-] [87]
+] [77]
 
-LaTeX Warning: Citation `sgld2011' on page 88 undefined on input line 113.
+LaTeX Warning: Citation `sgld2011' on page 78 undefined on input line 113.
 
-[88]) [89]) (./main.bbl) [90
+[78]) [79]) (./main.bbl) [80
 
 
 
@@ -2729,26 +2627,21 @@ LaTeX Warning: Citation `sgld2011' on page 88 undefined on input line 113.
 (./sections/hmm/learning.aux) (./sections/hmm/summary.aux)
 (./sections/generative/vae.aux) (./sections/generative/gan/gan.aux)
 (./sections/generative/gan/wasserstein.aux)
-(./sections/generative/gan/infogan.aux) (./sections/hmm/intro.aux)
-(./sections/hmm/evaluation.aux) (./sections/hmm/decoding.aux)
-(./sections/hmm/learning.aux) (./sections/hmm/summary.aux)
-(./sections/diffusion/intro.aux) (./sections/diffusion/distribution.aux)
-(./sections/diffusion/summary.aux) (./sections/diffusion/score_matching.aux))
+(./sections/generative/gan/infogan.aux) (./sections/diffusion/intro.aux)
+(./sections/diffusion/distribution.aux) (./sections/diffusion/summary.aux)
+(./sections/diffusion/score_matching.aux))
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: There were multiply-defined labels.
-
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 3D79BA7510229604619A56B3C587CAB2;18706.
+(rerunfilecheck)             Checksum: CABF5D9C8CC1ED18E8FB4483B2958B51;16148.
  ) 
 Here is how much of TeX's memory you used:
- 20328 strings out of 476017
- 343829 string characters out of 5767818
+ 20265 strings out of 476017
+ 342745 string characters out of 5767818
  1880666 words of memory out of 5000000
- 39530 multiletter control sequences out of 15000+600000
- 549694 words of font info for 261 fonts, out of 8000000 for 9000
+ 39521 multiletter control sequences out of 15000+600000
+ 550046 words of font info for 266 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,19n,76p,1001b,675s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
@@ -2792,10 +2685,10 @@ per/sfrm1095.pfb></opt/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm
 ></opt/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfti1095.pfb></opt/t
 exlive/2023/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb></opt/texlive/2
 023/texmf-dist/fonts/type1/public/cm-super/sftt1440.pfb>
-Output written on main.pdf (96 pages, 3405804 bytes).
+Output written on main.pdf (85 pages, 3380357 bytes).
 PDF statistics:
- 1612 PDF objects out of 1728 (max. 8388607)
- 1369 compressed objects within 14 object streams
- 406 named destinations out of 1000 (max. 500000)
- 61423 words of extra memory for PDF output out of 61914 (max. 10000000)
+ 1468 PDF objects out of 1728 (max. 8388607)
+ 1237 compressed objects within 13 object streams
+ 370 named destinations out of 1000 (max. 500000)
+ 61295 words of extra memory for PDF output out of 61914 (max. 10000000)
 

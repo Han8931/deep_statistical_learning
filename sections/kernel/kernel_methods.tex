@@ -1,0 +1,70 @@
+\chapter{Kernel Methods}
+\begin{itemize}
+	\item The main idea is to use large set of fixed non-linear basis functions.
+	\item The complexity depends on number of basis functions, but dual trick changes it to a size of dataset. 
+\end{itemize}
+
+Kernel function: Let $\phi(\rvx)$ be a set of basis functions that map inputs $\rvx$ to a feature space. In many algorithms, this feature space only appears in a dot product $\phi(\rvx)^T\phi(\rvx')$ of input pairs $\rvx$ and $\rvx'$. Then, kernel function can be defined as $k(\rvx, \rvx') = \phi(\rvx)^T\phi(\rvx')$. Note that we only need to know $k(\rvx, \rvx')$, not $\phi(\rvx)$.
+\begin{itemize}
+	\item The kernel function is a measure of similarity between $\rvx_i$and $\rvx_j$ 
+\end{itemize}
+
+A function $k: \mathbb{R}^d\times \mathbb{R}^d\to \mathbb{R}$ is said to be a positive semidefinite kernel if it is symmetric, (\ie $k(\rvx',\rvx)= k(\rvx,\rvx')$).
+
+Recall that the linear regression can be modelee as follows:
+$$f(\rvx) = \rvx^T\rvw,$$
+where $\rvx = [x_1, \dots, x_m]^T$ and $\rvw = [w_1,\dots,w_m]$. The ridge regression for $\mathbf{X}\in \mathbb{R}^{n\times m}$ matrix can be modeled as follows:
+\begin{align}
+	J(\rvw) &= \|\mathbf{y}-\mathbf{X}\rvw\|^2_2 + \lambda \|\rvw\|^2_2 \\
+			&= (\mathbf{y}-\mathbf{X}\rvw)^T(\mathbf{y}-\mathbf{X}\rvw)+\lambda\rvw^T\rvw\\
+			&= (\mathbf{y}^T-\rvw^T\mathbf{X}^T)(\mathbf{y}-\mathbf{X}\rvw)+\lambda\rvw^T\rvw\\
+			&= \rvy^T\rvy-\rvw^T\mathbf{X}^T\rvy-\rvy^T\mathbf{X}\rvw+\rvw^T\mathbf{X}^T\mathbf{X}\rvw+\rvw^T\lambda\mathbf{I}\rvw\\
+	\frac{\partial J}{\partial \rvw}&= -\mathbf{X}^T\rvy-\mathbf{X}^T\rvy+\mathbf{X}^T\mathbf{X}\rvw+\mathbf{X}^T\mathbf{X}\rvw+2\lambda\mathbf{I}\rvw = 0\\
+	\rvw	&= (\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})^{-1}\mathbf{X}^T\rvy
+	\label{eq:ridge_regression}
+\end{align}
+Let's change it into a dual form:
+\begin{align}
+	(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})\rvw	&= (\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})^{-1}\mathbf{X}^T\rvy\\
+	(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})\rvw &= \mathbf{X}^T\rvy\\ 
+	\rvw &= \lambda^{-1}\mathbf{I}(\mathbf{X}^T\rvy-\mathbf{X}^T\mathbf{X}\rvw)\\
+	&= \mathbf{X}^T\lambda^{-1}(\rvy-\mathbf{X}\rvw)\\
+	&= \mathbf{X}^T\alpha\\
+	\lambda\alpha &= (\rvy-\mathbf{X}\rvw)\\
+	&= (\rvy-\mathbf{X}\mathbf{X}^T\alpha)\\
+	\rvy &= (\mathbf{X}\mathbf{X}^T\alpha+\lambda\alpha)\\
+	\alpha &= (\mathbf{X}\mathbf{X}^T+\lambda)^{-1}\rvy\\
+	\alpha &= (\mathbf{G}+\lambda)^{-1}\rvy,
+	\label{eq:dual_regression}
+\end{align}
+where $\mathbf{G} = \mathbf{X}\mathbf{X}^T$ is a \textit{Gram matrix}. Thus, we just have to solve $m\times m$ matrix. 
+
+Therefore, given a new input $\rvx'\in \mathbb{R}^m$, the prediction $f(\rvx') = (\rvx')^T\rvw $ can be expressed as follows:
+$$f(\rvx') = (\rvx')^T\mathbf{X}^T(\mathbf{X}\mathbf{X}^T+\lambda\mathbf{I})^{-1}\rvy.$$
+
+Note that this formula depends only on the data via inner products. 
+\begin{align*}
+	(\rvx')^T\mathbf{X}^T = 
+	\begin{bmatrix}
+		\langle \rvx',\rvx_1\rangle\\
+		\vdots\\
+		\langle \rvx',\rvx_n\rangle
+	\end{bmatrix}^T,\quad
+	\mathbf{X}\mathbf{X}^T = 
+	\begin{bmatrix}
+		\langle \rvx_1,\rvx_1\rangle& \dots& \langle \rvx_1,\rvx_n\rangle\\
+		\vdots&\ddots&\vdots\\
+		\langle \rvx_n,\rvx_1\rangle &\dots &\langle \rvx_n,\rvx_n\rangle
+	\end{bmatrix}
+\end{align*}
+Therefore, we can apply the kernel trick and consider the more general prediction function.
+
+
+% Then, the closed-form solution of the ridge regression is given by
+% $$\hat{\boldsymbol{\theta}} = (\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})^{-1}\mathbf{X}^T\mathbf{y}.$$
+
+
+% We can rewrite it by $\rvw = \Phi \rva$, where $\Phi = [\phi(\rvx_1),\dots,\phi(\rvx_N)]$, $\rva = [a_1,\dots,a_N]^T$, and $a_n =-\frac{1}{\lambda} (\rvw^T\phi(\rvx_n)-y_n).$. Then, we get a dual objective, which aims to minimize $E$ with respect to $\rva$.
+
+% Let $K = \Phi^T\Phi$ be the Gram matrix. 
+
