@@ -21,11 +21,11 @@
 \subsection{Discriminator}
 The discriminator's goal is to maximize the following equation given $G$
 \begin{equation*}
-\mathbbm{E}_{x \sim p_{data}(x)}\log(D(x))+\mathbbm{E}_{z \sim p_{z}(z)}\log(1-D(G(z)))
+\mathbb{E}_{x \sim p_{data}(x)}\log(D(x))+\mathbb{E}_{z \sim p_{z}(z)}\log(1-D(G(z)))
 \end{equation*}
 The optimal discriminator given $G$ can be denoted as $D^*_{G}$. To get the optimal discriminator, define a value function
 \begin{equation*}
-V(G,D):= \mathbbm{E}_{x \sim p_{data}(x)}\log(D(x))+\mathbbm{E}_{z \sim p_z(z)}\log(1-D(G(z))).
+V(G,D):= \mathbb{E}_{x \sim p_{data}(x)}\log(D(x))+\mathbb{E}_{z \sim p_z(z)}\log(1-D(G(z))).
 \end{equation*}
 Then, $D_G^* = \text{argmax}_D V(G,D)$
 
@@ -35,7 +35,7 @@ G^* = \text{argmin}_G V(G,D_G^*).
 \end{equation*}
 
 \begin{equation*}
-\min_{G}\max_{D}V(D,G) =  \mathbbm{E}_{x\sim p_{data}(x)}[\textrm{log}D(x)]+\mathbbm{E}_{z\sim p_{z}(z)}[\textrm{log}(1-D(G(z)))]
+\min_{G}\max_{D}V(D,G) =  \mathbb{E}_{x\sim p_{data}(x)}[\textrm{log}D(x)]+\mathbb{E}_{z\sim p_{z}(z)}[\textrm{log}(1-D(G(z)))]
 \end{equation*}
 \begin{itemize}
 	\item $\min_{G} \rightarrow$ try to generate fake data that is similar to real data
@@ -48,12 +48,12 @@ At this point, we must show that this optimization problem has a unique solution
 
 One big idea from the GAN paper–, which is different from other approaches is that $G$ \textbf{need not be invertible}. Many pieces of notes online miss this fact when they try to replicate the proof and incorrectly use the change of variables formula from calculus (which would depend on $G$ being invertible). Rather, the whole proof relies on this equality:
 \begin{equation*}
-	\mathbbm{E}_{z \sim p_{z}(z)}\log(1-D(G(z))) = \mathbbm{E}_{x \sim p_{G}(x)}\log(1-D(x)) .
+	\mathbb{E}_{z \sim p_{z}(z)}\log(1-D(G(z))) = \mathbb{E}_{x \sim p_{G}(x)}\log(1-D(x)) .
 \end{equation*}
 
 With the above equality, 
 \begin{align*}
-	&\mathbbm{E}_{x \sim p_{data}(x)}\log(D(x))+\mathbbm{E}_{z \sim p_z(z)}\log(1-D(G(z)))\\
+	&\mathbb{E}_{x \sim p_{data}(x)}\log(D(x))+\mathbb{E}_{z \sim p_z(z)}\log(1-D(G(z)))\\
 	&=\int_{x} p_{data}(x)\log D(x) \, \mathrm{d}x + \int_{z} p(z)\log ( 1- D(G(z))) \, \mathrm{d}z\\ 
 	&= \int_{x} p_{data}(x)\log D(x) + p_G(x) \log ( 1- D(x)) \, \mathrm{d}x
 \end{align*}

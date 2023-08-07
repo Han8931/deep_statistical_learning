@@ -61,12 +61,12 @@ However, JS divergence also has some problem. If the value is close to $\frac{1}
 \subsection{Wasserstein Distance}
 Wasserstein Distance is a measure of the distance between two probability distributions. It is also called Earth Mover’s distance, short for EM distance, because informally it can be interpreted as the minimum energy cost of moving and transforming a pile of dirt in the shape of one probability distribution to the shape of the other distribution.
 \begin{equation*}
-	W(p_r, p_g) = \inf_{\gamma \sim \Pi(p_r, p_g)} \mathbbm{E}_{(x, y) \sim \gamma}[\| x-y \|]
+	W(p_r, p_g) = \inf_{\gamma \sim \Pi(p_r, p_g)} \mathbb{E}_{(x, y) \sim \gamma}[\| x-y \|]
 \end{equation*}
 
 \begin{itemize}
 	\item $\Pi$: is the transportation plan and the set of all possible joint probability distributions between $p_r$ and $p_g$. One joint distribution $\gamma \sim \Pi(p_r, p_g)$ describes one transport plan.\
-	\item $\mathbbm{E}_{x, y \sim \gamma} \| x-y \| = \sum_{x, y} \gamma(x, y) \| x-y \|$
+	\item $\mathbb{E}_{x, y \sim \gamma} \| x-y \| = \sum_{x, y} \gamma(x, y) \| x-y \|$
 	\item Finally, we take the minimum one among the costs of all dirt moving solutions as the EM distance (by infimum). 
 \end{itemize}
 

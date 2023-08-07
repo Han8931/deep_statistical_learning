@@ -1,7 +1,7 @@
 
 
 \section{K-Means Clustering}
-Suppose we have a data set $\mathbf{X} = \{\mathbf{x}_1,...,\mathbf{x}_n\}$ consisting of $N$ observations of a random $D$-dimensional variable $\mathbf{x}\in \mathbbm{R}^{D}$. Our goal is to partition the data into some number $K$ of clusters.  Intuitively, we may think of a cluster as comprising a group of data points whose inter-point distances are small compared with the distances to points outside of the cluster.
+Suppose we have a data set $\mathbf{X} = \{\mathbf{x}_1,...,\mathbf{x}_n\}$ consisting of $N$ observations of a random $D$-dimensional variable $\mathbf{x}\in \mathbb{R}^{D}$. Our goal is to partition the data into some number $K$ of clusters.  Intuitively, we may think of a cluster as comprising a group of data points whose inter-point distances are small compared with the distances to points outside of the cluster.
 
 This notion can be formalized by introducing a set of $D$-dimensional vectors $\boldsymbol{\mu}_k$, which represents the centers of the clusters. Our goal is to find an assignment of data points to clusters, as well as a set of vectors $\{\boldsymbol{\mu}_k\}$. Objective function of $K$-means clustering (\textit{distortion measure}) can be defined as follows:
 $$J =  \sum_{n=1}^{N}\sum_{k=1}^{K}r_{nk}||\boldsymbol{x}_n-\boldsymbol{\mu}_k||^2$$

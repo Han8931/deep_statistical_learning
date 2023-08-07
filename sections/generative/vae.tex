@@ -63,7 +63,7 @@ Subsequently, marginal distributions can be expressed as follows under i.i.d. as
 
 \subsection{VAE Optimization}
 We can train VAE using variational inference with the following objective function, ELBO:
-$$\mathcal{L}(\phi,\theta) = \mathbbm{E}_{q_{\phi}(z|x)}[\log p_{\theta}(x|z)] - D_{\textrm{KL}}(q_{\phi}(z|x)||p_{\theta}(z))$$
+$$\mathcal{L}(\phi,\theta) = \mathbb{E}_{q_{\phi}(z|x)}[\log p_{\theta}(x|z)] - D_{\textrm{KL}}(q_{\phi}(z|x)||p_{\theta}(z))$$
 Let's closely look at this objective function:
 \begin{itemize}
 	\item In $q_{\phi}(z|x)$, $x$ is a given data, so it is not stochatic. How to sample $z$?
@@ -72,14 +72,14 @@ Let's closely look at this objective function:
 		$$\tilde{z}\sim q_\phi(z|x) \to \tilde{z}\sim g_{\phi}(\epsilon, x)$$, where $\epsilon\sim p(\epsilon).$
 
 	\item Estimated by using Monte-Carlo estimation 
-		$$\mathbbm{E}_{q_{\phi}(z|x)}[\log p_{\theta}(x|z)]\approx \frac{1}{N}\sum_j \log p_{\theta}(x_i|z_j).$$
+		$$\mathbb{E}_{q_{\phi}(z|x)}[\log p_{\theta}(x|z)]\approx \frac{1}{N}\sum_j \log p_{\theta}(x_i|z_j).$$
 \end{itemize}
 
 \subsection{Conditional VAE}
 If we have label information about data, then it would provide a better optimization of VAE model. Recall that the following objective function is the objective of the original VAE:
-$$\mathcal{L}(\phi,\theta) = \mathbbm{E}_{q_{\phi}(z|x)}[\log p_{\theta}(x|z)] - D_{\textrm{KL}}(q_{\phi}(z|x)||p_{\theta}(z))$$
+$$\mathcal{L}(\phi,\theta) = \mathbb{E}_{q_{\phi}(z|x)}[\log p_{\theta}(x|z)] - D_{\textrm{KL}}(q_{\phi}(z|x)||p_{\theta}(z))$$
 In conditional VAE, 
-$$\mathcal{L}(\phi,\theta) = \mathbbm{E}_{q_{\phi}(z|x, y)}[\log p_{\theta}(x|y, z)] - D_{\textrm{KL}}(q_{\phi}(z|x, y)\ ||\ p_{\theta}(z|y))$$
+$$\mathcal{L}(\phi,\theta) = \mathbb{E}_{q_{\phi}(z|x, y)}[\log p_{\theta}(x|y, z)] - D_{\textrm{KL}}(q_{\phi}(z|x, y)\ ||\ p_{\theta}(z|y))$$
 
 \begin{align}
 	\log p(X|Y) & = \ln\int q(Z|X, Y) \frac{p(X, Z|Y)}{q(Z|X, Y)}dZ\\
@@ -134,7 +134,7 @@ By using two factorizations:
 
 % \begin{itemize}
 % 	\item 
-% 		$$\mathbbm{E}_{q_{\phi}(z|x)}[\log p_{\theta}(x|z)]\approx \frac{1}{N}\sum_j \log p_{\theta}(x_i|z_j).$$
+% 		$$\mathbb{E}_{q_{\phi}(z|x)}[\log p_{\theta}(x|z)]\approx \frac{1}{N}\sum_j \log p_{\theta}(x_i|z_j).$$
 % 	\item The second term can be solve analytically for some distributions like Gaussian.
 % 	\item For training, we need to use a reparameterization trick. 
 % \end{itemize}

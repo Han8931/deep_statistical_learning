@@ -61,25 +61,25 @@ However, JS divergence also has some problem. If the value is close to $\frac{1}
 \subsection{Wasserstein Distance}
 Wasserstein Distance is a measure of the distance between two probability distributions. It is also called Earth Mover’s distance, short for EM distance, because informally it can be interpreted as the minimum energy cost of moving and transforming a pile of dirt in the shape of one probability distribution to the shape of the other distribution.
 \begin{equation*}
-	W(p_r, p_g) = \inf_{\gamma \sim \Pi(p_r, p_g)} \mathbbm{E}_{(x, y) \sim \gamma}[\| x-y \|]
+	W(p_r, p_g) = \inf_{\gamma \sim \Pi(p_r, p_g)} \mathbb{E}_{(x, y) \sim \gamma}[\| x-y \|]
 \end{equation*}
 
 \begin{itemize}
 	\item $\Pi$: is the transportation plan and the set of all possible joint probability distributions between $p_r$ and $p_g$. One joint distribution $\gamma \sim \Pi(p_r, p_g)$ describes one transport plan.\
-	\item $\mathbbm{E}_{x, y \sim \gamma} \| x-y \| = \sum_{x, y} \gamma(x, y) \| x-y \|$
+	\item $\mathbb{E}_{x, y \sim \gamma} \| x-y \| = \sum_{x, y} \gamma(x, y) \| x-y \|$
 	\item Finally, we take the minimum one among the costs of all dirt moving solutions as the EM distance (by infimum). 
 \end{itemize}
 
 \section{WGAN}
 However, consider all possible joint distribution is intractable, so dual solution can be used. 
 
-$$W(p_r, p_g) = \frac{1}{K} \sup_{\| f \|_L \leq K} \mathbbm{E}_{x \sim p_r}[f(x)] - \mathbbm{E}_{x \sim p_g}[f(x)]$$
+$$W(p_r, p_g) = \frac{1}{K} \sup_{\| f \|_L \leq K} \mathbb{E}_{x \sim p_r}[f(x)] - \mathbb{E}_{x \sim p_g}[f(x)]$$
 
 So to calculate the Wasserstein distance, we just need to find a 1-Lipschitz function. To enforce the constraint, WGAN applies a very simple clipping to restrict the maximum weight value in $f$, i.e. the weights of the discriminator
 
 Suppose this function $f$ comes from a family of $K$-Lipschitz continuous functions, $\{f_w\}_{w\in W}$, parameterized by $w$. In the modified Wasserstein-GAN, the ``discriminator'' model is used to learn $w$ to find a good $f_w$ and the loss function is configured as measuring the Wasserstein distance between $p_r$ and $p_g$.
 
-$$L(p_r, p_g) = W(p_r, p_g) = \max_{w \in W} \mathbbm{E}_{x \sim p_r}[f_w(x)] - \mathbbm{E}_{z \sim p_r(z)}[f_w(g_\theta(z))]$$
+$$L(p_r, p_g) = W(p_r, p_g) = \max_{w \in W} \mathbb{E}_{x \sim p_r}[f_w(x)] - \mathbb{E}_{z \sim p_r(z)}[f_w(g_\theta(z))]$$
 
 There are two ways to satisfy the Lipschitz continuity:
 \begin{itemize}
@@ -90,7 +90,7 @@ There are two ways to satisfy the Lipschitz continuity:
 \subsection{Lipschitz continuity}
 The function $f$ in the new form of Wasserstein metric is demanded to satisfy $\| f \|_L \leq K$, meaning it should be $K$-Lipschitz continuous. \citep{Lil2017}
 
-A real-valued function $f: \mathbbm{R} \rightarrow \mathbbm{R}$ is called $K$-Lipschitz continuous if there exists a real constant $K\geq 0$ such that, for all $x_1, x_2 \in \mathbbm{R}$
+A real-valued function $f: \mathbb{R} \rightarrow \mathbb{R}$ is called $K$-Lipschitz continuous if there exists a real constant $K\geq 0$ such that, for all $x_1, x_2 \in \mathbb{R}$
 $$\lvert f(x_1) - f(x_2) \rvert \leq K \lvert x_1 - x_2 \rvert$$
 Here $K$ is known as a Lipschitz constant for function $f(\cdot)$. Functions that are everywhere continuously differentiable is Lipschitz continuous, because the derivative, estimated as $\frac{\lvert f(x_1) - f(x_2) \rvert}{\lvert x_1 - x_2 \rvert}$, has bounds. However, a Lipschitz continuous function may not be everywhere differentiable, such as $f(x) = \lvert x \rvert$
 
