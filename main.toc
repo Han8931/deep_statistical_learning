@@ -99,7 +99,11 @@
 \contentsline {section}{\numberline {12.6}Score Matching}{76}{section.12.6}%
 \contentsline {subsection}{\numberline {12.6.1}Fisher Divergence}{77}{subsection.12.6.1}%
 \contentsline {subsection}{\numberline {12.6.2}Langevin Dynamics}{78}{subsection.12.6.2}%
-\contentsline {chapter}{\numberline {13}Natural Language Processing}{80}{chapter.13}%
-\contentsline {section}{\numberline {13.1}Evaluation Metrics}{80}{section.13.1}%
-\contentsline {subsection}{\numberline {13.1.1}Perplexity}{80}{subsection.13.1.1}%
-\contentsline {subsection}{\numberline {13.1.2}Cross-Entropy and Perplexity}{81}{subsection.13.1.2}%
+\contentsline {part}{II\hspace {1em}Natural Language Processing}{80}{part.2}%
+\contentsline {chapter}{\numberline {13}Introduction}{81}{chapter.13}%
+\contentsline {section}{\numberline {13.1}Evaluation Metrics}{81}{section.13.1}%
+\contentsline {subsection}{\numberline {13.1.1}Perplexity}{81}{subsection.13.1.1}%
+\contentsline {subsection}{\numberline {13.1.2}Cross-Entropy and Perplexity}{82}{subsection.13.1.2}%
+\contentsline {chapter}{\numberline {14}Transformer}{83}{chapter.14}%
+\contentsline {section}{\numberline {14.1}Attention Mechanism}{83}{section.14.1}%
+\contentsline {section}{\numberline {14.2}Transformer}{84}{section.14.2}%
