@@ -1,4 +1,9 @@
 *.svg
 *.aux
+*.log
+*.bbl
+*.blg
+*.toc
+*.fdb_latexmk
 Codes/
 material/
