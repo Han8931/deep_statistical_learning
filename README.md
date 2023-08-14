@@ -1,2 +1,2 @@
 # Deep Statistical Learning
-My study notes...
+My ML/DL study notes.
