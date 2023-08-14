@@ -4,6 +4,8 @@
 *.bbl
 *.blg
 *.toc
+# *.out
+# *.fls
 *.fdb_latexmk
 Codes/
 material/
