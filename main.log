@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.4.17)  8 AUG 2023 12:53
-=======
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.4.26)  10 AUG 2023 22:19
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.4.17)  14 AUG 2023 11:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -917,12 +913,17 @@ l.35 \begin{align*}
 
  (./sections/bayes/bayes.tex
 Chapter 2.
-) [7
+
+Overfull \hbox (7.49957pt too wide) detected at line 11
+[]
+ []
+
+[7
 
 
 
 
-] [8]
+]) [8]
 \openout2 = `./sections/learning.aux'.
 
  (./sections/learning.tex
@@ -969,20 +970,12 @@ Chapter 6.
 
  (./sections/sampling.tex
 Chapter 7.
-<<<<<<< HEAD
-<./images/sampling/inverse.jpg, id=782, 401.5pt x 319.1925pt>
-=======
-<./images/sampling/inverse.jpg, id=750, 401.5pt x 319.1925pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/sampling/inverse.jpg, id=787, 401.5pt x 319.1925pt>
 File: ./images/sampling/inverse.jpg Graphic file (type jpg)
 <use ./images/sampling/inverse.jpg>
 Package pdftex.def Info: ./images/sampling/inverse.jpg  used on input line 27.
 (pdftex.def)             Requested size: 240.90184pt x 191.51697pt.
-<<<<<<< HEAD
-<./images/sampling/cdf.pdf, id=783, 127.2982pt x 135.44702pt>
-=======
-<./images/sampling/cdf.pdf, id=751, 127.2982pt x 135.44702pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/sampling/cdf.pdf, id=788, 127.2982pt x 135.44702pt>
 File: ./images/sampling/cdf.pdf Graphic file (type pdf)
 <use ./images/sampling/cdf.pdf>
 Package pdftex.def Info: ./images/sampling/cdf.pdf  used on input line 34.
@@ -990,13 +983,8 @@ Package pdftex.def Info: ./images/sampling/cdf.pdf  used on input line 34.
 [23
 
 
-<<<<<<< HEAD
 ] [24 <./images/sampling/inverse.jpg> <./images/sampling/cdf.pdf>]
-<./images/sampling/rejection.pdf, id=808, 394.11713pt x 269.34775pt>
-=======
-] [22 <./images/sampling/inverse.jpg> <./images/sampling/cdf.pdf>]
-<./images/sampling/rejection.pdf, id=777, 394.11713pt x 269.34775pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/sampling/rejection.pdf, id=813, 394.11713pt x 269.34775pt>
 File: ./images/sampling/rejection.pdf Graphic file (type pdf)
 <use ./images/sampling/rejection.pdf>
 Package pdftex.def Info: ./images/sampling/rejection.pdf  used on input line 67
@@ -1016,11 +1004,7 @@ Package pdftex.def Info: ./images/sampling/rejection.pdf  used on input line 67
 (./sections/lda/topic_modeling.tex
 Chapter 8.
 (./sections/lda/lda.tex
-<<<<<<< HEAD
-<./images/lda/lda.pdf, id=843, 432.12204pt x 108.10841pt>
-=======
-<./images/lda/lda.pdf, id=812, 432.12204pt x 108.10841pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/lda/lda.pdf, id=848, 432.12204pt x 108.10841pt>
 File: ./images/lda/lda.pdf Graphic file (type pdf)
 <use ./images/lda/lda.pdf>
 Package pdftex.def Info: ./images/lda/lda.pdf  used on input line 15.
@@ -1045,11 +1029,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-<<<<<<< HEAD
-<./images/generative/latent.png, id=887, 1107.13625pt x 369.38pt>
-=======
-<./images/generative/latent.png, id=855, 1107.13625pt x 369.38pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/generative/latent.png, id=892, 1107.13625pt x 369.38pt>
 File: ./images/generative/latent.png Graphic file (type png)
 <use ./images/generative/latent.png>
 Package pdftex.def Info: ./images/generative/latent.png  used on input line 9.
@@ -1069,15 +1049,9 @@ Chapter 10.
 
 
 
-<<<<<<< HEAD
 ]) [34] (./sections/generative/gmm.tex
 [35]
-<./images/generative/gmm.png, id=908, 256.96pt x 197.73875pt>
-=======
-]) [32] (./sections/generative/gmm.tex
-[33]
-<./images/generative/gmm.png, id=876, 256.96pt x 197.73875pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/generative/gmm.png, id=913, 256.96pt x 197.73875pt>
 File: ./images/generative/gmm.png Graphic file (type png)
 <use ./images/generative/gmm.png>
 Package pdftex.def Info: ./images/generative/gmm.png  used on input line 82.
@@ -1091,11 +1065,7 @@ Overfull \hbox (33.73181pt too wide) detected at line 177
 [][] 
  []
 
-<<<<<<< HEAD
-<./images/generative/em_update.png, id=929, 776.9025pt x 553.06625pt>
-=======
-<./images/generative/em_update.png, id=897, 776.9025pt x 553.06625pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/generative/em_update.png, id=934, 776.9025pt x 553.06625pt>
 File: ./images/generative/em_update.png Graphic file (type png)
 <use ./images/generative/em_update.png>
 Package pdftex.def Info: ./images/generative/em_update.png  used on input line 
@@ -1113,11 +1083,7 @@ Package pdftex.def Info: ./images/generative/em_update.png  used on input line
 
  (./sections/hmm/intro.tex
 Chapter 11.
-<<<<<<< HEAD
-<./images/hmm/bayes.jpg, id=963, 746.01291pt x 559.50967pt>
-=======
-<./images/hmm/bayes.jpg, id=931, 746.01291pt x 559.50967pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/hmm/bayes.jpg, id=968, 746.01291pt x 559.50967pt>
 File: ./images/hmm/bayes.jpg Graphic file (type jpg)
 <use ./images/hmm/bayes.jpg>
 Package pdftex.def Info: ./images/hmm/bayes.jpg  used on input line 41.
@@ -1128,22 +1094,13 @@ Package pdftex.def Info: ./images/hmm/bayes.jpg  used on input line 41.
 
 
 ]
-<<<<<<< HEAD
-<./images/hmm/cascade.pdf, id=968, 480.50157pt x 197.64934pt>
-=======
-<./images/hmm/cascade.pdf, id=936, 480.50157pt x 197.64934pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/hmm/cascade.pdf, id=973, 480.50157pt x 197.64934pt>
 File: ./images/hmm/cascade.pdf Graphic file (type pdf)
 <use ./images/hmm/cascade.pdf>
 Package pdftex.def Info: ./images/hmm/cascade.pdf  used on input line 59.
 (pdftex.def)             Requested size: 240.2502pt x 98.82442pt.
-<<<<<<< HEAD
  [45 <./images/hmm/bayes.jpg> <./images/hmm/cascade.pdf>] [46]
-<./images/hmm/hmm_figure.pdf, id=1018, 354.6048pt x 188.18106pt>
-=======
- [43 <./images/hmm/bayes.jpg> <./images/hmm/cascade.pdf>] [44]
-<./images/hmm/hmm_figure.pdf, id=986, 354.6048pt x 188.18106pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/hmm/hmm_figure.pdf, id=1023, 354.6048pt x 188.18106pt>
 File: ./images/hmm/hmm_figure.pdf Graphic file (type pdf)
 <use ./images/hmm/hmm_figure.pdf>
 Package pdftex.def Info: ./images/hmm/hmm_figure.pdf  used on input line 81.
@@ -1183,20 +1140,12 @@ Package pdftex.def Info: ./images/hmm/hmm_figure.pdf  used on input line 81.
 
  (./sections/generative/vae.tex
 Chapter 12.
-<<<<<<< HEAD
-<./images/generative/dgm.pdf, id=1093, 253.89787pt x 116.53172pt>
-=======
-<./images/generative/dgm.pdf, id=1061, 253.89787pt x 116.53172pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/generative/dgm.pdf, id=1098, 253.89787pt x 116.53172pt>
 File: ./images/generative/dgm.pdf Graphic file (type pdf)
 <use ./images/generative/dgm.pdf>
 Package pdftex.def Info: ./images/generative/dgm.pdf  used on input line 8.
 (pdftex.def)             Requested size: 126.94862pt x 58.2657pt.
-<<<<<<< HEAD
-<./images/generative/encoder.pdf, id=1094, 400.0012pt x 264.34709pt>
-=======
-<./images/generative/encoder.pdf, id=1062, 400.0012pt x 264.34709pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/generative/encoder.pdf, id=1099, 400.0012pt x 264.34709pt>
 File: ./images/generative/encoder.pdf Graphic file (type pdf)
 <use ./images/generative/encoder.pdf>
 Package pdftex.def Info: ./images/generative/encoder.pdf  used on input line 27
@@ -1216,11 +1165,7 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
  (./sections/generative/gan/gan.tex
 Chapter 13.
-<<<<<<< HEAD
-<./images/generative/gan/gan_model.pdf, id=1125, 408.55884pt x 229.16408pt>
-=======
-<./images/generative/gan/gan_model.pdf, id=1093, 408.55884pt x 229.16408pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/generative/gan/gan_model.pdf, id=1130, 408.55884pt x 229.16408pt>
 File: ./images/generative/gan/gan_model.pdf Graphic file (type pdf)
 <use ./images/generative/gan/gan_model.pdf>
 Package pdftex.def Info: ./images/generative/gan/gan_model.pdf  used on input l
@@ -1236,11 +1181,7 @@ Overfull \hbox (42.64665pt too wide) detected at line 96
 []
  []
 
-<<<<<<< HEAD
-<./images/generative/gan/gan_algorithm.png, id=1140, 1218.5525pt x 801.99625pt>
-=======
-<./images/generative/gan/gan_algorithm.png, id=1107, 1218.5525pt x 801.99625pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/generative/gan/gan_algorithm.png, id=1145, 1218.5525pt x 801.99625pt>
 
 File: ./images/generative/gan/gan_algorithm.png Graphic file (type png)
 <use ./images/generative/gan/gan_algorithm.png>
@@ -1255,21 +1196,13 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 (./sections/generative/gan/wasserstein.tex
-<<<<<<< HEAD
-<./images/generative/gan/twodist.pdf, id=1152, 480.49297pt x 174.57538pt>
-=======
-<./images/generative/gan/twodist.pdf, id=1121, 480.49297pt x 174.57538pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/generative/gan/twodist.pdf, id=1157, 480.49297pt x 174.57538pt>
 File: ./images/generative/gan/twodist.pdf Graphic file (type pdf)
 <use ./images/generative/gan/twodist.pdf>
 Package pdftex.def Info: ./images/generative/gan/twodist.pdf  used on input lin
 e 22.
 (pdftex.def)             Requested size: 240.2459pt x 87.28748pt.
-<<<<<<< HEAD
-<./images/generative/gan/wassersteinexample.png, id=1154, 1046.91125pt x 657.45
-=======
-<./images/generative/gan/wassersteinexample.png, id=1123, 1046.91125pt x 657.45
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/generative/gan/wassersteinexample.png, id=1159, 1046.91125pt x 657.45
 625pt>
 File: ./images/generative/gan/wassersteinexample.png Graphic file (type png)
 <use ./images/generative/gan/wassersteinexample.png>
@@ -1295,11 +1228,7 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-<<<<<<< HEAD
-<./images/generative/gan/wgan.jpeg, id=1168, 1606.0pt x 545.03625pt>
-=======
-<./images/generative/gan/wgan.jpeg, id=1137, 1606.0pt x 545.03625pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/generative/gan/wgan.jpeg, id=1173, 1606.0pt x 545.03625pt>
 File: ./images/generative/gan/wgan.jpeg Graphic file (type jpg)
 <use ./images/generative/gan/wgan.jpeg>
 Package pdftex.def Info: ./images/generative/gan/wgan.jpeg  used on input line 
@@ -1308,11 +1237,7 @@ Package pdftex.def Info: ./images/generative/gan/wgan.jpeg  used on input line
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<<<<<<< HEAD
-<./images/generative/gan/wgan_2.jpeg, id=1169, 1573.88pt x 386.44376pt>
-=======
-<./images/generative/gan/wgan_2.jpeg, id=1138, 1573.88pt x 386.44376pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/generative/gan/wgan_2.jpeg, id=1174, 1573.88pt x 386.44376pt>
 File: ./images/generative/gan/wgan_2.jpeg Graphic file (type jpg)
 <use ./images/generative/gan/wgan_2.jpeg>
 Package pdftex.def Info: ./images/generative/gan/wgan_2.jpeg  used on input lin
@@ -1388,11 +1313,7 @@ or  <return>  to continue without it.
 
 (./sections/diffusion/intro.tex
 Chapter 14.
-<<<<<<< HEAD
-<./images/diffusion/diffusion_model.png, id=1196, 1488.56125pt x 318.18875pt>
-=======
-<./images/diffusion/diffusion_model.png, id=1165, 1488.56125pt x 318.18875pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/diffusion/diffusion_model.png, id=1201, 1488.56125pt x 318.18875pt>
 File: ./images/diffusion/diffusion_model.png Graphic file (type png)
 <use ./images/diffusion/diffusion_model.png>
 Package pdftex.def Info: ./images/diffusion/diffusion_model.png  used on input 
@@ -1403,13 +1324,8 @@ line 33.
 
 
 
-<<<<<<< HEAD
 ] [71 <./images/diffusion/diffusion_model.png>] [72]
-<./images/diffusion/reverse.png, id=1232, 1351.0475pt x 341.275pt>
-=======
-] [69 <./images/diffusion/diffusion_model.png>] [70]
-<./images/diffusion/reverse.png, id=1200, 1351.0475pt x 341.275pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/diffusion/reverse.png, id=1237, 1351.0475pt x 341.275pt>
 File: ./images/diffusion/reverse.png Graphic file (type png)
 <use ./images/diffusion/reverse.png>
 Package pdftex.def Info: ./images/diffusion/reverse.png  used on input line 177
@@ -1577,22 +1493,14 @@ Chapter 15.
 ]) [88]
 Chapter 16.
 (./sections/nlp/transformer.tex
-<<<<<<< HEAD
-<./images/transformer/attention_database.pdf, id=1376, 70.63686pt x 62.95682pt>
-=======
-<./images/transformer/attention_database.pdf, id=1345, 70.63686pt x 62.95682pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/transformer/attention_database.pdf, id=1381, 70.63686pt x 62.95682pt>
 
 File: ./images/transformer/attention_database.pdf Graphic file (type pdf)
 <use ./images/transformer/attention_database.pdf>
 Package pdftex.def Info: ./images/transformer/attention_database.pdf  used on i
 nput line 7.
 (pdftex.def)             Requested size: 141.27332pt x 125.9133pt.
-<<<<<<< HEAD
-<./images/transformer/attention.pdf, id=1377, 321.07506pt x 168.23523pt>
-=======
-<./images/transformer/attention.pdf, id=1346, 321.07506pt x 168.23523pt>
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+<./images/transformer/attention.pdf, id=1382, 321.07506pt x 168.23523pt>
 File: ./images/transformer/attention.pdf Graphic file (type pdf)
 <use ./images/transformer/attention.pdf>
 Package pdftex.def Info: ./images/transformer/attention.pdf  used on input line
@@ -1605,19 +1513,15 @@ pdf
 
 pdfTeX warning: pdflatex (file ./images/transformer/attention.pdf): PDF inclusi
 on: multiple pdfs with page group included in a single page
-<<<<<<< HEAD
->])) [90] (./main.bbl) [91
-=======
 >]
-<./images/transformer/positional_1.png, id=1422, 436.63126pt x 341.77687pt>
+<./images/transformer/positional_1.png, id=1458, 436.63126pt x 341.77687pt>
 File: ./images/transformer/positional_1.png Graphic file (type png)
 <use ./images/transformer/positional_1.png>
 Package pdftex.def Info: ./images/transformer/positional_1.png  used on input l
 ine 38.
 (pdftex.def)             Requested size: 261.98077pt x 205.0677pt.
-)) [88 <./images/transformer/positional_1.png (PNG copy)>] (./main.bbl)
-[89
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+)) [90 <./images/transformer/positional_1.png (PNG copy)>] (./main.bbl)
+[91
 
 
 ] (./main.aux (./sections/intro.aux) (./sections/bayes/bayes.aux)
@@ -1636,26 +1540,18 @@ ine 38.
 
 LaTeX Warning: There were undefined references.
 
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
-<<<<<<< HEAD
 (rerunfilecheck)             Checksum: 5D649B487332258A2A43124677405E25;19200.
  ) 
 Here is how much of TeX's memory you used:
- 20440 strings out of 476017
- 346780 string characters out of 5767818
+ 20453 strings out of 476017
+ 347131 string characters out of 5767818
  1880666 words of memory out of 5000000
- 39611 multiletter control sequences out of 15000+600000
+ 39617 multiletter control sequences out of 15000+600000
  550440 words of font info for 272 fonts, out of 8000000 for 9000
-=======
-(rerunfilecheck)             Checksum: 42A6C6EB13BE9D46BB669974BB3B34FB;18472.
- ) 
-Here is how much of TeX's memory you used:
- 20395 strings out of 476001
- 345881 string characters out of 5767249
- 1881074 words of memory out of 5000000
- 39606 multiletter control sequences out of 15000+600000
- 550097 words of font info for 267 fonts, out of 8000000 for 9000
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
  1141 hyphenation exceptions out of 8191
  75i,19n,76p,1001b,675s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
@@ -1699,19 +1595,10 @@ per/sfrm1095.pfb></opt/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm
 ></opt/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfti1095.pfb></opt/t
 exlive/2023/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb></opt/texlive/2
 023/texmf-dist/fonts/type1/public/cm-super/sftt1440.pfb>
-<<<<<<< HEAD
-Output written on main.pdf (97 pages, 3428613 bytes).
+Output written on main.pdf (97 pages, 3473580 bytes).
 PDF statistics:
- 1710 PDF objects out of 1728 (max. 8388607)
- 1441 compressed objects within 15 object streams
- 416 named destinations out of 1000 (max. 500000)
- 61457 words of extra memory for PDF output out of 61914 (max. 10000000)
-=======
-Output written on main.pdf (95 pages, 3464036 bytes).
-PDF statistics:
- 1678 PDF objects out of 1728 (max. 8388607)
- 1410 compressed objects within 15 object streams
- 408 named destinations out of 1000 (max. 500000)
- 61430 words of extra memory for PDF output out of 61914 (max. 10000000)
->>>>>>> 0a2bc9bc2043a429a87dd640e994befe90ae3a5d
+ 1718 PDF objects out of 1728 (max. 8388607)
+ 1448 compressed objects within 15 object streams
+ 422 named destinations out of 1000 (max. 500000)
+ 61462 words of extra memory for PDF output out of 61914 (max. 10000000)
 
