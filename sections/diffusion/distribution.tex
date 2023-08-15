@@ -51,7 +51,7 @@ Let us instead try to derive a form for our ELBO where each term is computed as 
 \end{align*}
 Armed with this equation, we can factorize the ELBO again as follows:
 \begin{align}
-		L &= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log\frac{p(\rvx_{0:T})}{q(\rvx_{1:T}|\rvx_0)}\bigg] \quad \to \textrm{ELBO}\\
+		L &= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log\frac{p(\rvx_{0:T})}{q(\rvx_{1:T}|\rvx_0)}\bigg] \quad \to \textrm{ELBO}\\		
 		&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log p(\rvx_T)\prod_{t=1}^T\frac{p(\rvx_{t-1}|\rvx_t)}{q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
 		&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)p(\rvx_0|\rvx_{1})\prod_{t=2}^{T} p(\rvx_{t-1}|\rvx_{t})}{q(\rvx_1|\rvx_{0})\prod_{t=2}^{T}  q(\rvx_{t}|\rvx_{t-1})}\bigg]\\
 		&= \mathbb{E}_{q(\rvx_{1:T}|\rvx_0)}\bigg[\log \frac{p(\rvx_T)p(\rvx_0|\rvx_{1})\prod_{t=2}^{T} p(\rvx_{t-1}|\rvx_{t})}{q(\rvx_1|\rvx_{0})\prod_{t=2}^{T}  q(\rvx_{t}|\rvx_{t-1}, \blue{\rvx_0})}\bigg] \quad \textrm{ by Markov Property}\\
@@ -72,7 +72,7 @@ Armed with this equation, we can factorize the ELBO again as follows:
 Let's closely look at the last three terms:
 \begin{itemize}
 	\item $\mathbb{E}_{q(\rvx_{1}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})]$: reconstruction term. 
-	\item $D_{KL}_(q(\rvx_{T}|\rvx_0)||p(\rvx_T))$: Prior matching term.
+	\item $D_{KL} (q(\rvx_{T}|\rvx_0)||p(\rvx_T))$: Prior matching term.
 		\begin{itemize}
 			\item No trainable parameters 
 		\end{itemize}

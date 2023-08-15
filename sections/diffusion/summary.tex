@@ -16,7 +16,7 @@
 			\item Can be modeled by a separate decoder.
 		\end{itemize}
 	\item $q(\rvx_t|\rvx_0) = \mathcal{N}(\sqrt{\bar{\alpha}_t}\rvx_0, (1-\bar{\alpha}_t)I )$
-	\item $q(\rvx_t \vert \rvx_{t-1}) &= \mathcal{N}(\mathbf{x}_t; \sqrt{1 - \beta_t}\rvx_{t-1}, \beta_t\mathbf{I}),$
+	\item $q(\rvx_t \vert \rvx_{t-1}) = \mathcal{N}(\mathbf{x}_t; \sqrt{1 - \beta_t}\rvx_{t-1}, \beta_t\mathbf{I}),$
 		\begin{itemize}
 			\item[] We can sample by $\rvx_t=\sqrt{1 - \beta_t}\rvx_{t-1}+ \sqrt{\beta_t}\epsilon$
 		\end{itemize}
@@ -69,10 +69,10 @@ The sampling process is given by
 		$\rvx_T\sim \mathcal{N}(0,I)$\\
 		\For{$t=T,\cdots,1$}{
 			$\rvz\sim \mathcal{N}(0,I)$\\
-			\State $\rvx_{t-1}= \frac{1}{\sqrt{\alpha_t}}\bigg(\rvx_t-\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}}\boldsymbol{\epsilon}_\theta(\rvx_t,t)\bigg)+\Sigma_t\rvz$
+			$\rvx_{t-1}= \frac{1}{\sqrt{\alpha_t}}\bigg(\rvx_t-\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}}\boldsymbol{\epsilon}_\theta(\rvx_t,t)\bigg)+\Sigma_t\rvz$
 		}
-		\textbf{return} $\rvx_0$
-\end{algorithm*}
+		\textbf{return } $\rvx_0$
+\end{algorithm}
 \begin{itemize}
 	\item Ancestral sampling.
 	\item $T$ is typically around 1,000
