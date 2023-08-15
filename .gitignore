@@ -7,5 +7,6 @@
 *.out
 *.fls
 *.fdb_latexmk
+*.gz
 Codes/
 material/
