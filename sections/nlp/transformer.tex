@@ -5,7 +5,7 @@ $$attn(q, k, v) = \sum_i sim(q,k_i)\times v_i$$
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=2.0]{./images/transformer/attention_database.pdf}
-	\caption{The most similar key will be selected by measuring a similarity between a query and a key.}
+	\caption{The most similar key will be selected by measuring a \textbf{similarity} between a query and a key.}
 \end{figure}
 
 \begin{figure}[h]
@@ -20,21 +20,57 @@ There are several choices for a similarity function.
 	\item $q^TWk_i$: general dot product.
 	\item $w_q^Tq+ w_k^Tk_i$: additive similarity.
 \end{itemize}
-Finally, the attention score can be computed by using a softmax:
+Finally, the \textbf{attention score} can be computed by using a softmax:
 $$a_i = \frac{\exp(s_i)}{\sum_j \exp(s_j)}$$
 
 \section{Transformer}
 \label{sec:nlp_transformer}
+% The encoder's inputs first flow through a self-attention layer – a layer that helps the encoder look at other words in the input sentence as it encodes a specific word. 
 
-Self-attention:
+
+\subsection{Self-Attention}
 $$attn(Q,K,V) = softmax(\frac{Q^TK}{\sqrt{d_k}})V$$
-Masked attention (cross-attention. Self-attention in decoder):
+
+\subsection{Masked attention}
+The masked attention is often referred to cross-attention. This is just a self-attention in decoder.
 $$\textrm{MA}(Q,K,V) = softmax\bigg(\frac{Q^TK+M}{\sqrt{d_k}}\bigg)V,$$
 where $M$ is a matrix of 0 and $-\infty$. Note that $-\infty$ will make $exp$ term to be zero.
 
+\subsection{Skip Connection}
+This is a regularization technique.
 
-\begin{figure}[h]
+\subsection{Positional Embedding}
+
+\begin{figure}[t]
 	\centering
 	\includegraphics[scale=0.6]{./images/transformer/positional_1.png}
 	\caption{Positional embedding.}
 \end{figure}
+
+
+\begin{lstlisting}[language=Python]
+def position_encoding(seq_len: int, dim_model: int)->Tensor:
+    pos = torch.arange(seq_len, dtype=torch.float).reshape(1, -1, 1)
+    dim = torch.arange(dim_model, dtype=torch.float).reshape(1, 1, -1)
+    phase = pos / (1e4 ** (dim // dim_model))
+    return torch.where(dim.long() % 2 == 0, torch.sin(phase), torch.cos(phase))
+\end{lstlisting}
+
+\subsection{Encoder}
+
+\subsection{Decoder}
+The output of each step is fed to the bottom decoder in the next time step, and the decoders bubble up their decoding results just like the encoders did. And just like we did with the encoder inputs, we embed and add positional encoding to those decoder inputs to indicate the position of each word.
+
+\begin{lstlisting}[language=Python]
+def forward(self, tgt: Tensor, memory: Tensor) -> Tensor:
+	seq_len, dimension = tgt.size(1), tgt.size(2)
+	tgt += position_encoding(seq_len, dimension)
+	for layer in self.layers:
+		tgt = layer(tgt, memory)
+	return torch.softmax(self.linear(tgt), dim=-1)
+\end{lstlisting}
+
+
+
+
+

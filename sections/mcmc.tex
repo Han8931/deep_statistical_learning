@@ -1,0 +1,113 @@
+\section{Markov Chain Monte Carlo}
+The basic sampling methods we have learnt so far do not leverage past information, which assumes all samples are independent. In Markov chain based sampling, we will treat random variables as a sequence of sampling process. 
+
+In Markov Chain Monte Carlo(MCMC), we assume that a stationary distribution is already known. We are more interested in estimating a transition rule that describing the stationary distribution. 
+
+Ground rules for MCMCs:
+\begin{itemize}
+	\item MCMCs stochastically explore the parameter space in such a way that the histogram of their samples produces the target distribution.
+	\item Markovian: Evolution of the chain (\ie collections of samples from one iteration to the other) only depends on the current position and some transition probability distribution (\ie how we move from one point in parameter space to another). This means that the chain has no memory and past samples cannot be used to determine new positions in parameter space.
+	\item The chain will converge to the target distribution if the transition probability is:
+		\begin{itemize}
+			\item Irreducible: From any point in parameter space, we must be able to reach any other point in the space in a finite number of steps.
+			\item Positive recurrent: For any point in parameter space, the expected number of steps for the chain to return to that point is finite. This means that the chain must be able to re-visit previously explored areas of parameter space.
+			\item Aperiodic: The number of steps to return to a given point must not be a multiple of some value $k$. This means that the chain cannot get caught in cycles.
+		\end{itemize}
+\end{itemize}
+
+
+
+\subsection{Metropolis-Hasting Algorithm}
+% \begin{itemize}
+% 	\item Current value $z^t$
+% 	\item Propose a candidate $z^*\sim q(z^*|z^t)$ where $q_t$ is a proposal distribution (\ie Normal distribution). 
+% 	\item Same as importance and rejections samplings, yet the difference is the Markov property idea in the proposal distribution. 
+% 	\item With an acceptance probability (or moving criteria), $\alpha$.
+% \end{itemize}
+
+% \href{https://youtu.be/oX2wIGSn4jY}{Ref: YouTube Lecture}
+
+% % The product of MCMC is a posterior distribution.
+
+Suppose we have a target posterior distribution $\pi(x)$, where $x$ here can be any collection of parameters (not a single parameter). In order to move around this parameter space we must formulate some proposal distribution:
+
+$$q(x_{i+1}\mid x_i),$$
+
+that specifies the probability of moving to a point in parameter space, $x_{i+1},$ given that we are currently at $x_i$. The Metropolis Hastings algorithm accepts a ``jump'' to $x_{i+1}$ with the following probability
+
+$$\kappa(x_{i+1}\mid x_i) = \mathrm{min}\left(1, \frac{\pi(x_{i+1})q(x_i\mid x_{i+1})}{\pi(x_{i})q(x_{i+1}\mid x_{i})}\right) = \mathrm{min}(1, H),$$
+
+where the fraction above is called the Hastings ratio, $H$. The above expression represents that the probability of transitioning from point $x_{i+1}$ given the current position $x_{i}$ is a function of the ratio of the value of the posterior at the new point to the old point (\ie $\pi(x_{i+1})/\pi(x_i)$) and the ratio of the transition probabilities at the new point to the old point (\ie $q(x_i\mid x_{i+1})/q(x_{i+1}\mid x_i)$). Firstly, it is clear that if the ratio is bigger than 1 then the jump will be accepted. Secondly, the ratio of the target posteriors ensures that the chain will gradually move to high probability regions. Lastly, the ratio of the transition probabilities ensures that the chain is not ``favored'' toward certain locations by the proposal distribution function. Note that many proposal distributions are symmetric (\ie $q(x_{i+1}\mid x_i) = q(x_i\mid x_{i+1})$).
+
+The Metropolis-Hasting algorithm is then:
+
+\begin{lstlisting}[language=Python]
+def mh_sampler(x0, lnprob_fn, prop_fn, prop_fn_kwargs={}, iterations=100000):
+    """Simple metropolis hastings sampler.
+
+    :param x0: Initial array of parameters.
+    :param lnprob_fn: Function to compute log-posterior.
+    :param prop_fn: Function to perform jumps.
+    :param prop_fn_kwargs: Keyword arguments for proposal function
+    :param iterations: Number of iterations to run sampler. Default=100000
+
+    :returns:
+        (chain, acceptance, lnprob) tuple of parameter chain , acceptance rate
+        and log-posterior chain.
+    """
+
+    # number of dimensions
+    ndim = len(x0)
+
+    # initialize chain, acceptance rate and lnprob
+    chain = np.zeros((iterations, ndim))
+    lnprob = np.zeros(iterations)
+    accept_rate = np.zeros(iterations)
+
+    # first samples
+    chain[0] = x0
+    lnprob0 = lnprob_fn(x0)
+    lnprob[0] = lnprob0
+
+    # start loop
+    naccept = 0
+    for ii in range(1, iterations):
+
+        # propose
+        x_star, factor = prop_fn(x0, **prop_fn_kwargs)
+
+        # draw random uniform number
+        u = np.random.uniform(0, 1)
+
+        # compute hastings ratio
+        lnprob_star = lnprob_fn(x_star)
+        H = np.exp(lnprob_star - lnprob0) * factor
+
+        # accept/reject step (update acceptance counter)
+        if u < H:
+            x0 = x_star
+            lnprob0 = lnprob_star
+            naccept += 1
+
+        # update chain
+        chain[ii] = x0
+        lnprob[ii] = lnprob0
+        accept_rate[ii] = naccept / ii
+
+    return chain, accept_rate, lnprob
+
+\end{lstlisting}<++>
+
+
+% \begin{algorithm}
+% 	Initialization: $x_0$\\
+% 	\For {$i=1,\dots,N$}{
+		
+% 	}
+% 	Return $p(X) = \sum_i^M \alpha_T^i$
+% 	\caption{Metropolis-Hasting algorithm}
+% 	\label{algo:metro-polis}
+% \end{algorithm}
+
+
+

@@ -73,19 +73,3 @@ If $p(i,j) = q(j,i)$, it is called time-reversible Markov chain.
 
 % \section{Markov Chain for Sampling}
 
-\section{Markov Chain Monte Carlo}
-The basic sampling methods we have learnt so far do not leverage past information, which assumes all samples are independent. In Markov chain based sampling, we will treat random variables as a sequence of sampling process. 
-
-In Markov Chain Monte Carlo(MCMC), we assume that a stationary distribution is already known. We are more interested in estimating a transition rule that describing the stationary distribution. 
-
-\subsection{Metropolis-Hasting Algorithm}
-\begin{itemize}
-	\item Current value $z^t$
-	\item Propose a candidate $z^*\sim q(z^*|z^t)$ where $q_t$ is a proposal distribution (\ie Normal distribution). 
-	\item Same as importance and rejections samplings, yet the difference is the Markov property idea in the proposal distribution. 
-	\item With an acceptance probability (or moving criteria), $\alpha$.
-\end{itemize}
-
-\href{https://youtu.be/oX2wIGSn4jY}{Ref: YouTube Lecture}
-
-% The product of MCMC is a posterior distribution.
