@@ -12,10 +12,28 @@ The phrase ``Markov chain Monte Carlo'' encompasses a broad array of techniques 
 
 In order for all these ideas to make sense, we need to first go through some background on Markov chains. The rest of this chapter will be spent defining all these terms, the conditions under which they make sense, and giving examples of how they can be implemented in practice.
 
-\subsection{Markov Chain}
+\section{Markov Chain}
+Reference: \href{https://gregorygundersen.com/blog/2019/10/28/ergodic-markov-chains/}{Link}
 
 A Markov chain is a stochastic process that evolves over time by transitioning into different states. The sequence of states is denoted by the collection $\{X_i\}$ and the transition between states is random, following the rule 
-$$P(X_t|X_{t-1},\dots,X_0)=P(X_t|X_{t-1})$$
+
+\begin{definition}
+	Let $D$ be a finite set. A random process $X_1, X2,\dots$  with values in $D$ is called a Markov chain if
+$$P(X_t=x_{t+1}|X_{t}=x_t,\dots,X_0=x_0)=P(X_{t+1}=x_{t+1}|X_{t}=x_t)$$
+\label{def:markov_chain}
+\end{definition}
+We can think of $X_t$ as a random state at time $t$, and the Markovian assumption is that the probability of transitioning from $x_t$ to $x_{t+1}$ only depends on $x_t$. In words, the future depends only on the present. Let $p_{ij}$ be the probability of transitioning from state $i$ to state $j$. A Markov chain can be defined by a transition probability matrix:
+\begin{definition}
+	The matrix $\mathbf{P}=(p_{ij})_{i,j}\in D$ is called the transition probability matrix.
+\label{def:markov_chain_transition_matrix}
+\end{definition}
+Thus, $P$ is a $∣D∣\times∣D∣$ matrix, where $∣D∣$ denotes the cardinality of $D$, and the cell value $p_{ij}$ is the probability of transitioning from state $i$ to state j$,$ and the rows of $P$ must sum to one. In this post, we will restrict ourselves to time \textit{homogeneous Markov chains}:
+
+\begin{definition}
+A Markov chain is called time homogeneous if 
+$$\mathbb{P}{X_{t+1}=j∣X_n=i}=p_{ij},\, \forall n.$$
+\end{definition}
+In words, the transition probabilities are not changing as a function of time. Finally, let's introduce some useful notation for the initial state of the Markov chain. Let
 
 \begin{itemize}
 	\item Each node has a probability distribution of states.
@@ -23,16 +41,13 @@ $$P(X_t|X_{t-1},\dots,X_0)=P(X_t|X_{t-1})$$
 		% \begin{align*}
 		% 	P(X_1=i) = \sum_{i=1}^N P(X_i=j|X_0=i)P(X_0=i)\\
 		% \end{align*}
-\end{itemize}
-
-\begin{itemize}
 	\item $i \to j$: Accessible if a state $j$ is accessible from $i$. 
 		\begin{itemize}
 			\item $i \leftrightarrow j$: Communicate between the two states.
 		\end{itemize}
-	\item Reducibility: A Markov chain is \textbf{\textit{irreducible}} if $i\leftrightarrow j, \forall i,j\in S$. Simply, if all states can visit other states, then it is irreducible. 
+	\item Reducibility: A Markov chain is \textbf{\textit{irreducible}} if $i\leftrightarrow j, \forall i,j\in S$. Simply, if all states are able to visit other states, it is irreducible. 
 	\item Periodic: State $i$ has a period $d$ (\ie periodically visit the state $i$) $\leftrightarrow$ aperiodic.
-	\item Transience: A state is transient if, when we leave this state, there is a non-zero probability that we will never return to it. Conversely, a state is recurrent if we know that we will return to that state, in the future, with probability 1 after leaving it (if it is not transient). 
+	\item Transience: A state is \textit{transient} if, when we leave this state, there is a non-zero probability that we will never return to it. Conversely, a state is \textit{recurrent} if we know that we will return to that state, in the future, with probability 1 after leaving it (if it is not transient). 
 		\begin{itemize}
 			\item Stationary Distribution: A probability of being in a state s at time-step t is equal to a probability of being in the state s at the next time-step. Then, it is a stationary probability distribution.
 		\end{itemize}
