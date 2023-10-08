@@ -1,0 +1,57 @@
+\chapter{Introduction}
+\section{KL Divergence}
+% \href{https://dibyaghosh.com/blog/probability/kldivergence.html}{Reference}
+The KL divergence can be defined as follows:
+\begin{align*}
+	D_{KL}(P||Q) = \mathbbm{E}_{x\sim P}\Bigg[\log \frac{P(X)}{Q(X)}\Bigg]
+\end{align*}
+
+\subsection{Properties}
+\begin{itemize}
+	\item Non symmetric
+	\item $D_{KL} \in [0,\infty]$ 
+	\item In order for the KL divergence to be finite, the support of $P$ needs to be in the support of $Q$. 
+\end{itemize}
+
+\subsection{Rewriting the Objective}
+\begin{align*}
+	D_{KL}(P||Q) &= \mathbbm{E}_{x\sim P}\Bigg[\log \frac{P(X)}{Q(X)}\Bigg]\\
+	&= \mathbbm{E}_{x\sim P} [-\log Q(X)] - \mathcal{H}(P(X))
+\end{align*}
+
+\begin{itemize}
+	\item $\mathbbm{E}_{x\sim P} [-\log Q(X)]$: Cross entropy
+	\item $\mathcal{H}(P(X))$: Entropy of $P$
+\end{itemize}
+
+\subsection{Forward and Reverse KL}
+
+Let's say there is a true distribution $P(X)$ with two modes and our approximation $Q(X)$ has one mode. Then,
+
+\begin{itemize}
+	\item Forward KL: $D_{KL}(P||Q)$
+	\item Reverse KL: $D_{KL}(Q||P)$
+\end{itemize}
+
+\paragraph{Forward KL: Mean-Seeking Behavior}
+\begin{align*}
+\arg\min_{\theta}D_{KL}(P \| Q) &= \arg\min_{\theta} \mathbbm{E}_{x \sim P}[-\log Q_\theta(X)] - \mathcal{H}(P(X))\\
+&= \arg\min_{\theta} \mathbbm{E}_{x \sim P}[-\log Q_\theta(X)]\\
+&= \arg\max_{\theta} \mathbbm{E}_{x \sim P}[\log Q_\theta(X)]
+\end{align*}
+
+Intuition: $x$ will be sampled from the distribution $P$, and its value will be estimated from $Q$. Thus, there will be higher chance that $x$ will be sampled from a space with higher probablity in $P$. Therefore, $Q_\theta$ has to consider all modes, which have high probabilities. 
+
+To use the forward KL, we have to have an access to the true model $P(X)$ for sampling. 
+
+\paragraph{Reverse KL: Mode-Seeking Behavior}
+\begin{align*}
+\arg\min_{\theta}D_{KL}(Q \| P) &= \arg\min_{\theta} \mathbbm{E}_{x \sim Q_\theta}[-\log P(X)] - \mathcal{H}(Q_\theta(X))\\
+&= \arg\max_{\theta} \mathbbm{E}_{x \sim Q_\theta}[\log P(X)] + \mathcal{H}(Q_{\theta}(X))
+\end{align*}
+
+Intuition: $x$ will be sampled from the distribution $Q$, and its value will be estimated from $P$. Thus, there will be higher chance that $x$ will be sampled from a space with higher probablity in $Q$. Therefore, to maximize the value, we need to focus on a single mode.  
+
+To use the reverse KL, we have to be able to evaluate the true model $P(X)$. 
+
+
