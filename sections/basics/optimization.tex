@@ -19,15 +19,15 @@ Most deep learning algorithms involve \textbf{optimization}.
 	Now let $\mathbf{d}\neq0, ||\mathbf{d}||=1$ be a direction, and in consideration of a new point $\mathbf{x}:=\bar{\mathbf{x}}+\mathbf{d}$, we define:
 	$$f(\bar{\mathbf{x}}+\mathbf{d})\approx f(\bar{\mathbf{x}})+\nabla f(\bar{\mathbf{x}})^T\mathbf{d}$$
 
-We would like to choose $\mathbf{d}$ that minimizes the function $f$. From the Cauchy-Schwarz inequality, we know that
-$$\nabla f(\bar{\mathbf{x}})^T\mathbf{d}\leq ||\nabla f(\bar{\mathbf{x}})||\textrm{ }||\mathbf{d}||  \quad \footnotemark[0]$$
+We would like to choose $\mathbf{d}$ that minimizes the function $f$. From the Cauchy-Schwarz inequality \footnote{Cauchy-Schwarz Inequaility: $|\mathbf{a}\cdot \mathbf{b}|\leq ||\mathbf{a}||\textrm{ } ||\mathbf{b}||$. Equality holds if and only if either $\mathbf{a}$ or $\mathbf{b}$ is a multiple of the other.}, we know that
+$$\nabla f(\bar{\mathbf{x}})^T\mathbf{d}\leq ||\nabla f(\bar{\mathbf{x}})||\textrm{ }||\mathbf{d}||$$
 with equality when $\mathbf{d}=\lambda \nabla f(\bar{\mathbf{x}})$, where $\lambda\in \mathbbm{R}$.
 
 	Since we want to minimize the function $f$, we negate the steepest direction $\mathbf{d}^{*}$ so the iterations of steepest descent becomes
 	$$\mathbf{x}^{(k+1)} = \mathbf{x}^{(k)} - \eta \nabla f(\mathbf{x}^{(k)})$$
 	, where $k$ is the index of iteration step and $\eta$ is the learning rate parameter.
 
-\footnotetext{Cauchy-Schwarz Inequaility: $|\mathbf{a}\cdot \mathbf{b}|\leq ||\mathbf{a}||\textrm{ } ||\mathbf{b}||$. Equality holds if and only if either $\mathbf{a}$ or $\mathbf{b}$ is a multiple of the other.}
+
 
 %	$\nabla f(\bar{\mathbf{x}})^T\mathbf{d}/||\mathbf{d}||\geq ||\nabla f(\bar{\mathbf{x}})||=\nabla f(\bar{\mathbf{x}})^T\Bigg(\frac{\nabla f(\bar{\mathbf{x}})}{||\nabla f(\bar{\mathbf{x}})||}\Bigg)$
 
