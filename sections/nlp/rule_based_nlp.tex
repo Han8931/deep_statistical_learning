@@ -1,0 +1,118 @@
+\chapter{Classical NLP Techniques}
+
+\section{Edit Distance}
+\label{sec:nlp_edit_distance}
+
+Edit distance is a method used in spell correction to determine how similar two words are by calculating the minimum number of operations (insertions, deletions, or substitutions) required to transform one word into another. The smaller the edit distance, the more similar the two words are.
+
+For example, let's say we have the following dictionary of valid words: "cat", "car", "cart", "care", "cards", "cast". If the input word is "carr", we calculate the edit distance between "carr" and each word in the dictionary as follows:
+
+\begin{itemize}
+	\item cat: 3 (insert "r" and "r", then delete "t")
+	\item car: 1 (replace second "r" with "t")
+	\item cart: 2 (insert "t" and delete second "r")
+\end{itemize}
+
+The smallest edit distance is 1, between "carr" and "car", so "car" would be selected as the corrected word.
+
+The edit distance method can be improved by using techniques such as weighting the importance of each operation (insertion, deletion, substitution) or using a more sophisticated algorithm such as \textit{Levenshtein distance}. Additionally, the method can be combined with other methods such as language modeling or phonetic analysis to further improve spell correction accuracy.
+
+\section{Point-wise Mutual Information}
+\label{sec:nlp_pmi}
+
+Point-wise Mutual Information (PMI) is a statistical measure to calculate the association between two words in a given corpus. PMI is calculated by comparing the probability of the co-occurrence of two words with their individual probabilities of occurrence.
+
+Formally, it is a quantity which is closely related to the mutual information is the point-wise mutual information. For two events (not random variables) $x$ and $y$, this is defined as
+\begin{align}
+	\textrm{PMI}[x,y] &\triangleq \textrm{log}\frac{p(x, y)}{p(x)p(y)}\\
+					 &= \frac{p(x|y)}{p(x)}=\frac{p(y|x)}{p(y)}
+	\label{eq:pmi}
+\end{align}
+This measures the discrepancy between these events occurring together compared to what would be expected by chance. 
+
+\begin{itemize}
+	\item $x$ and $y$ are two words being considered,
+	\item $P(x)$ is the probability of the occurrence of word $x$ in the corpus,
+	\item $P(y)$ is the probability of the occurrence of word $y$ in the corpus, and
+	\item $P(x,y)$ is the probability of the co-occurrence of words $x$ and $y$ in the corpus. In other words, $x$ and $y$ are adjacent
+\end{itemize}
+
+For terms with three words, the formula becomes:
+\begin{align*}
+	\textrm{PMI}[x,y,z] &= \textrm{log}\frac{p(x, y, z)}{p(x)p(y)p(z)}
+\end{align*}
+PMI values can range from $-\infty$ to $\infty$. Positive PMI values indicate that the words have a strong association, while negative values indicate that the words are unlikely to appear together.
+
+For example, consider a small corpus of text:
+\begin{itemize}
+	\item "The cat sat on the mat. The dog sat on the mat."
+	\item The matrix below is $6\times 6$ considering all possible combination of the "forward" co-occurrences.
+	\begin{align*}
+		\begin{bmatrix}
+		&the &cat &dog &sat &on  &mat\\
+		the & 0  &1   &1   &0   &0   &2\\
+		cat & 0  &0   &0   &1   &0   &0\\
+		dog & 0  &0   &0   &1   &0   &0\\
+		sat & 0  &0   &0   &0   &2   &0\\
+		on  & 2  &0   &0   &0   &0   &0\\
+		mat & 0  &0   &0   &0   &0   &0\\
+		\end{bmatrix}
+	\end{align*}
+\end{itemize}
+
+
+\subsection{Remove Stopwords prior to PMI}
+In the above example we have not removed stopwords, so some of you might be wondering if we need to remove stopwords prior to PMI. It depends on the problem statement but if your objective is to find the related words, you should remove stopwords prior to calculating PMI. 
+
+\section{TF-IDF}
+\label{sec:nlp_tf_idf}
+
+The term TF stands for term frequency, and the term IDF stands for inverse document frequency.
+
+The TF-IDF representation takes into account the importance of each word in a document. In the bag-of-words model, each word is assumed to be equally important, which is obviously a less accurate assumption.
+
+The method to calculate the TF-IDF weights of a term in a document is given by the following formula:
+
+\begin{itemize}
+	\item Term Frequency (TF), $tf(t,d)$, is the relative frequency of term t within document $d$,
+		$$tf(t,d) = \frac{f_{t,d}}{\sum_{t'\in d}f_{t',d}},$$
+
+		where $f_{t,d}$ is the raw count of a term in a document, \ie, the number of times that term $t$ occurs in document $d$. Note the denominator is simply the total number of terms in document $d$ (counting each occurrence of the same term separately). There are various other ways to define term frequency:
+		\begin{itemize}
+			\item The raw count itself: $tf(t,d) = f_{t,d}$ 
+    		\item Boolean "frequencies": 
+				\begin{align*}
+					tf(t,d) = \begin{cases}
+						1, \quad \text{if $t$ occurs in $d$}\\
+						0 \quad \text{otherwise}
+							\end{cases}
+				\end{align*}
+    		\item Logarithmically scaled frequency: $tf(t,d) = \log (1 + ft,d)$
+    		\item Augmented frequency, to prevent a bias towards longer documents, \eg. raw frequency divided by the raw frequency of the most frequently occurring term in the document:
+				\begin{align*}
+					tf(t,d) = 0.5 + 0.5\frac{f_{t,d}}{\max \{f_{t',d}:t' \in d\}}
+				\end{align*}
+		\end{itemize}
+	\item Inverse document frequency: The IDF is a measure of how much information the word provides, \ie, if it is common or rare across all documents. It is the logarithmically scaled inverse fraction of the documents that contain the word, which is obtained by dividing the total number of documents by the number of documents containing the term, and then taking the logarithm of that quotient: 
+		\begin{align*}
+			idf(t, D) = \log \frac{N}{|\{d\in D: t\in d\}|}
+		\end{align*}
+		\begin{itemize}
+			\item $N$ total number of documents in the corpus ($=|D|$). 
+			\item $|\{d\in D: t\in d\}|$: number of documents where the term $t$ appears.
+			\item 
+		\end{itemize}
+
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+

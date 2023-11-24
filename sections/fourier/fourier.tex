@@ -1,0 +1,46 @@
+\chapter{Fourier Analysis}
+Reference: Y.D. Chong 2021, NTU Lecture Note
+
+The Fourier transform is one of the most important mathematical tools used for analyzing functions. Given an arbitrary function $f(x)$, with a real domain $(x \in \mathbb{R})$, we can express it as a linear combination of complex waves
+
+\section{Fourier Series}
+\label{sec:fourier_series}
+
+We begin by discussing the Fourier series, which is used to analyze functions that are periodic in their inputs. A periodic function $f(x)$ is a function of a real variable $x$ that repeats itself every time $x$ changes by $a$. The constant $a$ is called the period. We can write the periodicity condition as
+$$f(x+a) = f(x), \forall x\in \mathbb{R}.$$
+The value of $f(x)$ can be real or complex, but $x$ should be real.
+
+Let's consider what it means to specify a periodic function $f(x)$. One way to specify the function is to give an explicit mathematical formula for it. Another approach might be to specify the function values in $−a/2 \leq x < a/2$. Since there's an uncountably infinite number of points in this domain, we can generally only achieve an approximate specification of $f$ this way, by giving the values of $f$ at a large but finite set $x$ points. 
+
+There is another interesting approach to specifying f. We can express it as a linear combination of simpler periodic functions, consisting of sines and cosines:
+$$f(x) = \sum_{n=1}^{\infty} \alpha_n \sin\bigg(\frac{2\pi n x}{a}\bigg)+\sum_{m=0}^{\infty}\beta_m \cos\bigg(\frac{2\pi m x}{a}\bigg).$$
+Note that the index $n$ does not include 0; since the sine term with $n = 0$ vanishes for all $x$, it's redundant. The above formula is called a \textit{Fourier series}. Given the numbers $\{\alpha_n, \beta_m\}$, which are called the \textit{Fourier coefficients}, $f(x)$ can be calculated for any $x$. The Fourier coefficients are real if $f(x)$ is a real function, or complex if $f(x)$ is complex.
+
+\subsection{Square-integrable functions}
+Can arbitrary periodic functions always be expressed as a Fourier series? It turns out that a certain class of periodic functions, commonly encountered in physical contexts, are guaranteed to always be expressible as Fourier series. These are called square-integrable functions such that the integral of the square of the absolute value is finite:
+\begin{align*}
+\int_{-a/2}^{a/2}|f(x)|^2 dx < \infty.
+\end{align*}
+Unless otherwise stated, we will always assume that the functions we're dealing with are square-integrable.
+
+\subsection{Complex Fourier series and inverse relations}
+
+We have written the Fourier series as a sum of sine and cosine functions. However, sines and cosines can be expressed by exponential functions by using \textit{Euler's formula}. 
+\begin{align}
+	e^{ix}=\cos x+i\sin x
+	\label{eq:euler_formula}
+\end{align}
+\begin{itemize}
+	\item $\cos x=\frac{e^{ix}+e^{-ix}}{2}$
+	\item $\sin x=\frac{e^{ix}-e^{-ix}}{2i}$
+\end{itemize}
+Thus, Fourier series can be expressed as follows:
+$$f(x) = \sum_{n=-\infty}^{\infty}e^{2\pi i n x/a}f_n$$
+\begin{itemize}
+	\item $i$: complex number
+	\item $n$: integer
+	\item $a$: period
+	\item $f_n$: Fourier coefficient
+\end{itemize}
+
+
