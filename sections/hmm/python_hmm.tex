@@ -1,0 +1,52 @@
+\section{Python Implementation}
+\label{sec:hmm_python}
+
+\subsection{Viterbi Algorithm}
+The Viterbi algorithm is a dynamic programming algorithm used to determine the most probable sequence of hidden states in a Hidden Markov Model (HMM) based on a sequence of observations. 
+
+The algorithm works by recursively computing the probability of the most likely sequence of hidden states that ends in each state for each observation.
+
+At each time step, the algorithm computes the probability of being in each state and emits the current observation based on the probabilities of being in the previous states and making a transition to the current state.
+
+Assuming we have an HMM with N hidden states and T observations, the Viterbi algorithm can be summarized as follows:
+
+    Initialization: At time t=1, we set the probability of the most likely path ending in state i for each state i to the product of the initial state probability pi and the emission probability of the first observation given state i. This is denoted by: delta[1,i] = pi * b[i,1].
+    Recursion: For each time step t from 2 to T, and for each state i, we compute the probability of the most likely path ending in state i at time t by considering all possible paths that could have led to state i. This probability is given by:
+
+delta[t,i] = max_j(delta[t-1,j] * a[j,i] * b[i,t])
+
+Here, a[j,i] is the probability of transitioning from state j to state i, and b[i,t] is the probability of observing the t-th observation given state I.
+
+We also keep track of the most likely previous state that led to the current state i, which is given by:
+
+psi[t,i] = argmax_j(delta[t-1,j] * a[j,i])
+
+\begin{itemize}
+	\item Termination: The probability of the most likely path overall is given by the maximum of the probabilities of the most likely paths ending in each state at time T. That is, P* = max_i(delta[T,i]).
+	\item Backtracking: Starting from the state i* that gave the maximum probability at time T, we recursively follow the psi values back to time t=1 to obtain the most likely path of hidden states.
+\end{itemize}
+
+The Viterbi algorithm is an efficient and powerful tool that can handle long sequences of observations using dynamic programming.
+
+
+% \begin{lstlisting}[language=Python]
+% import torch.optim as optim
+% epsilon = 2./255
+
+% delta = torch.zeros_like(pig_tensor, requires_grad=True) # init delta
+% opt = optim.SGD([delta], lr=1e-1) # Update delta
+
+% for t in range(30):
+%     pred = model(norm(pig_tensor + delta))
+% 	# For gradient ascent -CELoss
+%     loss = -nn.CrossEntropyLoss()(pred, torch.LongTensor([341])) 
+%     if t % 5 == 0:
+%         print(t, loss.item())
+
+%     opt.zero_grad()
+%     loss.backward()
+%     opt.step()
+%     delta.data.clamp_(-epsilon, epsilon) # infinity norm
+
+% print("True class probability:", nn.Softmax(dim=1)(pred)[0,341].item())
+% \end{lstlisting}
