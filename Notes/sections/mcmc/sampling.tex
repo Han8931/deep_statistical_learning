@@ -91,16 +91,36 @@ To run the rejection sampling, introduce a constant $k$ whose value is chosen su
 
 \subsection{Importance Sampling}
 
-We want to estimate an expectation of function $f(x), x\sim p(x)$, but it would be hard to estimate the distribution $p(x)$. Again, the importance sampling is not a method for generating samples from $p(\mathbf{x})$. In this case, we can use a simple distribution $q(x)$ by
-$$\mathbb{E}(f) = \int f(x)p(x)dx = \int f(x)\frac{p(x)}{q(x)}q(x)dx \approx \frac{1}{N}\sum_{n=1}^N \frac{p(x_i)}{q(x_i)}f(x_i) .$$
+We want to estimate an expectation of function $f(x),$ where $x\sim p(x)$, but it is hard to estimate the distribution $p(x)$. Again, the importance sampling is not a method for generating samples from $p(\mathbf{x})$. In this case, we can use a simple distribution $q(x)$ by
+% $$\mathbb{E}(f) = \int f(x)p(x)dx = \int f(x)\frac{p(x)}{q(x)}q(x)dx \approx \frac{1}{N}\sum_{n=1}^N \frac{p(x_i)}{q(x_i)}f(x_i) .$$
 
-%Importance sampling is not a method for generating samples from $p(\mathbf{x})$. It is just a method for estimating the expectation of a function $f(\mathbf{x})$. We first generate $R$ samples $\{x^{(r)}\}$ from $q(x)$, then we could estimate the expectation by Monte Carlo method. However, if the generated samples, values of $x$ where $q(x)$ is greater than $p(x)$ will be over-represented in this estimator, and where $q(x)$ is less than $p(x)$ will be under-represented. Thus, we introduce weights 
-%$$w_r = \frac{p(x^*)}{q(x^*)}$$
-	
-%	%$$\hat{f} = \frac{1}{L}\sum_{l=1}^{L}f(\mathbf{z}^{(l)})$$
+\begin{align*}
+	\mathds{E}_p[f(\bf x)] &=  \int p(\mathbf{x}) f(\mathbf{x}) d\rvx\\
+	&= \int p(\mathbf{x}) f(\mathbf{x}) \frac{q(\rvx)}{q(\rvx)} d\rvx\\
+	&= \int q(\rvx) \Bigg[ f(\mathbf{x}) \frac{p(\mathbf{x})}{q(\rvx)}\Bigg] d\rvx\\
+	&= \mathds{E}_q\Bigg[ f(\mathbf{x}) \frac{p(\mathbf{x})}{q(\rvx)}\Bigg]
+\end{align*}
 
 \begin{itemize}
 	\item Assume that $p(\mathbf{x})$ is known and too complicated to be sampled directly. 
 	\item Samples are independently drawn from a \textbf{proposal density} $Q(\mathbf{x})$, which is designed to be close to the true density $p(\mathbf{x})$ and \textbf{simpler}
 	\item Generate $R$ samples from $Q(\mathbf{x})$
 \end{itemize}
+
+By applying the Monte-Carlo method, we can get
+% By the Monte-Carlo, we can estimate the following equation with samples from $q$.
+\begin{align}
+	\mathds{E}_q\Bigg[ f(\mathbf{x}) \frac{p(\mathbf{x})}{q(\rvx)}\Bigg]&
+	\approx \frac{1}{N}\sum_{i=1}^N f(\mathbf{x}) \frac{p(\mathbf{x})}{q(\rvx)}, \quad \rvx_i\sim p(\rvx)
+	\label{eq:imporatnce_sampling}
+\end{align}
+
+\begin{itemize}
+	\item Unbiased estimation
+	\item (Potentially) Smaller variance compared to the vanilla Monte-Carlo method above.
+		\begin{itemize}
+			\item $Var_q\Bigg[f(\mathbf{x}) \frac{p(\mathbf{x})}{q(\rvx)}\Bigg]<Var_p[f(\rvx)]$
+			\item When $q(\rvx)$ is high where $|p(\rvx)f(\rvx)|$ is high.
+		\end{itemize}
+\end{itemize}
+
