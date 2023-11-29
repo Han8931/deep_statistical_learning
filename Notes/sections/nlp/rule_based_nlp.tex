@@ -99,13 +99,42 @@ The method to calculate the TF-IDF weights of a term in a document is given by t
 		\end{align*}
 		\begin{itemize}
 			\item $N$ total number of documents in the corpus ($=|D|$). 
-			\item $|\{d\in D: t\in d\}|$: number of documents where the term $t$ appears.
+			\item $|\{d\in D: t\in d\}|$: number of documents where the term $t$ appears. If the term is not in the corpus, this will lead to a division-by-zero. It is therefore common to adjust the numerator $1 + N$ and denominator to $1+|\{d\in D: t\in d\}|$.
 			\item 
 		\end{itemize}
 
 \end{itemize}
 
+\subsection{Term frequency–inverse document frequency}
+TF-IDF is calculated as a multiplication of $tf(t, D)$ and $idf(t, D)$. 
+\begin{itemize}
+	\item A high weight in TF–IDF is reached by a high term frequency (in the given document) and a low document frequency of the term in the whole collection of documents; the weights hence tend to filter out common terms. 
+	\item Since the ratio inside the IDF's log function is always greater than or equal to 1, the value of IDF (and TF–IDF) is greater than or equal to 0. 
+	\item As a term appears in more documents, the ratio inside the logarithm approaches 1, bringing the IDF and TF–IDF closer to 0. 
+\end{itemize}
 
+% \subsection{Justification of IDF}
+% Let's say
+% \begin{align*}
+% 	P(t|D) &= \frac{|\{d\in D: t\in d\}|}{N}.
+% \end{align*}
+% Then, 
+% \begin{align*}
+% 	IDF &= -\log P(t|D)\\
+% 		&= \log \frac{1}{P(t|D)}\\
+% 		&= \log \frac{N}{|\{d\in D: t\in d\}|}.\\
+% \end{align*}
+
+\subsection{Python Implementation}
+
+
+
+\subsection{Link with Information Theory}
+This expression shows that summing the TF–IDF of all possible terms and documents recovers the mutual information between documents and term taking into account all the specificities of their joint distribution. Each TF–IDF hence carries the "bit of information" attached to a term x document pair. 
+
+
+\section{BM25}
+\label{sec:nlp_bm25}
 
 
 
