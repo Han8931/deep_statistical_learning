@@ -1,0 +1,40 @@
+\section{Introduction}
+\label{state:sec:intro}
+
+
+\subsection{State-Space Model}
+\begin{align*}
+	\frac{dX}{dt} &= {A}X+{B}U,\\
+	Y &= {C}X+DU.
+\end{align*}
+The first and the second equations are known as \textit{state equation} and \textit{output equation}, respectively. The state equation tells us that how the state vector changes with the state vector and the input. 
+
+\begin{itemize}
+	\item $X$ and ${dX}/{dt}$ are the state vector and the differential state vector respectively. 
+	\item $U$ and $Y$ are scalar input vector and scalar output vector respectively. 
+	\item $A$ is the system matrix.
+	\item $B$ and $C$ are the input and the output matrices.
+	\item $D$ is the feed-forward matrix.
+\end{itemize}
+
+
+The state space model (SSM) can be defined as follows:
+\begin{align*}
+	x'(t) &= \mathbf{A}x(t)+\mathbf{B}u(t),\\
+	y(t) &= \mathbf{C}x(t)+\mathbf{D}u(t).
+\end{align*}
+
+It maps a single dimensional input signal $u(t)$ to an $N$-dim latent state $x(t)$ before projecting to a one-dim output signal $y(t)$.  
+
+Our goal is to simply use the SSM as a black-box representation in a deep sequence model, where $\rmA, \rmB, \rmC$, and $\rmD$ are parameters learned by gradient descent. We will omit the parameter $\rmD$ for exposition (or equivalently, assume $\rmD=0$, because the term $\rmD u$ can be viewed as a skip connection and is easy to compute).
+
+An SSM maps a input $u(t)$ to a state representation vector $x(t)$ and an output $y(t)$. For simplicity, we assume the input and output are one-dimensional, and the state representation is $N$-dimensional. The first equation defines the change in $x(t)$ over time.
+
+% \begin{lstlisting}[language=Python]
+% 	def random_SSM(rng, N):
+% 		a_r, b_r, c_r = jax.random.split(rng, 3)
+% 		A = jax.random.uniform(a_r, (N, N))
+% 		B = jax.random.uniform(b_r, (N, 1))
+% 		C = jax.random.uniform(c_r, (1, N))
+%     return A, B, C
+% \end{lstlisting}
