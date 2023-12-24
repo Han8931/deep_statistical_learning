@@ -1,10 +1,40 @@
 \chapter{Gaussian Process}
+\href{https://github.com/jwangjie/Gaussian-Process-Regression-Tutorial}{Reference}
+
+
 \section{Introduction}
 \label{sec:gaussian_process}
-Gaussian processes are distributions over functions $f(x)$ of which the distribution is defined by a mean function $m(x)$ and positive definite covariance function $k(x,x')$:
+A Gaussian process (GP) is a probability distribution over possible functions that fit a set of points. More formally, GPs are distributions over functions $f(x)$ of which the distribution is defined by a mean function $m(x)$ and positive definite covariance function $k(x,x')$ (\ie \textit{kernel}). Thus, it is a distribution over functions whose shape is defined by the kernel:
 $$f(x) \sim \mathcal{GP}(m(x),k(x,x')).$$
 
-Let $f(x) = \phi(x)^Tw$, with $w\sim \mathcal{N}(0, \alpha^{-1}\mathbf{I})$. Then, $m(x) = \mathbb{E}[f(x)] = \mathbb{E}[w]^T\phi(x) = 0$
+Since we have the probability distribution over all possible functions, we can calculate the mean and the variance of the function to determine how confident in our predictions.
 
-$k(x, x') = \mathbb{E}[(f(x)-m(x))(f(x')-m(x'))] =\mathbb{E}[f(x)(f(x')] $
+Let's say we have observations, and we have estimated functions $\rvf$ with these observations. Now say we have some new points $\mathbf{X}_*$ where we want to predict $f(\mathbf{X}_*)$.
+
+The joint distribution of $\rvf$ and $\rvf_*$ can be modeled as:
+
+\begin{align*}
+	\begin{pmatrix}
+		\rvf\\
+		\rvf_*
+		\end{pmatrix}\sim \mathcal{N} 
+		\begin{pmatrix}
+		\begin{pmatrix}
+			m(\mathbf{X})\\
+			m(\mathbf{X}_*)
+		\end{pmatrix},
+		\begin{pmatrix}
+			\mathbf{K} & \mathbf{K}_*\\
+			\mathbf{K}_*^T & \mathbf{K}_{**}
+		\end{pmatrix}
+		\end{pmatrix},
+\end{align*}
+where 
+
+However, what we want is $\rvf_*$, predictions for new observations, which is a conditional distribution over $\rvf_*$. 
+
+
+% Let $f(x) = \phi(x)^Tw$, with $w\sim \mathcal{N}(0, \alpha^{-1}\mathbf{I})$. Then, $m(x) = \mathbb{E}[f(x)] = \mathbb{E}[w]^T\phi(x) = 0$
+
+% $k(x, x') = \mathbb{E}[(f(x)-m(x))(f(x')-m(x'))] =\mathbb{E}[f(x)(f(x')] $
 

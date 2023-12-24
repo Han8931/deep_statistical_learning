@@ -4,7 +4,7 @@ Integrate over all $\theta$
 
 \begin{align}
 P(heads \mid D) =& \int_{\theta} P(heads, \theta \mid D) d\theta\\
- =& \int_{\theta} P(heads \mid \theta, D) P(\theta \mid D) d\theta \ \ \ \ \ \  \textrm{(Chain rule: $P(A,B|C)=P(A|B,C)P(B|C)$.)}\\ 
+ =& \int_{\theta} P(heads \mid \theta, D) P(\theta \mid D) d\theta \quad \because  \textrm{Chain rule, } P(A,B|C)=P(A|B,C)P(B|C)\\ 
   =& \int_{\theta} \theta P(\theta \mid D) d\theta\\ 
   =&E\left[\theta|D\right]\\
  =&\frac{n_H + \alpha}{n_H + \alpha + n_T + \beta}
