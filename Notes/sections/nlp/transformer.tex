@@ -4,13 +4,13 @@ The attention mechanism mimics the retrieval of a value $v_i$ for a query $q$ ba
 $$attn(q, k, v) = \sum_i sim(q,k_i)\times v_i$$
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=2.0]{./images/transformer/attention_database.pdf}
+	\includegraphics[scale=1.8]{./images/transformer/attention_database.pdf}
 	\caption{The most similar key will be selected by measuring a \textbf{similarity} between a query and a key.}
 \end{figure}
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.8]{./images/transformer/attention.pdf}
+	\includegraphics[scale=0.6]{./images/transformer/attention.pdf}
 	\caption{The similarity $s_t$ is computed by a query and keys}
 \end{figure}
 There are several choices for a similarity function.
@@ -29,7 +29,7 @@ $$a_i = \frac{\exp(s_i)}{\sum_j \exp(s_j)}$$
 
 
 \subsection{Self-Attention}
-$$attn(Q,K,V) = softmax(\frac{Q^TK}{\sqrt{d_k}})V$$
+$$attn(Q,K,V) = softmax\bigg(\frac{Q^TK}{\sqrt{d_k}}\bigg)V$$
 
 \subsection{Masked attention}
 The masked attention is often referred to cross-attention. This is just a self-attention in decoder.
