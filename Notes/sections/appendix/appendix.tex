@@ -4,6 +4,65 @@
 \begin{appendices}
 \chapter{Appendix}
 
+\section{Vector Notations}
+
+\begin{itemize}
+	\item $\rvx = (x_1, x_2,..., x_n)$ or
+	\item 
+		\begin{align*}
+			\rvx = \begin{bmatrix}x_1\\ \vdots\\ x_n\end{bmatrix}
+		\end{align*}
+\end{itemize}
+
+\subsection{Differentiate}
+
+Differentiate a vector $y$ by a scalar $\rvx$:
+\begin{align*}
+	\frac{\partial \rvy}{\partial x} = \begin{bmatrix}\frac{\partial y_1}{\partial x}\\ \vdots\\ \frac{\partial y_n}{\partial x}\end{bmatrix}
+\end{align*}
+
+Differentiate a scalar $y$ by a vector $\rvx$:
+\begin{align*}
+	\frac{\partial y}{\partial \rvx} = \bigg[\frac{\partial y}{\partial x_1}, \cdots, \frac{\partial y}{\partial x_n}\bigg]
+\end{align*}
+
+Differentiate a vector $y$ by a vector $\rvx$:
+\begin{align*}
+	\frac{\partial \rvy}{\partial \rvx} = \begin{bmatrix}
+		\frac{\partial y_1}{\partial x_1} & \cdots & \frac{\partial y_1}{\partial x_n}\\ 
+		\vdots & \ddots & \vdots\\ 
+		\frac{\partial y_n}{\partial x_1} & \cdots & \frac{\partial y_n}{\partial x_n}
+\end{bmatrix}
+\end{align*}
+
+$\rva^T\rvx$ is a scalar value, so 
+
+\begin{align*}
+	\frac{\partial \rva^T\rvx}{\partial \rvx} &= \bigg[\frac{\partial (\rva^T\rvx)}{\partial x_1} \cdots \frac{\partial (\rva^T\rvx)}{\partial x_n}\bigg] = \bigg[\frac{\partial (a_1x_1+\dots+a_nx_n)}{\partial x_1}, \cdots, \frac{\partial (a_1x_1+\dots+a_nx_n)}{\partial x_n}\bigg]\\ 
+	&= [a_1, \dots, a_n] = \rva^T
+\end{align*}
+
+\begin{align*}
+	A\rvx = \begin{bmatrix}
+		a_{11} & \dots & a_{1n}\\
+		\vdots & \ddots & \vdots\\
+		a_{m1} & \dots & a_{mn}\\
+	\end{bmatrix}\times
+	\begin{bmatrix}
+		x_1\\
+		\vdots\\
+		x_n
+		\end{bmatrix} = \begin{bmatrix}
+		\sum_{i=1}^n a_{1i}x_i\\
+		\vdots\\
+		\sum_{i=1}^n a_{mi}x_i\\
+	\end{bmatrix}
+\end{align*}
+Thus, 
+\begin{align*}
+	\frac{\partial A\rvx}{\partial \rvx} = 
+\end{align*}
+
 \section{KL Divergence between Two Normal Distribution}
 \begin{align*}
 D_\text{KL}(P||Q) & = \mathbb{E}_P\Big[\textrm{log}\frac{P}{Q}\Big]\\
