@@ -60,7 +60,11 @@ $\rva^T\rvx$ is a scalar value, so
 \end{align*}
 Thus, 
 \begin{align*}
-	\frac{\partial A\rvx}{\partial \rvx} = 
+	\frac{\partial A\rvx}{\partial \rvx} =\begin{bmatrix}
+		\frac{\partial \sum_{i=1}^n a_{1i}x_i}{\partial x_1}& \dots & \frac{\partial \sum_{i=1}^n a_{1i}x_i}{\partial x_n}\\
+		\vdots & \ddots & \vdots\\
+		\frac{\partial \sum_{i=1}^n a_{mi}x_i}{\partial x_1} & \dots & \frac{\partial \sum_{i=1}^n a_{mi}x_i}{\partial x_n}
+	\end{bmatrix} = A
 \end{align*}
 
 \section{KL Divergence between Two Normal Distribution}
