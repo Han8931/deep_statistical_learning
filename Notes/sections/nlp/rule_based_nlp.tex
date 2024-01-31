@@ -74,7 +74,7 @@ The TF-IDF representation takes into account the importance of each word in a do
 The method to calculate the TF-IDF weights of a term in a document is given by the following formula:
 
 \begin{itemize}
-	\item Term Frequency (TF), $tf(t,d)$, is the relative frequency of term t within document $d$,
+	\item \textbf{Term Frequency} (TF), $tf(t,d)$, is the relative frequency of term $t$ within document $d$,
 		$$tf(t,d) = \frac{f_{t,d}}{\sum_{t'\in d}f_{t',d}},$$
 
 		where $f_{t,d}$ is the raw count of a term in a document, \ie, the number of times that term $t$ occurs in document $d$. Note the denominator is simply the total number of terms in document $d$ (counting each occurrence of the same term separately). There are various other ways to define term frequency:
@@ -93,14 +93,18 @@ The method to calculate the TF-IDF weights of a term in a document is given by t
 					tf(t,d) = 0.5 + 0.5\frac{f_{t,d}}{\max \{f_{t',d}:t' \in d\}}
 				\end{align*}
 		\end{itemize}
-	\item Inverse document frequency: The IDF is a measure of how much information the word provides, \ie, if it is common or rare across all documents. It is the logarithmically scaled inverse fraction of the documents that contain the word, which is obtained by dividing the total number of documents by the number of documents containing the term, and then taking the logarithm of that quotient: 
+	\item \textbf{Inverse document frequency (IDF)}: \textit{The IDF is a measure of how much information the word provides}, \ie, if it is common or rare across all documents. It is the logarithmically scaled inverse fraction of the documents that contain the word, which is obtained by dividing the total number of documents by the number of documents containing the term, and then taking the logarithm of that quotient: 
 		\begin{align*}
 			idf(t, D) = \log \frac{N}{|\{d\in D: t\in d\}|}
 		\end{align*}
 		\begin{itemize}
 			\item $N$ total number of documents in the corpus ($=|D|$). 
 			\item $|\{d\in D: t\in d\}|$: number of documents where the term $t$ appears. If the term is not in the corpus, this will lead to a division-by-zero. It is therefore common to adjust the numerator $1 + N$ and denominator to $1+|\{d\in D: t\in d\}|$.
-			\item 
+			\item Similarly, IDF can also be expressed
+		\begin{align*}
+			idf(t, D) = \log \frac{N-n+0.5}{n+0.5}+1,
+		\end{align*}
+		where $n$ is the number of documents containing the term $t$.
 		\end{itemize}
 
 \end{itemize}
@@ -114,7 +118,7 @@ TF-IDF is calculated as a multiplication of $tf(t, D)$ and $idf(t, D)$.
 \end{itemize}
 
 % \subsection{Justification of IDF}
-% Let's say
+% Let's say we can estimate the probability that a given document $d$ contains a term $t$ as the relative document frequency 
 % \begin{align*}
 % 	P(t|D) &= \frac{|\{d\in D: t\in d\}|}{N}.
 % \end{align*}
@@ -125,7 +129,7 @@ TF-IDF is calculated as a multiplication of $tf(t, D)$ and $idf(t, D)$.
 % 		&= \log \frac{N}{|\{d\in D: t\in d\}|}.\\
 % \end{align*}
 
-\subsection{Python Implementation}
+% \subsection{Python Implementation}
 
 
 
@@ -133,8 +137,27 @@ TF-IDF is calculated as a multiplication of $tf(t, D)$ and $idf(t, D)$.
 This expression shows that summing the TF–IDF of all possible terms and documents recovers the mutual information between documents and term taking into account all the specificities of their joint distribution. Each TF–IDF hence carries the "bit of information" attached to a term x document pair. 
 
 
-\section{BM25}
+\section{Best Match 25 Ranking Algorithm}
 \label{sec:nlp_bm25}
+Best Match 25 ranking algorithm or BM25 is a bag-of-words retrieval function that ranks a set of documents based on the query terms appearing in each document, regardless of their proximity within the document. It is a family of scoring functions with slightly different components and parameters. One of the most prominent instantiations of the function is as follows. 
+
+Given a query $Q$, containing keywords $q_1, \dots, q_n$, the BM25 score of a document $D$ is given by
+\begin{align*}
+	\text{score}(D,Q)=\sum_{i=1}^n IDF(q_i)\cdot \frac{f(q_i, D)\cdot (k_1+1)}{f(q_i, D)+k_1\cdot (1-b+b\cdot\frac{|D|}{avgd1})},
+\end{align*}
+where $f(q_i, D)$ is the number of times that the keyword $q_i$ occurs in the document, $D$, $|D|$ is the length of the document $D$ in words, and $avgd1$ is the average document length in a collection of documents. $k_1$ and $b$ are free parameters, usually chosen, in absence of an advanced optimization, as $k_1\in [1.2, 2.0]$ and $b=0.75$.
+
+\section{Reciprocal Rank Fusion }
+\label{sec:nlp_rrf}
+Reciprocal Rank Fusion (RRF), a simple method for combining the document rankings from multiple information retrieval systems.
+
+\begin{align*}
+	RRF(d\inD) = \sum_{r\in R}\frac{1}{k+r(d)}
+\end{align*}
+\begin{itemize}
+	\item $k$ is a constant that helps to balance between high and low ranking. Typically set at 60.
+	\item $r(d)$ is the rank/position of the document.
+\end{itemize}
 
 
 
