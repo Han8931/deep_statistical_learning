@@ -1,0 +1,76 @@
+\section{Probability}
+\label{sec:intro_prob}
+
+\begin{definition}{Independence}
+	\begin{align*}
+		X\perp Y \leftrightarrow p(X,Y)=p(X)p(Y)
+	\end{align*}
+\end{definition}
+\begin{definition}{Conditional independence}
+	\begin{align*}
+		X\perp Y|Z \leftrightarrow p(X,Y|Z)=p(X|Z)p(Y|Z)
+	\end{align*}
+\end{definition}
+All the dependencies between $X$ and $Y$ are mediated via $Z$. If $X$ and $Y$ are conditionally independent, then 
+\begin{align*}
+	p(X|Y,Z)&=\frac{p(X,Y|Z)}{p(Y|Z)}\\
+	&=\frac{p(X|Z)p(Y|Z)}{p(Y|Z)}\\
+	&=p(X|Z).
+\end{align*}
+
+\section{Transformations of Random Variable}
+\subsection{Formal Definition}
+Suppose $X$ is a continuous random variable with pdf $f(x)$. If we define $Y=g(X)$, where $g(\cdot)$ is a monotonically increasing function, then the pdf of $Y$ can be obtained as follows:
+\begin{align*}
+	p(Y\leq y) &= p(g(X)\leq y)\\
+	& = p(X\leq g^{-1}(y))
+\end{align*}
+This can be re-written as by definition
+\begin{align*}
+F_Y(y) = F_X(g^{-1}(y))
+\end{align*}
+By differentiating the CDFs on both sides w.r.t. $y$, we can get the pdf of $Y$. If the function $g(\cdot)$ is monotonically increasing, then the pdf of $Y$ is given by
+$$f_Y(y) = f_X(g^{-1}(y))\frac{d}{dy}g^{-1}(y)$$
+On the other hand, if it is monotonically decreasing, then the pdf of $Y$ is given by
+$$f_Y(y) = - f_X(g^{-1}(y))\frac{d}{dy}g^{-1}(y)$$
+Compactly, the above two equations can be combined into a following equation:
+$$f_Y(y) = f_X(g^{-1}(y))\Bigg|\frac{d}{dy}g^{-1}(y)\Bigg|$$
+
+\subsection{Intuition}
+Given a random variable $z$ and its known probability density function $z\sim \pi(z)$, we would like to construct a new random variable using a one-to-one mapping function $x=f(z)$. The function $f$ is invertible, so $z = f^{-1}(x)$. Now the question is how to infer the unknown probability density function of the new variable, $p(x)$?
+
+$$
+\begin{aligned}
+& \int p(x)dx = \int \pi(z)dz = 1 \scriptstyle{\text{   ; Definition of probability distribution.}}\\
+& p(x) = \pi(z) \left\vert\frac{dz}{dx}\right\vert = \pi(f^{-1}(x)) \left\vert\frac{d f^{-1}(x)}{dx}\right\vert = \pi(f^{-1}(x)) \vert (f^{-1})'(x) \vert
+\end{aligned}$$
+
+In multivariate case, 
+
+\begin{align}
+\mathbf{z} &\sim \pi(\mathbf{z}), \mathbf{x} = f(\mathbf{z}), \mathbf{z} = f^{-1}(\mathbf{x}) \\
+p(\mathbf{x}) 
+&= \pi(\mathbf{z}) \left\vert \det \dfrac{d \mathbf{z}}{d \mathbf{x}} \right\vert  
+= \pi(f^{-1}(\mathbf{x})) \left\vert \det \dfrac{d f^{-1}}{d \mathbf{x}} \right\vert
+\end{align}
+
+\section{Bernoulli distribution}
+\label{sec:bernoulli}
+
+The probability of $x=1$ will be denoted by the parameter $\mu$ so that 
+$$p(x=1|\mu) = \mu,$$
+where $0 \leq \mu \leq 1$, from which it follows that $p(x=0|\mu) = 1-\mu$. The probability distribution over $x$ can be written in the form 
+\begin{align}
+	Bern(x|\mu) = \mu^x(1-\mu)^{1-x},
+	\label{eq:bernoulli}
+\end{align}
+which is known as the \textit{Bernoulli distribution}.  
+
+Now suppose we have a dataset $\mathcal{D} = \{x_1, \dots, \x_{N}\}$. We can construct the likelihood function, which is a function of $\mu$, on the assumption that the observations are drawn independently from $p(x|\mu)$, so that
+
+$$p(\mathcal{D}|\mu) = \prod_{n=1}^Np(x_n|\mu)= \prod_{n=1}^N\mu^{x_n}(1-\mu)^{1-x_n}$$
+
+In a frequentist, setting, we can estimate a value for $\mu$ by maximizing the likelihood function, or equivalently maximizing the logarithm of the likelihood. 
+$$L(w) = p(\rvt|\rvw, \sigma^2) = $$
+
+\input{./sections/probability/gaussian}
