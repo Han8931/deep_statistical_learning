@@ -66,20 +66,38 @@ Here, $A=-\frac{1}{\tau_p}$, $B = \frac{K_p}{\tau_p}$, $C=1$, and $D=0$. We can 
 % 	\item $D$ is the feed-forward matrix.
 % \end{itemize}
 
+\section{Legendre Memory Units}
+\label{sec:nlp_lmu}
+
 
 \section{Efficiently Modeling Long Sequences with Structured State-Spaces}
-\label{sec:}
-The state space model (SSM) can be defined as follows:
+\label{sec:nlp_ssm}
+The Linear State-Space Layer (LSSL) is a simple sequence model that maps a one-dimensional function  or sequence $u(t)\to y(t)$ through an implicit state $x(t)$ by simulating a linear continuous-time state-space representation in discrete-time
 \begin{align*}
 	x'(t) &= \mathbf{A}x(t)+\mathbf{B}u(t),\\
 	y(t) &= \mathbf{C}x(t)+\mathbf{D}u(t).
 \end{align*}
 
-It maps a single dimensional input signal $u(t)$ to an $N$-dim latent state $x(t)$ before projecting to a one-dim output signal $y(t)$.  
+It maps a single dimensional input signal $u(t)$ to an $N$-dim latent state (or hidden state) $x(t)$ before projecting to a one-dim output signal $y(t)$.  
 
 Our goal is to simply use the SSM as a black-box representation in a deep sequence model, where $\rmA, \rmB, \rmC$, and $\rmD$ are parameters learned by gradient descent. We will omit the parameter $\rmD$ for exposition (or equivalently, assume $\rmD=0$, because the term $\rmD u$ can be viewed as a skip connection and is easy to compute).
 
 An SSM maps a input $u(t)$ to a state representation vector $x(t)$ and an output $y(t)$. For simplicity, we assume the input and output are one-dimensional, and the state representation is $N$-dimensional. The first equation defines the change in $x(t)$ over time.
+
+\paragraph{Discretization} Then the discrete-time state-space model is given by
+\begin{align*}
+	x'(t) &= \overline{\mathbf{A}}x(t)+\overline{\mathbf{B}}u(t),\\
+	y(t) &= \mathbf{C}x(t)+\mathbf{D}u(t),
+\end{align*}
+where $\overline{\mathbf{A}} = \mathbf{I}+\Delta \mathbf{A}$
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{./images/nlp/ssm.pdf}
+	\caption{S4 Model}
+	\label{fig:nlp_s4_model}
+\end{figure}
+\paragraph{As a Convolution} 
 
 % \begin{lstlisting}[language=Python]
 % 	def random_SSM(rng, N):
