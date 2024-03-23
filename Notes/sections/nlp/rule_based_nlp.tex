@@ -117,6 +117,26 @@ TF-IDF is calculated as a multiplication of $tf(t, D)$ and $idf(t, D)$.
 	\item As a term appears in more documents, the ratio inside the logarithm approaches 1, bringing the IDF and TF–IDF closer to 0. 
 \end{itemize}
 
+
+In short, TF
+\begin{itemize}
+	\item This measures the frequency of a word in a document. If a word appears more times in a document, it is likely more important to the document.
+	\item number of times term ``word'' appears in a document / Total number of terms in the document
+	\item Consider a document containing 100 words wherein the word `cat' appears 3 times, then TF is 0.03
+\end{itemize}
+
+IDF: 
+\begin{itemize}
+	\item This measures the importance of a word in the entire corpus. If a word appears in many documents, it is likely less important to any individual document. 
+	\item $\log_e$ total number of documents/ Number of documents with term ``word'' in it. 
+	\item If we have 10 million documents, and `cat' appears in 1,000 of these. Then, IDF is $\log 10,000,000/1,000$  = 4
+\end{itemize}
+
+Finally, TF-IDF is $0.03\times 4 = 0.12$ 
+The higher the TF-IDF score, the rarer the term and vice versa. 
+
+
+
 % \subsection{Justification of IDF}
 % Let's say we can estimate the probability that a given document $d$ contains a term $t$ as the relative document frequency 
 % \begin{align*}
