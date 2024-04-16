@@ -7,13 +7,14 @@
 Kernel function: Let $\phi(\rvx)$ be a set of basis functions that map inputs $\rvx$ to a feature space. In many algorithms, this feature space only appears in a dot product $\phi(\rvx)^T\phi(\rvx')$ of input pairs $\rvx$ and $\rvx'$. Then, kernel function can be defined as $k(\rvx, \rvx') = \phi(\rvx)^T\phi(\rvx')$. Note that we only need to know $k(\rvx, \rvx')$, not $\phi(\rvx)$.
 \begin{itemize}
 	\item The kernel function is a measure of similarity between $\rvx_i$and $\rvx_j$ 
+	\item The key idea of kernel method is to represent the raw data based on a similarity function called kernel function over pairs of data points. 
 \end{itemize}
 
 A function $k: \mathbb{R}^d\times \mathbb{R}^d\to \mathbb{R}$ is said to be a positive semidefinite kernel if it is symmetric, (\ie $k(\rvx',\rvx)= k(\rvx,\rvx')$).
 
-Recall that the linear regression can be modelee as follows:
-$$f(\rvx) = \rvx^T\rvw,$$
-where $\rvx = [x_1, \dots, x_m]^T$ and $\rvw = [w_1,\dots,w_m]$. The ridge regression for $\mathbf{X}\in \mathbb{R}^{n\times m}$ matrix can be modeled as follows:
+Recall that the linear regression can be modeled as follows:
+$$f(\rvx) = \mathbf{X}\rvw,$$
+where $\rvx = [x_1, \dots, x_d]$ and $\rvw = [w_1,\dots,w_d]^T$. The ridge regression for $\mathbf{X}\in \mathbb{R}^{m\times d}$ matrix can be modeled as follows:
 \begin{align}
 	J(\rvw) &= \|\mathbf{y}-\mathbf{X}\rvw\|^2_2 + \lambda \|\rvw\|^2_2 \\
 			&= (\mathbf{y}-\mathbf{X}\rvw)^T(\mathbf{y}-\mathbf{X}\rvw)+\lambda\rvw^T\rvw\\
@@ -39,12 +40,12 @@ Let's change it into a dual form:
 \end{align}
 where $\mathbf{G} = \mathbf{X}\mathbf{X}^T$ is a \textit{Gram matrix}. Thus, we just have to solve $m\times m$ matrix. 
 
-Therefore, given a new input $\rvx'\in \mathbb{R}^m$, the prediction $f(\rvx') = (\rvx')^T\rvw $ can be expressed as follows:
-$$f(\rvx') = (\rvx')^T\mathbf{X}^T(\mathbf{X}\mathbf{X}^T+\lambda\mathbf{I})^{-1}\rvy.$$
+Therefore, given a new input $\rvx'\in \mathbb{R}^d$, the prediction $f(\rvx') = \rvx'\rvw $ can be expressed as follows:
+$$f(\rvx') = \rvx'\mathbf{X}^T(\mathbf{X}\mathbf{X}^T+\lambda\mathbf{I})^{-1}\rvy.$$
 
-Note that this formula depends only on the data via inner products. 
+Note that this formula \textbf{depends only on the data via inner products.}
 \begin{align*}
-	(\rvx')^T\mathbf{X}^T = 
+	\rvx'\mathbf{X}^T = 
 	\begin{bmatrix}
 		\langle \rvx',\rvx_1\rangle\\
 		\vdots\\
