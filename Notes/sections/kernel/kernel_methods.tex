@@ -1,14 +1,110 @@
 \chapter{Introduction to Kernel Methods}
+We will define the kind of kernels (so-called (\textit{Mercer}) kernels) that are used in kernel methods. Those kernels are covariance functions that have to be \textit{symmetric} and \textit{positive(-semi) definite}.
+
+Basic idea: we can make linear ML models non-linear by applying basis function (feature) transformations on the input space. For an input vector $\mathbf{x}\in \mathbb{R}^d$, do transformation $\mathbf{x}\to \phi(\rvx)$ where $\phi(\rvx)\in \mathbb{R}^D$. Usually, $D>>d$ because we add dimensions that capture non-linear interactions among features. 
+
 \begin{itemize}
 	\item The main idea is to use large set of fixed non-linear basis functions.
 	\item The complexity depends on number of basis functions, but dual trick changes it to a size of dataset. 
-\end{itemize}
-
-Kernel function: Let $\phi(\rvx)$ be a set of basis functions that map inputs $\rvx$ to a feature space. In many algorithms, this feature space only appears in a dot product $\phi(\rvx)^T\phi(\rvx')$ of input pairs $\rvx$ and $\rvx'$. Then, kernel function can be defined as $k(\rvx, \rvx') = \phi(\rvx)^T\phi(\rvx')$. Note that we only need to know $k(\rvx, \rvx')$, not $\phi(\rvx)$.
-\begin{itemize}
 	\item The kernel function is a measure of similarity between $\rvx_i$and $\rvx_j$ 
 	\item The key idea of kernel method is to represent the raw data based on a similarity function called kernel function over pairs of data points. 
 \end{itemize}
+
+
+\section{Kernel Trick}
+\label{sec:kernel:kernel_trick}
+
+Kernel trick aims to avoid computing explicit feature transformations $\phi(\rvx)$ by changing the entire ML algorithm to use only \textit{inner products} of feature transformations $\langle \phi(\rvx), \phi(\rvx')\rangle$ which are computed directly using a \textit{kernel} (rather than the feature transformations themselves.).
+
+\subsection{Linear Model}
+
+Consider a linear model where we use gradient descent with a squared loss function to learn the parameters. So, we have $h(\rvx) = \mathbf{w}^T\mathbf{x}$ and the squared loss function:
+$$l(\rvw) = \sum_{i=1}^{n}(\rvw^T\rvx - y_i)^2.$$
+
+The gradient w.r.t., $\rvw$ is given by 
+
+$$g(\rvw) = \frac{\partial l}{\partial \rvw} = \sum_{i=1}^{n}2(\rvw^T\rvx - y_i)\rvx_i.$$
+Since the loss is convex, the final solution is independent of the initialization, and we can initialize $\rvw_0$ to be whatever we want. For convenience, we choose $\rvw_0=\mathbf{0}.$
+
+Recall that the gradient update rule is given by
+$$\rvw_{t+1} = \rvw_t-\eta g(\rvw_t),$$
+where $\eta$ is the step size. We can show that for every $t$, $\rvw_t$ is a linear combination of $\rvx_i$ by setting 
+$$\rvw_t = \sum_{i=1}^{n}\alpha_i^{(t)}\rvx_i.$$
+Then,
+\begin{align*}
+	\rvw_{t+1} &= \rvw_t - \eta g(w)\\
+			   &= \sum_{i=1}^{n}\alpha_i^{(t)}\rvx_i-\eta\sum_{i=1}^{n}2(\rvw^T\rvx - y_i)\rvw_i\\
+			   &= \sum_{i=1}^{n}\alpha_i^{(t+1)}\rvx_i,
+\end{align*}
+where $\alpha_i^{(t+1)} = \alpha_i^{(t)}2\eta(\rvw^T\rvx - y_i)$. So instead of updating $\rvw_t$, we can update $\boldsymbol{\alpha}^{(t)}$.
+
+Now, $\rvw$ can be written as a linear combination of the training set. Then, we can also express the inner-product of $\rvw$ with any input $\rvx_i$ purely in terms of inner-products between training inputs:
+
+$$\rvw_t^T\rvx_i = \sum_{i=1}^{n}\alpha_j^{(t+1)}\rvx_j^T\rvx_i.$$
+Consequently, the entire loss function is not relying on $\rvx_j^T\rvx_i$, which can be replaced by $\langle \phi(\rvx_i), \phi(\rvx_j)\rangle$, kernel trick. 
+
+Note that we have transformed our learning problem that has $d$ parameters into a $m$-parameter problem. 
+
+\section{From Feature Transformations to Kernels}
+\label{sec:kernel:kernels}
+Instead of computing $\phi(\rvx_i), \forall i$ , we pre-compute $\langle \phi(\rvx_i), \phi(\rvx_j)\rangle$ for all $\rvx_i$ and $\rvx_j$. Then we store the values in an $n\times n$ matrix $K$ where $K_{ij}= \langle \phi(\rvx_i), \phi(\rvx_j)\rangle$. $K$ is called the kernel matrix or Gram matrix. 
+
+Computing $\phi(\rvx_i)$ is $\mathcal{O}(2^d)\times n = \mathcal{O}(2^dn)$. On the other hand, pre-computing the inner products can be more efficient as follows:
+\begin{align*}
+	\langle \phi(\rvx), \phi(\rvx')\rangle &= \phi(\rvx)^T\phi(\rvx')\\ 
+										   &= \prod_{k=1}^d(1+x_kx'_k)
+\end{align*}
+
+Note that all kernel methods are non-parametric models as we need to keep training data to be able to compute the kernel values between new test inputs and the training inputs.
+
+\section{Kernels}
+\label{sec:kernel:kernel_def}
+
+$k(\cdot, \cdot)$ is a valid or well-defined kernel, if the function $k(\rvx, \rvx')$ is both 
+\begin{itemize}
+	\item Symmetric: $k(\rvx, \rvx') = k(\rvx', \rvx)$ for all $\rvx, \rvx'$.
+	\item Positive semi-definite: $k(\cdot, \cdot)$ is PSD if for all finite subsets $\{\rvx_1,\dots,\rvx_m\}$, $\rvx_i\in \mathcal{X}$, $K$ is a PSD matrix. 
+\end{itemize}
+
+Note that 
+\begin{itemize}
+	\item A matrix $A\in \mathbb{R}^{m\times m}$ is PSD iff $\forall \rvq\in \mathbb{R}^m$ the following holds: $\rvq^TA\rvq\geq 0$.
+	\item A symmetric matrix $A\in \mathbb{R}^{m\times m}$ is PSD iff all eigenvalues $\lambda$ of $A$ are non-negative. 
+	\item A symmetric matrix $A$ is PSD if all its upper left sub-matrices have non-negative determinants.
+\end{itemize}
+
+For symmetric matrices all of the above are equivalent. 
+
+Some of the most popular kernels are
+\begin{itemize}
+	\item Linear kernel: $k(\rvx, \rvx') = \rvx^T\rvx'$
+	\item Polynomial kernel: $k(\rvx, \rvx') = (1+\rvx^T\rvx')^{\tilda{d}}$, where $\tilda{d}$ is the degree of the polynomial
+	% \item RBF: $k(\rvx, \rvx') = ||\rvx-\rvx'||^2$
+\end{itemize}
+
+Note that some kernels such as the RBF kernel have an infinite-dimensional feature space transformation. Hence, it is impossible to compute the feature space transformation explicitly. 
+
+\subsection{Some Intuitions}
+
+Let $y=f(\rvx)+\epsilon$. Then $f$ does not vary a lot if $\rvx$, $\rvx'$ are close enough. This can be modeled by the co-variance of the $y'$s.
+
+Let's represent the co-variance of the outputs in terms of the co-variance of the inputs. 
+
+$$cov(y,y') = k(\rvx, \rvx')+\underbracket{\sigma_n^2\delta_{\rvx,\rvx'}}_{\textrm{noise term}}.$$
+
+As $y$ is a function values of $f(\rvx)$, the kernel function can be viewed as an extension of the covariance matrix $\Sigma$ of random vectors to the covariance of (random) functions. 
+
+\section{Kernel Machines}
+\label{sec:kernel:kernel_machines}
+
+There are two steps to kernelize an ML method.
+\begin{itemize}
+	\item Rewriting learning and prediction algorithm entirely in terms of inner-products.
+	\item Define a kernel function and substitute $k(\rvx_i, \rvx_j)$ for $\rvx_i^T\rvx_j$.
+\end{itemize}
+
+
+Kernel function: Let $\phi(\rvx)$ be a set of basis functions that map inputs $\rvx$ to a feature space. In many algorithms, this feature space only appears in a dot product $\phi(\rvx)^T\phi(\rvx')$ of input pairs $\rvx$ and $\rvx'$. Then, kernel function can be defined as $k(\rvx, \rvx') = \phi(\rvx)^T\phi(\rvx')$. Note that we only need to know $k(\rvx, \rvx')$, not $\phi(\rvx)$.
 
 A function $k: \mathbb{R}^d\times \mathbb{R}^d\to \mathbb{R}$ is said to be a positive semidefinite kernel if it is symmetric, (\ie $k(\rvx',\rvx)= k(\rvx,\rvx')$).
 
