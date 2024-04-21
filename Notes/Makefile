@@ -2,8 +2,7 @@
 
 # main: main.pdf
 
-# main.bbl: main.pdf
-# 	bibtex main.aux
+# main.bbl: main.pdf bibtex main.aux
 
 # main.pdf: FORCE
 # 	pdflatex -synctex=1 -interaction=nonstopmode main.tex
@@ -25,7 +24,7 @@
 all: main.pdf
 
 main.pdf: main.bib
-	latexmk -pdf -pdflatex="pdflatex -interaction=nonstopmode" -use-make main.tex
+	latexmk -pdf -f -pdflatex="pdflatex -interaction=nonstopmode" -use-make main.tex
 
 main.bib:
 	touch -m references.bib

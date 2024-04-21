@@ -1,0 +1,100 @@
+\section{Regression}
+\label{sec:basic_regression}
+Suppose a noisy measurement $\rvy = [y_1, \dots, \y_n]$ with noise $\eta$ and we want to estimate parameter $\boldsymbol{\beta} = [\beta_1,\dots,\beta_d]^T$ by using our input $\rvx = [x_1, \dots, x_d]$. 
+
+This can be expressed as 
+$$\rvy = \mathbf{X}\boldsymbol{\beta}+\eta.$$
+
+Given an estimate $\tilde{\boldsymbol{\beta}}$, we consider the difference between the noisy measurements and estimated value as follows:
+$$\boldsymbol{\epsilon} = \rvy - \mathbf{X}\boldsymbol{\beta}$$
+
+Then, we can establish an objective function as follows:
+$$J(\boldsymbol{\beta}) = \boldsymbol{\epsilon}^T\boldsymbol{\epsilon}$$
+
+This is equivalent to minimizing the mean squared error:
+$$MSE = \frac{1}{n}\sum_{i=1}^n (y_i-\rvx_i\boldsymbol{\beta}).$$
+
+% The OLEs' solution can be optimized by a closed form as follows:
+% $$f(\rvx) = \mathbf{X}\boldsymbol{\beta},$$
+% where $\rvx = [x_1, \dots, x_d]$ and $\boldsymbol{\beta} = [\beta_1,\dots,\beta_d]^T$. The ridge regression for $\mathbf{X}\in \mathbb{R}^{n\times d}$ matrix can be modeled as follows:
+
+With the ridge regression principle, we can optimize it as follows:
+\begin{align}
+	J(\boldsymbol{\beta}) &= \|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2 + \lambda \|\boldsymbol{\beta}\|^2_2 \\
+			&= (\mathbf{y}-\mathbf{X}\boldsymbol{\beta})^T(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})+\lambda\boldsymbol{\beta}^T\boldsymbol{\beta}\\
+			&= (\mathbf{y}^T-\boldsymbol{\beta}^T\mathbf{X}^T)(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})+\lambda\boldsymbol{\beta}^T\boldsymbol{\beta}\\
+			&= \rvy^T\rvy-\boldsymbol{\beta}^T\mathbf{X}^T\rvy-\rvy^T\mathbf{X}\boldsymbol{\beta}+\boldsymbol{\beta}^T\mathbf{X}^T\mathbf{X}\boldsymbol{\beta}+\boldsymbol{\beta}^T\lambda\mathbf{I}\boldsymbol{\beta}\\
+	\frac{\partial J}{\partial \boldsymbol{\beta}}&= -\mathbf{X}^T\rvy-\mathbf{X}^T\rvy+\mathbf{X}^T\mathbf{X}\boldsymbol{\beta}+\mathbf{X}^T\mathbf{X}\boldsymbol{\beta}+2\lambda\mathbf{I}\boldsymbol{\beta} = 0\\
+	\boldsymbol{\beta}	&= (\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})^{-1}\mathbf{X}^T\rvy
+	\label{eq:ridge_regression}
+\end{align}
+
+The OLEs assume an equal confidence on all the measurements. Now we look at varying confidence in the measurements. We assume that the noise for each measurement has zero mean and is independent, then the covariance matrix for all measurement noise is given by
+\begin{align*}
+	R &= \mathbb{E}(\eta\eta^T)\\
+	  &= \begin{bmatrix}
+		  \sigma_1^2 & \dots & 0\\
+		  \vdots & \ddots & \vdots\\
+		  0 & \ddots & \sigma_l^2\\
+	  \end{bmatrix}
+\end{align*}
+By denoting the error vector $\rvy-H\tilda{\rvx}$ as $\boldsymbol{\epsilon} = (\epsilon_1, \dots, \epsilon_l)^T$, we will minimize the sum of squared differences weighted over the variations of the measurements:
+$$J(\tilda{\rvx}) = \boldsymbol{\epsilon}^TR^{-1}\boldsymbol{\epsilon}.$$
+This is equivalent to
+$$\frac{1}{n}\sum_{i=1}^{n}\sum_{i=1}^n \alpha_i (y_i-\rvx_i\boldsymbol{\beta}).$$
+
+The best estimate of the parameter is given by
+$$(H^TR^{-1}H)^{-1}H^TR^{-1}\rvy.$$
+Note that the measurement noise matrix $R$ must be non-singular for a solution to exist.
+
+\section{Recursive Least Squares}
+\label{sec:recursive_least_square}
+
+The ordinary least-squares assumes that all measurements are available at a certain time. However, this often might not be the case in practice. More often, we obtain measurements sequentially and want to update our estimate with each new measurement. In this case, the matrix $H$ needs to be augmented. This update can be very expensive. When then number of measurements is extremely large, the solutions of the least squares problem are difficult to compute. 
+
+These motivate the RLS. Suppose we have an estimate $\tilda{\rvx}_{k-1}$ after $k-1$ measurements, and obtain a new measurement $\rvy_k$. To be general, every measurements is now an $m$-vector with values yielded by, say, several measuring instruments. 
+
+A linear recursive estimator can be written in the following form:
+\begin{align*}
+	\rvy_k &= H_k\rvx+\eta_k\\
+	\tilda{\rvx}_k &= \tilda{\rvx}_{k-1}+K_k (\rvy_k-H_k\tilda{\rvx}_{k-1})
+\end{align*}
+Here $H_k$ is an $m\times n$ matrix, and $K_k$ is $n\times m$ and referred to as the \textit{estimator gain matrix}. We refer to $\rvy_k-H_k\tilda{\rvx}_{k-1}$ as the \textit{correction term}. Namely, the new estimate is modified from the previous estimate $\tilda{\rvx}_{k-1}$ with a correction via the gain vector. 
+
+The current estimation error is
+
+\begin{align*}
+	\boldsymbol{\epsilon}_k	&= \rvx-\tilda{\rvx}_k \\
+							&= \rvx-\tilda{\rvx}_{k-1} - K_k (\rvy_k-H_k\tilda{\rvx}_{k-1})\\
+							&= \boldsymbol{\epsilon}_{k-1}-K_k (H_k\rvx+\eta_k-H_k\tilda{\rvx}_{k-1})\\
+							&= \boldsymbol{\epsilon}_{k-1}-K_k H_k(\rvx-\tilda{\rvx}_{k-1})-K_k\eta_k\\
+							&= (I-K_k H_k)\boldsymbol{\epsilon}_{k-1}-K_k\eta_k,
+\end{align*}
+where $I$ is the $n\times n$ identity matrix. The mean of this error is then
+$$\mathbb{E}[\boldsymbol{\epsilon}_{k}] = (I-K_k H_k)\mathbb{E}[\boldsymbol{\epsilon}_{k-1}]-K_k\mathbb{E}[\boldsymbol{\eta}_{k}]$$
+If $\mathbb{E}[\boldsymbol{\eta}_{k}]=0$ and $\mathbb{E}[\boldsymbol{\epsilon}_{k-1}]=0$, then $\mathbb{E}[\boldsymbol{\epsilon}_{k}]=0$. So if the measurement noise has zero mean for all $k$, and the initial estimate of $\rvx$ is set equal to its expected value, then $\tilda{\rvx}_k=\rvx_k, \forall k$. With this property, the estimator $\tilda{\rvx}_k &= \tilda{\rvx}_{k-1}+K_k (\rvy_k-H_k\tilda{\rvx}_{k-1})$ is \textit{unbiased}. The property holds regardless of the value of the gain vector $K_k$. This means the estimate will be equal to the true value $\rvx$ on average. 
+
+The key is to determine the optimal value of the gain vector $K_k$. The optimality criterion used by us is to minimize the aggregated variance of the estimation errors at time $k$: 
+\begin{align*}
+	J_k &= \mathbb{E}[||\rvx-\tilda{\rvx}_k||^2]\\
+		&= \mathbb{E}[\boldsymbol{\epsilon}_{k}^T\boldsymbol{\epsilon}_{k}]\\
+		&= \mathbb{E}[tr(\boldsymbol{\epsilon}_{k}\boldsymbol{\epsilon}_{k}^T)]\\
+		&= tr(P_k),
+\end{align*}
+where $P_k=\mathbb{E}[\boldsymbol{\epsilon}_{k}\boldsymbol{\epsilon}_{k}^T]$ is the estimation-error covariance and the third line is done by the trace of a product (or cyclic property). The expectation in the third line can go into the trace operator by its linearity. Next, we can obtain $P_k$ by
+\begin{align*}
+	P_k &= \mathbb{E}\bigg[\big((I-K_k H_k)\boldsymbol{\epsilon}_{k-1}-K_k\eta_k\big)\big((I-K_k H_k)\boldsymbol{\epsilon}_{k-1}-K_k\eta_k\big)^T\bigg]
+\end{align*}
+By rearranging the above equation with the property that the mean of noise is zero, we can get
+$P_k = (I-K_k H_k)P_{k-1}(I-K_k H_k)^T+K_kR_kK_k^T.$
+
+This equation is the recurrence for the covariance of the least squares estimation error. It is consistent with the intuition that as the measurement noise $R_k$ increases, the uncertainty $P_k$ increases. 
+
+Next, we have to compute $K_k$ that minimizes the cost function given by error equation. 
+
+
+
+
+
+
+
