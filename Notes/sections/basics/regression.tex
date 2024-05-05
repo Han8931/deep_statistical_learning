@@ -1,23 +1,62 @@
 \section{Regression}
 \label{sec:basic_regression}
-Suppose a noisy measurement $\rvy = [y_1, \dots, \y_n]$ with noise $\eta$ and we want to estimate parameter $\boldsymbol{\beta} = [\beta_1,\dots,\beta_d]^T$ by using our input $\rvx = [x_1, \dots, x_d]$. 
+Suppose a noisy measurement $\rvy = [y_1, \dots, y_m]^T$ with noise $\boldsymbol{\eta} = [\eta_1, \dots, \eta_d]^T$ and we want to estimate parameter $\boldsymbol{\beta} = [\beta_1,\dots,\beta_d]^T$ by using our input $\rvx = [x_1, \dots, x_d]$. 
 
-This can be expressed as 
-$$\rvy = \mathbf{X}\boldsymbol{\beta}+\eta.$$
-
-Given an estimate $\tilde{\boldsymbol{\beta}}$, we consider the difference between the noisy measurements and estimated value as follows:
+The measurement $\rvy$ can be modeled as follows:
+$$\rvy = \mathbf{X}\boldsymbol{\beta}+\boldsymbol{\eta},$$
+where $\mathbf{X}$ is a $m\times d$ input matrix (or our observations). Given a parameter $\boldsymbol{\beta}$, we consider the difference between the noisy measurements and estimated value as follows:
 $$\boldsymbol{\epsilon} = \rvy - \mathbf{X}\boldsymbol{\beta}$$
-
 Then, we can establish an objective function as follows:
 $$J(\boldsymbol{\beta}) = \boldsymbol{\epsilon}^T\boldsymbol{\epsilon}$$
-
-This is equivalent to minimizing the mean squared error:
-$$MSE = \frac{1}{n}\sum_{i=1}^n (y_i-\rvx_i\boldsymbol{\beta}).$$
-
+Note that this is equivalent to minimizing the mean squared error:
+$$MSE = \frac{1}{n}\sum_{i=1}^n (y_i-\rvx_i\boldsymbol{\beta})^2.$$
 % The OLEs' solution can be optimized by a closed form as follows:
 % $$f(\rvx) = \mathbf{X}\boldsymbol{\beta},$$
 % where $\rvx = [x_1, \dots, x_d]$ and $\boldsymbol{\beta} = [\beta_1,\dots,\beta_d]^T$. The ridge regression for $\mathbf{X}\in \mathbb{R}^{n\times d}$ matrix can be modeled as follows:
+We can optimize this in a closed-form as follows:
+\begin{align*}
+	J(\boldsymbol{\beta}) &= \|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2 \\
+			&= (\mathbf{y}-\mathbf{X}\boldsymbol{\beta})^T(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})\\
+			&= (\mathbf{y}^T-\boldsymbol{\beta}^T\mathbf{X}^T)(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})\\
+			&= \rvy^T\rvy-\boldsymbol{\beta}^T\mathbf{X}^T\rvy-\rvy^T\mathbf{X}\boldsymbol{\beta}+\boldsymbol{\beta}^T\mathbf{X}^T\mathbf{X}\boldsymbol{\beta}
+\end{align*}
+To find the $\boldsymbol{\beta}$ that minimizes the objective function, we will compute a derivative of the function while setting it equal to zero:
+\begin{align*}
+	\frac{\partial J}{\partial \boldsymbol{\beta}}&= -\mathbf{X}^T\rvy-\mathbf{X}^T\rvy+\mathbf{X}^T\mathbf{X}\boldsymbol{\beta}+\mathbf{X}^T\mathbf{X}\boldsymbol{\beta} = 0\\
+	\boldsymbol{\beta}	&= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy
+\end{align*}
+\begin{lstlisting}[language=Python]
+import numpy as np
+import matplotlib.pyplot as plt
 
+N = 50
+x = np.random.randn(N)
+w_1 = 3.4 # True Parameter
+w_0 = 0.9 # True Parameter
+y = w_1*x + w_0 + 0.3*np.random.randn(N) # Synthesize training data
+
+X = np.column_stack((x, np.ones(N)))
+W = np.array([w_1, w_0])
+
+# From Scratch
+XtX    = np.dot(X.T, X)
+XtXinvX = np.dot(np.linalg.inv(XtX), X.T) # d x m
+W_best = np.dot(XtXinvX, y.T)
+print(f"W_best: {W_best}") 
+
+# Pythonic Approach
+theta = np.linalg.lstsq(X, y, rcond=None)[0]
+print(f"Theta: {theta}") 
+
+t = np.linspace(0, 1, 200)
+y_pred = W_best[0]*t+W_best[1]
+yhat = theta[0]*t+theta[1]
+plt.plot(x, y, 'o')
+plt.plot(t, y_pred, 'r', linewidth=4)
+plt.show()
+\end{lstlisting}
+
+\subsection{Ridge Regression}
 With the ridge regression principle, we can optimize it as follows:
 \begin{align}
 	J(\boldsymbol{\beta}) &= \|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2 + \lambda \|\boldsymbol{\beta}\|^2_2 \\
@@ -29,6 +68,7 @@ With the ridge regression principle, we can optimize it as follows:
 	\label{eq:ridge_regression}
 \end{align}
 
+\subsection{Weighted LSE}
 The OLEs assume an equal confidence on all the measurements. Now we look at varying confidence in the measurements. We assume that the noise for each measurement has zero mean and is independent, then the covariance matrix for all measurement noise is given by
 \begin{align*}
 	R &= \mathbb{E}(\eta\eta^T)\\
@@ -38,17 +78,22 @@ The OLEs assume an equal confidence on all the measurements. Now we look at vary
 		  0 & \ddots & \sigma_l^2\\
 	  \end{bmatrix}
 \end{align*}
-By denoting the error vector $\rvy-H\tilda{\rvx}$ as $\boldsymbol{\epsilon} = (\epsilon_1, \dots, \epsilon_l)^T$, we will minimize the sum of squared differences weighted over the variations of the measurements:
-$$J(\tilda{\rvx}) = \boldsymbol{\epsilon}^TR^{-1}\boldsymbol{\epsilon}.$$
-This is equivalent to
-$$\frac{1}{n}\sum_{i=1}^{n}\sum_{i=1}^n \alpha_i (y_i-\rvx_i\boldsymbol{\beta}).$$
+By denoting the error vector $\rvy-\mathbf{X}\boldsymbol{\beta}$ as $\boldsymbol{\epsilon} = (\epsilon_1, \dots, \epsilon_l)^T$, we will minimize the sum of squared differences weighted over the variations of the measurements:
+$$J(\tilda{\rvx}) = \boldsymbol{\epsilon}^TR^{-1}\boldsymbol{\epsilon}=\frac{\boldsymbol{\epsilon}_1^2}{\sigma_1^2}+\dots+\frac{\boldsymbol{\epsilon}_l^2}{\sigma_l^2}$$
+% This is equivalent to
+% $$\frac{1}{n}\sum_{i=1}^{n}\sum_{i=1}^n \alpha_i (y_i-\rvx_i\boldsymbol{\beta}).$$
 
 The best estimate of the parameter is given by
-$$(H^TR^{-1}H)^{-1}H^TR^{-1}\rvy.$$
+$$\boldsymbol{\beta} = (\mathbf{X}^TR^{-1}\mathbf{X})^{-1}\mathbf{X}^TR^{-1}\rvy.$$
 Note that the measurement noise matrix $R$ must be non-singular for a solution to exist.
 
 \section{Recursive Least Squares}
 \label{sec:recursive_least_square}
+
+\begin{itemize}
+	\item $H==X$
+	\item $x==\beta$
+\end{itemize}
 
 The ordinary least-squares assumes that all measurements are available at a certain time. However, this often might not be the case in practice. More often, we obtain measurements sequentially and want to update our estimate with each new measurement. In this case, the matrix $H$ needs to be augmented. This update can be very expensive. When then number of measurements is extremely large, the solutions of the least squares problem are difficult to compute. 
 
