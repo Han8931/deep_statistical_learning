@@ -1,4 +1,4 @@
-\section{Regression}
+\chapter{Regression}
 \label{sec:basic_regression}
 Suppose a noisy measurement $\rvy = [y_1, \dots, y_m]^T$ with noise $\boldsymbol{\eta} = [\eta_1, \dots, \eta_d]^T$ and we want to estimate parameter $\boldsymbol{\beta} = [\beta_1,\dots,\beta_d]^T$ by using our input $\rvx = [x_1, \dots, x_d]$. 
 
@@ -56,7 +56,21 @@ plt.plot(t, y_pred, 'r', linewidth=4)
 plt.show()
 \end{lstlisting}
 
-\subsection{Ridge Regression}
+\section{Overdetermined and Underdetermined Systems}
+Recall that the linear regression problem is an optimization problem of finding the optimal parameter as follows:
+$$\boldsymbol{\beta} = \argmin_{\boldsymbol{\beta}\in \mathbb{R}^d}||y-\mathbf{X}\boldsymbol{\beta}||^2.$$
+We say the optimization problem is \textit{overdetermined} if $\mathbf{X}\in \mathbb{R}^{N\times d}$ is tall and skinny, \ie $N>d$. This problem has a unique solution $\boldsymbol{\beta}	&= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy$ if and only if $\mathbf{X}^T\mathbf{X}$ is invertible. Equivalently, $\mathbf{X}$ should be linearly independent (\ie full rank). 
+
+The problem is called \textit{underdetermined} if $\mathbf{X}$ is fat and short, \ie $N<d$. This problem will have infinitely many solutions.  This problem will have infinitely many solutions. 
+
+\section{Overfitting}
+We examine the relationship between the number of training samples and the complexity of the model.
+
+
+\section{Ridge Regression}
+Regularization means that instead of seeking the model parameters by minimizing the training loss alone, we add a penalty term to force the parameters to ``behave better''. 
+
+
 With the ridge regression principle, we can optimize it as follows:
 \begin{align}
 	J(\boldsymbol{\beta}) &= \|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2 + \lambda \|\boldsymbol{\beta}\|^2_2 \\
@@ -68,7 +82,12 @@ With the ridge regression principle, we can optimize it as follows:
 	\label{eq:ridge_regression}
 \end{align}
 
-\subsection{Weighted LSE}
+\begin{itemize}
+	\item If $\lambda\to 0$, then $\|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2 + \underbrace{\lambda \|\boldsymbol{\beta}\|^2_2}_{=0}$ 
+	\item $\lambda\to \infty$, then $\underbrace{\frac{1}{\lambda}\|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2}_{=0} + \|\boldsymbol{\beta}\|^2_2$, since what we want to do is to minimize the objective function, we can divide it by $\lambda$. Therefore, the solution will be $\boldsymbol{\beta}=0$, because it is the smallest value the squared function can achieve. 
+\end{itemize}
+
+\section{Weighted LSE}
 The OLEs assume an equal confidence on all the measurements. Now we look at varying confidence in the measurements. We assume that the noise for each measurement has zero mean and is independent, then the covariance matrix for all measurement noise is given by
 \begin{align*}
 	R &= \mathbb{E}(\eta\eta^T)\\
