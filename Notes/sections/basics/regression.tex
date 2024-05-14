@@ -59,9 +59,19 @@ plt.show()
 \section{Overdetermined and Underdetermined Systems}
 Recall that the linear regression problem is an optimization problem of finding the optimal parameter as follows:
 $$\boldsymbol{\beta} = \argmin_{\boldsymbol{\beta}\in \mathbb{R}^d}||y-\mathbf{X}\boldsymbol{\beta}||^2.$$
-We say the optimization problem is \textit{overdetermined} if $\mathbf{X}\in \mathbb{R}^{N\times d}$ is tall and skinny, \ie $N>d$. This problem has a unique solution $\boldsymbol{\beta}	&= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy$ if and only if $\mathbf{X}^T\mathbf{X}$ is invertible. Equivalently, $\mathbf{X}$ should be linearly independent (\ie full rank). 
+We say the optimization problem is \textit{overdetermined} if $\mathbf{X}\in \mathbb{R}^{m\times d}$ is tall and skinny, \ie $m>d$. This problem has a unique solution $\boldsymbol{\beta}	&= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy$ if and only if $\mathbf{X}^T\mathbf{X}$ is invertible. Equivalently, $\mathbf{X}$ should be linearly independent (\ie full rank). 
 
 The problem is called \textit{underdetermined} if $\mathbf{X}$ is fat and short, \ie $N<d$. This problem will have infinitely many solutions.  This problem will have infinitely many solutions. 
+
+\subsection{Underdetermined System}
+\begin{align*}
+	\mathcal{L}(\boldsymbol{\theta}, \boldsymbol{\lambda}) = \|\boldsymbol{\theta}\|^2 + \boldsymbol{\lambda}^T(\mathbf{X}\boldsymbol{\theta}-\rvy),
+\end{align*}
+where $\boldsymbol{\lambda}$ is a Lagrange multiplier. The solution of the constrained optimization is the stationary point of the Lagrangian. To find it, we take the derivatives w.r.t., $\boldsymbol{\lambda}$ and $\boldsymbol{\theta}$ as follows: 
+\begin{align*}
+	\nabla_{\boldsymbol{\theta}} &= 2 \boldsymbol{\theta} + \mathbf{X}^T\boldsymbol{\lambda} = 0\\ 
+	\nabla_{\boldsymbol{\lambda}} &= \mathbf{X}\boldsymbol{\theta} - \rvy = 0
+\end{align*}
 
 \section{Overfitting}
 We examine the relationship between the number of training samples and the complexity of the model.
@@ -86,6 +96,15 @@ With the ridge regression principle, we can optimize it as follows:
 	\item If $\lambda\to 0$, then $\|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2 + \underbrace{\lambda \|\boldsymbol{\beta}\|^2_2}_{=0}$ 
 	\item $\lambda\to \infty$, then $\underbrace{\frac{1}{\lambda}\|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2}_{=0} + \|\boldsymbol{\beta}\|^2_2$, since what we want to do is to minimize the objective function, we can divide it by $\lambda$. Therefore, the solution will be $\boldsymbol{\beta}=0$, because it is the smallest value the squared function can achieve. 
 \end{itemize}
+Note that $\mathbf{X}^T\mathbf{X}$ is always symmetric \footnote{$(\mathbf{X}^T\mathbf{X})^T = \mathbf{X}^T\mathbf{X}$.}. Thus, it can be decomposed as $Q\Lambda Q^T$ by the Spectral theorem, where $Q and \Lambda$ are eigenvector and eigenvalue matrices. Then, the inverse operation in the ridge regression can be expressed as follows:
+\begin{align*}
+	\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I} &= \mathbf{Q}\mathbf{\Lambda}\mathbf{Q}^T+\lambda\mathbf{I}\\
+											 &= \mathbf{Q}\mathbf{\Lambda}\mathbf{Q}^T+\lambda\mathbf{Q}\mathbf{Q}^T\\
+											 &= \mathbf{Q}(\mathbf{\Lambda}+\lambda\mathbf{I})\mathbf{Q}^T.
+\end{align*}
+Even if the symmetric matrix is not invertible or close to not invertible, the regularization constant $\lambda$ makes it invertible (by making it to be a full-rank). 
+
+
 
 \section{Weighted LSE}
 The OLEs assume an equal confidence on all the measurements. Now we look at varying confidence in the measurements. We assume that the noise for each measurement has zero mean and is independent, then the covariance matrix for all measurement noise is given by

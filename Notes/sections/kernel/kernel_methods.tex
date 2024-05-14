@@ -1,7 +1,7 @@
 \chapter{Introduction to Kernel Methods}
 We will define the kind of kernels (so-called (\textit{Mercer}) kernels) that are used in kernel methods. Those kernels are covariance functions that have to be \textit{symmetric} and \textit{positive(-semi) definite}.
 
-Basic idea: we can make linear ML models non-linear by applying basis function (feature) transformations on the input space. For an input vector $\mathbf{x}\in \mathbb{R}^d$, do transformation $\mathbf{x}\to \phi(\rvx)$ where $\phi(\rvx)\in \mathbb{R}^D$. Usually, $D>>d$ because we add dimensions that capture non-linear interactions among features. 
+Basic idea: we can make linear ML models non-linear by applying basis function (feature) transformations on the input space. For an input vector $\mathbf{x}\in \mathbb{R}^d$, do transformation $\mathbf{x}\to \phi(\rvx)$ where $\phi(\rvx)\in \mathbb{R}^D$. Usually, $D\gg d$, because we add dimensions that capture non-linear interactions among features. 
 
 \begin{itemize}
 	\item The main idea is to use large set of fixed non-linear basis functions.
@@ -14,7 +14,7 @@ Basic idea: we can make linear ML models non-linear by applying basis function (
 \section{Kernel Trick}
 \label{sec:kernel:kernel_trick}
 
-Kernel trick aims to avoid computing explicit feature transformations $\phi(\rvx)$ by changing the entire ML algorithm to use only \textit{inner products} of feature transformations $\langle \phi(\rvx), \phi(\rvx')\rangle$ which are computed directly using a \textit{kernel} (rather than the feature transformations themselves.).
+Kernel trick aims to avoid computing explicit feature transformations $\phi(\rvx)$ by changing the entire ML algorithm to use only \textit{inner products} of feature transformations $\langle \phi(\rvx), \phi(\rvx')\rangle$ which are computed directly using a \textit{kernel} (rather than the feature transformations themselves.). Note that even the RBF kernel can be expressed as an inner product. 
 
 \subsection{Linear Model}
 
@@ -52,8 +52,9 @@ Instead of computing $\phi(\rvx_i), \forall i$ , we pre-compute $\langle \phi(\r
 Computing $\phi(\rvx_i)$ is $\mathcal{O}(2^d)\times n = \mathcal{O}(2^dn)$. On the other hand, pre-computing the inner products can be more efficient as follows:
 \begin{align*}
 	\langle \phi(\rvx), \phi(\rvx')\rangle &= \phi(\rvx)^T\phi(\rvx')\\ 
-										   &= \prod_{k=1}^d(1+x_kx'_k)
+										   &= \prod_{k=1}^d(1+x_kx'_k).
 \end{align*}
+This takes $\mathcal{O}(d)$ and we can compute the entire kernel matrix $K$ in $\mathcal{O}(dn^2)$. 
 
 Note that all kernel methods are non-parametric models as we need to keep training data to be able to compute the kernel values between new test inputs and the training inputs.
 
