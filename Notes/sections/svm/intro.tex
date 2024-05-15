@@ -26,48 +26,51 @@ Equivalently,
 \end{align*}
 
 \section{Decision Boundary with Margin}
-
-Support vectors are the data points that lie closest to the decision surface(or hyperplane). They are directly related to the optimal hyperplane. The goal of SVM is to find the optimal separating hyperplane which maximizes the margin of the training data. The hyperplane can be written as the set of points $\mathbf{x}$, satisfying 
+A hyperplane(or decision surface) is used to separate data points belonging to different classes. \textbf{Support vectors are the data points that lie closest to the hyperplane}. The hyperplane can be written as the set of points $\mathbf{x}$, satisfying 
 $$\mathbf{w}\cdot \mathbf{x}+b=0$$
 Note that the hyperplain is normal to the vector $\mathbf{w}$. 
 $$\mathbf{w}(\mathbf{x}-\mathbf{x}_0)=0,$$
-where $b = \mathbf{w}\cdot\mathbf{x}_0$. However, what is the optimal separating hyperplanes? The optimal hyperplane is the one which maximizes the margin of the training data. SVMs maximize the margin around the separating hyperplane. The decision function is fully specified by a subset of training samples, the support vectors. Let's consider a simple case, where training data is linearly separable, $\mathcal{D} = \left\{ (\mathbf{x}_i, y_i)\mid\mathbf{x}_i \in \mathbb{R}^p,\, y_i \in \{-1,1\}\right\}_{i=1}^n$. Then, we can build two hyperplanes separating the data with no points between them:
+where $b = \mathbf{w}\cdot\mathbf{x}_0$. The support vectors are directly related to the optimal hyperplane. The goal of SVM is to find the optimal separating hyperplane. However, what is the optimal separating hyperplanes? \textbf{The optimal hyperplane is the one which maximizes the distance from the hyperplane to the nearest data point of any class}. The distance is referred to as the \textit{margin}. SVMs maximize the margin around the separating hyperplane. The decision function is fully specified by a subset of training samples, the support vectors. 
+
+Let's consider a simple scenario, where training data is linearly separable: 
+$$\mathcal{D} = \left\{ (\mathbf{x}_i, y_i)\mid\mathbf{x}_i \in \mathbb{R}^p,\, y_i \in \{-1,1\}\right\}_{i=1}^N.$$
+Then, we can build two hyperplanes separating the data with no points between them:
 \begin{itemize}
 	\item $H_1:\mathbf{w}\cdot \mathbf{x}+b=1$
 	\item $H_2:\mathbf{w}\cdot \mathbf{x}+b=-1$
 \end{itemize}
 
-There are two constraints:
+The, all samples have to satisfy one of two constraints:
 \begin{enumerate}
 	\item $\mathbf{w}\cdot \mathbf{x}+b\geq1$
 	\item $\mathbf{w}\cdot \mathbf{x}+b\leq-1$
 \end{enumerate}
-These can be combined as follows:
+Equivalently, 
 $$y(\mathbf{w}\cdot \mathbf{x}+b)\geq 1.$$
 
 To maximize the margin, we can consider a unit vector $\mathbf{u} = \frac{\mathbf{w}}{||\mathbf{w}||}$, which is perpendicular to the hyperplanes and a point $x_0$ on the hyperplane $H_2$. If we scale $u$ from $x_0$, we get $z = x_0+ru$. If we assume $z$ is on $H_1$, then $\mathbf{w}\cdot z +b=1$. This is equivalent to 
 \begin{align*}
 	\mathbf{w}\cdot (x_0+ru)+b=1\\
-	\mathbf{w}x_0+\mathbf{w}r\frac{\mathbf{w}}{||\mathbf{w}||}+b=1\\
-	\mathbf{w}x_0+r||\mathbf{w}||+b=1\\
-	\mathbf{w}x_0+b=1-r||\mathbf{w}||
+	\mathbf{w}x_0+\mathbf{w}r\frac{\mathbf{w}}{\|\mathbf{w}\|}+b=1\\
+	\mathbf{w}x_0+r\|\mathbf{w}\|+b=1\\
+	\mathbf{w}x_0+b=1-r\|\mathbf{w}\|
 \end{align*}
-$x_0$ is on $H_2$, so $\mathbf{w}x_0+b=-1$
+The second step is done by $u=w/\|w\|$. The third step is valid since $w\cdot w = \|w\|^2$. As $x_0$ is on $H_2$, so $\mathbf{w}x_0+b=-1$. By substituting the LHS with it, we have
 \begin{align*}
 	-1=1-r||\mathbf{w}||\\
-	r=\frac{2}{||\mathbf{w}||}
+	r=\frac{2}{||\mathbf{w}||}.
 \end{align*}
-Note that the scaled unit vector $ru$'s magnitude is $r$. Thus, the maximization of margin is equivalent to maximize $r$. To maximize $r$, it is important to minimize the norm of $\mathbf{w}$. This is equivalent to an optimization problem. 
+Note that the scaled unit vector $ru$'s magnitude is $r$. Thus, the maximization of margin is equivalent to maximize $r$. To maximize $r$, we have to minimize the norm of $\mathbf{w}$. This is equivalent to an optimization problem. 
 \begin{align*}
-	&\min ||w||,\quad \textrm{subject to } \\
+	&\min \|w\|,\quad \textrm{subject to } \\
 	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1 \quad\forall i.
 \end{align*}
 This minimization problem gives the same result as the following:  
 \begin{align*}
-	&\min \frac{1}{2}||w||^2,\quad \textrm{subject to } \\
+	&\min \frac{1}{2}\|w\|^2,\quad \textrm{subject to } \\
 	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1 \quad\forall i.
 \end{align*}
-Now, we now have \textbf{convex quadratic optimization problem}. However, this hard margin cannot tolerate erroneous cases. There could be two solutions:
+Now, we now have \textbf{convex quadratic optimization problem}. The optimization is explained in \Cref{sec:svm_optimization}. However, this hard margin cannot tolerate erroneous cases, which could be too strict for better generalization. To relax it, two solutions can be leveraged:
 \begin{itemize}
 	\item Admits prediction errors. 
 	\item Use non-linearity (complex decision boundary).
@@ -90,7 +93,18 @@ Note that $\xi_j>1$ when mis-classified by its definition:
 \end{align*}
 Let's look at the new constraint. If some data points are mis-classified, then $\xi_j>1$ and $y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\leq 0$. This approach is called \textbf{soft-margin SVM}. Lastly, how do we set $C$?
 
-\input{./sections/svm/kernel}
+\section{Kernel Trick}
+\label{sec:kernel_trick}
+Applying the kernel trick simply means replacing the dot product of two examples in a dual form by a kernel function. 
+
+\begin{align}
+	 \max_\alpha \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \psi(\mathbf{x}_i)\cdot \psi(\mathbf{x}_j)
+	 \label{eq:kernel_dual_form}
+\end{align}
+Equivalently, 
+\begin{align}
+	 \max_\alpha \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j K(\mathbf{x}_i,\mathbf{x}_j).
+\end{align}
 
 
 

@@ -1,0 +1,73 @@
+\section{Asymmetric Kernels}
+\label{sec:asymmetric_kernels}
+
+Asymmetric kernels capture directional relationships in data that symmetric kernels cannot. For example, in directed graphs or conditional probability scenarios, the relationship from \(x\) to \(y\) is different from \(y\) to \(x\).
+
+\subsection{AsK-LS Primal Problem Formulation}
+The primal problem for AsK-LS is formulated to handle these asymmetric relationships. The goal is to find the weight vectors \( \omega \) and \( \nu \), and bias terms \( b_1 \) and \( b_2 \), that minimize the following objective function:
+
+\[
+\min_{\omega, \nu, b_1, b_2, e, h} \frac{1}{2} \omega^T \nu + \frac{\gamma}{2} \sum_{i=1}^m e_i^2 + \frac{\gamma}{2} \sum_{i=1}^m h_i^2
+\]
+subject to the constraints:
+\[
+y_i (\omega^T \phi_s(x_i) + b_1) = 1 - e_i
+\]
+\[
+y_i (\nu^T \phi_t(x_i) + b_2) = 1 - h_i
+\]
+
+Here:
+\begin{itemize}
+	\item \( \omega \) and \( \nu \) are weight vectors for the source and target features.
+	\item \( \phi_s(x) \) and \( \phi_t(x) \) are the source and target feature mappings.
+	\item \( e_i \) and \( h_i \) are error terms for the source and target constraints.
+	\item \( \gamma \) is a regularization parameter.
+\end{itemize}
+
+Let's transform it into a dual form. The dual problem involves solving a system of linear equations derived from the primal problem's Lagrangian. The Lagrangian function for the primal problem is:
+\begin{align*}
+	\mathcal{L}( \omega, \nu, b_1, b_2, e, h, \alpha, \beta) &= \frac{1}{2} \omega^T \nu + \frac{\gamma}{2} \sum_{i=1}^m e_i^2 + \frac{\gamma}{2} \sum_{i=1}^m h_i^2\\ 
+		   &+ \sum_{i=1}^m \alpha_i (1 - e_i - y_i (\omega^T \phi_s(x_i) + b_1)) + \sum_{i=1}^m \beta_i (1 - h_i - y_i (\nu^T \phi_t(x_i) + b_2))
+\end{align*}
+The KKT conditions are derived by setting the partial derivatives of the Lagrangian with respect to \( \omega, \nu, b_1, b_2, e, \) and \( h \) to zero. The dual problem leads to the following linear system:
+
+\[
+\begin{bmatrix}
+0 & 0 & Y^T & 0 \\
+0 & 0 & 0 & Y^T \\
+Y & 0 & \frac{I}{\gamma} & H \\
+0 & Y & H^T & \frac{I}{\gamma}
+\end{bmatrix}
+\begin{bmatrix}
+b_1 \\
+b_2 \\
+\alpha \\
+\beta
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 \\
+0 \\
+1 \\
+1
+\end{bmatrix}
+\]
+where:
+\begin{itemize}
+	\item \( Y \) is a vector of class labels.
+	\item \( H \) is the kernel matrix with elements \( H_{ij} = y_i K(x_i, x_j) y_j \), where \( K(x_i, x_j) = \langle \phi_s(x_i), \phi_t(x_j) \rangle \) is the asymmetric kernel function.
+\end{itemize}
+
+% ### 5. Feature Interpretation and Asymmetric Information
+AsK-LS uses two different feature mappings \( \phi_s \) and \( \phi_t \) for the source and target features. This approach allows capturing more information compared to symmetric kernels. The dual solution provides weight vectors \( \omega \) and \( \nu \), which span the target and source feature spaces, respectively.
+
+The decision functions for classification from the source and target perspectives are given by
+\[
+f_s(x) = \sum_{i=1}^m \beta_i y_i K(x, x_i) + b_1
+\]
+\[
+f_t(x) = \sum_{i=1}^m \alpha_i y_i K(x_i, x) + b_2
+\]
+These functions utilize the learned asymmetric relationships in the data.
+
