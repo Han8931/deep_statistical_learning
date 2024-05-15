@@ -18,6 +18,24 @@ All the dependencies between $X$ and $Y$ are mediated via $Z$. If $X$ and $Y$ ar
 	&=p(X|Z).
 \end{align*}
 
+
+\subsection{The law of total expectation}
+$$\mathbb{E}[\mathbb{E}[Y|X]] = \mathbb{E}[Y].$$
+
+It is worth trying to parse this formula more carefully and adding some subscripts:
+$$\mathbb{E}_X[\mathbb{E}_{Y|X}[Y|X]] = \mathbb{E}[Y].$$
+Intuitively, this expression has a divide and conquer flavour, \ie what it says is that to compute the average of a random variable $Y$, you can first compute its average over a bunch of partitions of the sample space (where some other random variable $X$ is fixed to different values), and then average the resulting averages. 
+
+Example: Suppose I had a population of people, 47\% of whom weer men and the remaining 53\% were women. Suppose that the average height of the men was 70 inches, and the women was 71 inches. What is the average height of the entire population?
+
+By the law of total expectation:
+
+\begin{align*}
+	\mathbb{E}[H] &= \mathbb{E}[\mathbb{E}[H|S]]\\
+				  &= \mathbb{E}[H|S]\mathbb{P}(S=m) + \mathbb{E}[H|S]\mathbb{P}(S=f)\\
+			   &= 70\times 0.47 + 71\times 0.53 = 70.53
+\end{align*}
+
 \section{Transformations of Random Variable}
 \subsection{Formal Definition}
 Suppose $X$ is a continuous random variable with pdf $f(x)$. If we define $Y=g(X)$, where $g(\cdot)$ is a monotonically increasing function, then the pdf of $Y$ can be obtained as follows:
