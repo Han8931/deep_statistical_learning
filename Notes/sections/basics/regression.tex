@@ -1,29 +1,29 @@
 \chapter{Regression}
 \label{sec:basic_regression}
-Suppose a noisy measurement $\rvy = [y_1, \dots, y_m]^T$ with noise $\boldsymbol{\eta} = [\eta_1, \dots, \eta_d]^T$ and we want to estimate parameter $\boldsymbol{\beta} = [\beta_1,\dots,\beta_d]^T$ by using our input $\rvx = [x_1, \dots, x_d]$. 
+Suppose a noisy measurement $\rvy = [y_1, \dots, y_m]^T$ with noise $\boldsymbol{\eta} = [\eta_1, \dots, \eta_d]^T$ and we want to estimate parameter $\boldsymbol{\theta} = [\theta_1,\dots,\theta_d]^T$ by using our input $\rvx = [x_1, \dots, x_d]$. 
 
 The measurement $\rvy$ can be modeled as follows:
-$$\rvy = \mathbf{X}\boldsymbol{\beta}+\boldsymbol{\eta},$$
-where $\mathbf{X}$ is a $m\times d$ input matrix (or our observations). Given a parameter $\boldsymbol{\beta}$, we consider the difference between the noisy measurements and estimated value as follows:
-$$\boldsymbol{\epsilon} = \rvy - \mathbf{X}\boldsymbol{\beta}$$
+$$\rvy = \mathbf{X}\boldsymbol{\theta}+\boldsymbol{\eta},$$
+where $\mathbf{X}$ is a $m\times d$ input matrix (or our observations). Given a parameter $\boldsymbol{\theta}$, we consider the difference between the noisy measurements and estimated value as follows:
+$$\boldsymbol{\epsilon} = \rvy - \mathbf{X}\boldsymbol{\theta}$$
 Then, we can establish an objective function as follows:
-$$J(\boldsymbol{\beta}) = \boldsymbol{\epsilon}^T\boldsymbol{\epsilon}$$
+$$J(\boldsymbol{\theta}) = \boldsymbol{\epsilon}^T\boldsymbol{\epsilon}$$
 Note that this is equivalent to minimizing the mean squared error:
-$$MSE = \frac{1}{n}\sum_{i=1}^n (y_i-\rvx_i\boldsymbol{\beta})^2.$$
+$$MSE = \frac{1}{n}\sum_{i=1}^n (y_i-\rvx_i\boldsymbol{\theta})^2.$$
 % The OLEs' solution can be optimized by a closed form as follows:
-% $$f(\rvx) = \mathbf{X}\boldsymbol{\beta},$$
-% where $\rvx = [x_1, \dots, x_d]$ and $\boldsymbol{\beta} = [\beta_1,\dots,\beta_d]^T$. The ridge regression for $\mathbf{X}\in \mathbb{R}^{n\times d}$ matrix can be modeled as follows:
+% $$f(\rvx) = \mathbf{X}\boldsymbol{\theta},$$
+% where $\rvx = [x_1, \dots, x_d]$ and $\boldsymbol{\theta} = [\theta_1,\dots,\theta_d]^T$. The ridge regression for $\mathbf{X}\in \mathbb{R}^{n\times d}$ matrix can be modeled as follows:
 We can optimize this in a closed-form as follows:
 \begin{align*}
-	J(\boldsymbol{\beta}) &= \|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2 \\
-			&= (\mathbf{y}-\mathbf{X}\boldsymbol{\beta})^T(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})\\
-			&= (\mathbf{y}^T-\boldsymbol{\beta}^T\mathbf{X}^T)(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})\\
-			&= \rvy^T\rvy-\boldsymbol{\beta}^T\mathbf{X}^T\rvy-\rvy^T\mathbf{X}\boldsymbol{\beta}+\boldsymbol{\beta}^T\mathbf{X}^T\mathbf{X}\boldsymbol{\beta}
+	J(\boldsymbol{\theta}) &= \|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2_2 \\
+			&= (\mathbf{y}-\mathbf{X}\boldsymbol{\theta})^T(\mathbf{y}-\mathbf{X}\boldsymbol{\theta})\\
+			&= (\mathbf{y}^T-\boldsymbol{\theta}^T\mathbf{X}^T)(\mathbf{y}-\mathbf{X}\boldsymbol{\theta})\\
+			&= \rvy^T\rvy-\boldsymbol{\theta}^T\mathbf{X}^T\rvy-\rvy^T\mathbf{X}\boldsymbol{\theta}+\boldsymbol{\theta}^T\mathbf{X}^T\mathbf{X}\boldsymbol{\theta}
 \end{align*}
-To find the $\boldsymbol{\beta}$ that minimizes the objective function, we will compute a derivative of the function while setting it equal to zero:
+To find the $\boldsymbol{\theta}$ that minimizes the objective function, we will compute a derivative of the function while setting it equal to zero:
 \begin{align*}
-	\frac{\partial J}{\partial \boldsymbol{\beta}}&= -\mathbf{X}^T\rvy-\mathbf{X}^T\rvy+\mathbf{X}^T\mathbf{X}\boldsymbol{\beta}+\mathbf{X}^T\mathbf{X}\boldsymbol{\beta} = 0\\
-	\boldsymbol{\beta}	&= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy
+	\frac{\partial J}{\partial \boldsymbol{\theta}}&= -\mathbf{X}^T\rvy-\mathbf{X}^T\rvy+\mathbf{X}^T\mathbf{X}\boldsymbol{\theta}+\mathbf{X}^T\mathbf{X}\boldsymbol{\theta} = 0\\
+	\boldsymbol{\theta}	&= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy
 \end{align*}
 \begin{lstlisting}[language=Python]
 import numpy as np
@@ -58,12 +58,18 @@ plt.show()
 
 \section{Overdetermined and Underdetermined Systems}
 Recall that the linear regression problem is an optimization problem of finding the optimal parameter as follows:
-$$\boldsymbol{\beta} = \argmin_{\boldsymbol{\beta}\in \mathbb{R}^d}||y-\mathbf{X}\boldsymbol{\beta}||^2.$$
-We say the optimization problem is \textit{overdetermined} if $\mathbf{X}\in \mathbb{R}^{m\times d}$ is tall and skinny, \ie $m>d$. This problem has a unique solution $\boldsymbol{\beta}	&= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy$ if and only if $\mathbf{X}^T\mathbf{X}$ is invertible. Equivalently, $\mathbf{X}$ should be linearly independent (\ie full rank). 
+$$\boldsymbol{\theta}_{opt} = \argmin_{\boldsymbol{\theta}\in \mathbb{R}^d}||y-\mathbf{X}\boldsymbol{\theta}||^2.$$
+We say the optimization problem is \textit{overdetermined} if $\mathbf{X}\in \mathbb{R}^{m\times d}$ is tall and skinny, \ie $m>d$. This problem has a unique solution $\boldsymbol{\theta}	&= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy$ if and only if $\mathbf{X}^T\mathbf{X}$ is invertible. Equivalently, $\mathbf{X}$ should be linearly independent (\ie full rank). 
 
-The problem is called \textit{underdetermined} if $\mathbf{X}$ is fat and short, \ie $N<d$. This problem will have infinitely many solutions.  This problem will have infinitely many solutions. 
-
-\subsection{Underdetermined System}
+The problem is called \textit{underdetermined} if $\mathbf{X}$ is fat and short, \ie $N<d$. This problem will have infinitely many solutions.  This problem will have infinitely many solutions. Among all the feasible solutions, we pick the one that minimizes the squared norm. The solution is called the \textit{minimum-norm} least squares. Consider a underdetermined linear regression problem:  
+\begin{align*}
+	\boldsymbol{\theta} = \argmin_{\boldsymbol{\theta}\in \mathbb{R}^d} \|\boldsymbol{\theta}\|^2, \,\textrm{subject to}\ \rvy = \mathbf{X}\boldsymbol{\theta},
+\end{align*}
+where $\mathbf{X}\in \mathbb{R}^{m\times d}, \boldsymbol{\theta}\in \mathbb{R}^d,$ and $\rvy\in \mathbb{R}^m$. If rank$(\mathbf{X})=N$, then the linear regression problem will have a unique global minimum 
+\begin{align*}
+	\boldsymbol{\theta} = \mathbf{X}^T(\mathbf{X}\mathbf{X}^T)^{-1}\rvy.
+\end{align*}
+This solution is called the minimum-norm least-squares solution. The proof of this solution is given by:
 \begin{align*}
 	\mathcal{L}(\boldsymbol{\theta}, \boldsymbol{\lambda}) = \|\boldsymbol{\theta}\|^2 + \boldsymbol{\lambda}^T(\mathbf{X}\boldsymbol{\theta}-\rvy),
 \end{align*}
@@ -72,6 +78,11 @@ where $\boldsymbol{\lambda}$ is a Lagrange multiplier. The solution of the const
 	\nabla_{\boldsymbol{\theta}} &= 2 \boldsymbol{\theta} + \mathbf{X}^T\boldsymbol{\lambda} = 0\\ 
 	\nabla_{\boldsymbol{\lambda}} &= \mathbf{X}\boldsymbol{\theta} - \rvy = 0
 \end{align*}
+The first equation gives us $\boldsymbol{\theta} = -\mathbf{X}^T\boldsymbol{\lambda}/2$. Substituting it into the second equation, and assuming that rank$(\mathbf{X})=N$ so that $\mathbf{X}^T\mathbf{X}$ is invertible, we have $\boldsymbol{\lambda} = -2 (\mathbf{X}\mathbf{X}^T)^{-1}\rvy.$ Thus, we have
+\begin{align*}
+	\boldsymbol{\theta} = \mathbf{X}^T(\mathbf{X}\mathbf{X}^T)^{-1}\rvy.
+\end{align*}
+
 
 \section{Overfitting}
 We examine the relationship between the number of training samples and the complexity of the model.
@@ -83,18 +94,18 @@ Regularization means that instead of seeking the model parameters by minimizing 
 
 With the ridge regression principle, we can optimize it as follows:
 \begin{align}
-	J(\boldsymbol{\beta}) &= \|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2 + \lambda \|\boldsymbol{\beta}\|^2_2 \\
-			&= (\mathbf{y}-\mathbf{X}\boldsymbol{\beta})^T(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})+\lambda\boldsymbol{\beta}^T\boldsymbol{\beta}\\
-			&= (\mathbf{y}^T-\boldsymbol{\beta}^T\mathbf{X}^T)(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})+\lambda\boldsymbol{\beta}^T\boldsymbol{\beta}\\
-			&= \rvy^T\rvy-\boldsymbol{\beta}^T\mathbf{X}^T\rvy-\rvy^T\mathbf{X}\boldsymbol{\beta}+\boldsymbol{\beta}^T\mathbf{X}^T\mathbf{X}\boldsymbol{\beta}+\boldsymbol{\beta}^T\lambda\mathbf{I}\boldsymbol{\beta}\\
-	\frac{\partial J}{\partial \boldsymbol{\beta}}&= -\mathbf{X}^T\rvy-\mathbf{X}^T\rvy+\mathbf{X}^T\mathbf{X}\boldsymbol{\beta}+\mathbf{X}^T\mathbf{X}\boldsymbol{\beta}+2\lambda\mathbf{I}\boldsymbol{\beta} = 0\\
-	\boldsymbol{\beta}	&= (\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})^{-1}\mathbf{X}^T\rvy
+	J(\boldsymbol{\theta}) &= \|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2_2 + \lambda \|\boldsymbol{\theta}\|^2_2 \\
+			&= (\mathbf{y}-\mathbf{X}\boldsymbol{\theta})^T(\mathbf{y}-\mathbf{X}\boldsymbol{\theta})+\lambda\boldsymbol{\theta}^T\boldsymbol{\theta}\\
+			&= (\mathbf{y}^T-\boldsymbol{\theta}^T\mathbf{X}^T)(\mathbf{y}-\mathbf{X}\boldsymbol{\theta})+\lambda\boldsymbol{\theta}^T\boldsymbol{\theta}\\
+			&= \rvy^T\rvy-\boldsymbol{\theta}^T\mathbf{X}^T\rvy-\rvy^T\mathbf{X}\boldsymbol{\theta}+\boldsymbol{\theta}^T\mathbf{X}^T\mathbf{X}\boldsymbol{\theta}+\boldsymbol{\theta}^T\lambda\mathbf{I}\boldsymbol{\theta}\\
+	\frac{\partial J}{\partial \boldsymbol{\theta}}&= -\mathbf{X}^T\rvy-\mathbf{X}^T\rvy+\mathbf{X}^T\mathbf{X}\boldsymbol{\theta}+\mathbf{X}^T\mathbf{X}\boldsymbol{\theta}+2\lambda\mathbf{I}\boldsymbol{\theta} = 0\\
+	\boldsymbol{\theta}	&= (\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})^{-1}\mathbf{X}^T\rvy
 	\label{eq:ridge_regression}
 \end{align}
 
 \begin{itemize}
-	\item If $\lambda\to 0$, then $\|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2 + \underbrace{\lambda \|\boldsymbol{\beta}\|^2_2}_{=0}$ 
-	\item $\lambda\to \infty$, then $\underbrace{\frac{1}{\lambda}\|\mathbf{y}-\mathbf{X}\boldsymbol{\beta}\|^2_2}_{=0} + \|\boldsymbol{\beta}\|^2_2$, since what we want to do is to minimize the objective function, we can divide it by $\lambda$. Therefore, the solution will be $\boldsymbol{\beta}=0$, because it is the smallest value the squared function can achieve. 
+	\item If $\lambda\to 0$, then $\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2_2 + \underbrace{\lambda \|\boldsymbol{\theta}\|^2_2}_{=0}$ 
+	\item $\lambda\to \infty$, then $\underbrace{\frac{1}{\lambda}\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2_2}_{=0} + \|\boldsymbol{\theta}\|^2_2$, since what we want to do is to minimize the objective function, we can divide it by $\lambda$. Therefore, the solution will be $\boldsymbol{\theta}=0$, because it is the smallest value the squared function can achieve. 
 \end{itemize}
 Note that $\mathbf{X}^T\mathbf{X}$ is always symmetric \footnote{$(\mathbf{X}^T\mathbf{X})^T = \mathbf{X}^T\mathbf{X}$.}. Thus, it can be decomposed as $Q\Lambda Q^T$ by the Spectral theorem, where $Q and \Lambda$ are eigenvector and eigenvalue matrices. Then, the inverse operation in the ridge regression can be expressed as follows:
 \begin{align*}
@@ -103,6 +114,23 @@ Note that $\mathbf{X}^T\mathbf{X}$ is always symmetric \footnote{$(\mathbf{X}^T\
 											 &= \mathbf{Q}(\mathbf{\Lambda}+\lambda\mathbf{I})\mathbf{Q}^T.
 \end{align*}
 Even if the symmetric matrix is not invertible or close to not invertible, the regularization constant $\lambda$ makes it invertible (by making it to be a full-rank). 
+
+We can change this into a dual form:
+\begin{align}
+	(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})\boldsymbol{\theta}	&= (\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})^{-1}\mathbf{X}^T\rvy\\
+	(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})\boldsymbol{\theta} &= \mathbf{X}^T\rvy\\ 
+	\boldsymbol{\theta} &= \lambda^{-1}\mathbf{I}(\mathbf{X}^T\rvy-\mathbf{X}^T\mathbf{X}\boldsymbol{\theta})\\
+	&= \mathbf{X}^T\lambda^{-1}(\rvy-\mathbf{X}\boldsymbol{\theta})\\
+	&= \mathbf{X}^T\alpha\\
+	\lambda\alpha &= (\rvy-\mathbf{X}\boldsymbol{\theta})\\
+	&= (\rvy-\mathbf{X}\mathbf{X}^T\alpha)\\
+	\rvy &= (\mathbf{X}\mathbf{X}^T\alpha+\lambda\alpha)\\
+	\alpha &= (\mathbf{X}\mathbf{X}^T+\lambda)^{-1}\rvy\\
+	\alpha &= (\mathbf{G}+\lambda)^{-1}\rvy,
+	\label{eq:dual_regression}
+\end{align}
+where $\mathbf{G} = \mathbf{X}\mathbf{X}^T$ is a \textit{Gram matrix}. Thus, we just have to solve $m\times m$ matrix. 
+
 
 
 
@@ -116,13 +144,13 @@ The OLEs assume an equal confidence on all the measurements. Now we look at vary
 		  0 & \ddots & \sigma_l^2\\
 	  \end{bmatrix}
 \end{align*}
-By denoting the error vector $\rvy-\mathbf{X}\boldsymbol{\beta}$ as $\boldsymbol{\epsilon} = (\epsilon_1, \dots, \epsilon_l)^T$, we will minimize the sum of squared differences weighted over the variations of the measurements:
+By denoting the error vector $\rvy-\mathbf{X}\boldsymbol{\theta}$ as $\boldsymbol{\epsilon} = (\epsilon_1, \dots, \epsilon_l)^T$, we will minimize the sum of squared differences weighted over the variations of the measurements:
 $$J(\tilda{\rvx}) = \boldsymbol{\epsilon}^TR^{-1}\boldsymbol{\epsilon}=\frac{\boldsymbol{\epsilon}_1^2}{\sigma_1^2}+\dots+\frac{\boldsymbol{\epsilon}_l^2}{\sigma_l^2}$$
 % This is equivalent to
-% $$\frac{1}{n}\sum_{i=1}^{n}\sum_{i=1}^n \alpha_i (y_i-\rvx_i\boldsymbol{\beta}).$$
+% $$\frac{1}{n}\sum_{i=1}^{n}\sum_{i=1}^n \alpha_i (y_i-\rvx_i\boldsymbol{\theta}).$$
 
 The best estimate of the parameter is given by
-$$\boldsymbol{\beta} = (\mathbf{X}^TR^{-1}\mathbf{X})^{-1}\mathbf{X}^TR^{-1}\rvy.$$
+$$\boldsymbol{\theta} = (\mathbf{X}^TR^{-1}\mathbf{X})^{-1}\mathbf{X}^TR^{-1}\rvy.$$
 Note that the measurement noise matrix $R$ must be non-singular for a solution to exist.
 
 \section{Recursive Least Squares}
@@ -130,7 +158,7 @@ Note that the measurement noise matrix $R$ must be non-singular for a solution t
 
 \begin{itemize}
 	\item $H==X$
-	\item $x==\beta$
+	\item $x==\theta$
 \end{itemize}
 
 The ordinary least-squares assumes that all measurements are available at a certain time. However, this often might not be the case in practice. More often, we obtain measurements sequentially and want to update our estimate with each new measurement. In this case, the matrix $H$ needs to be augmented. This update can be very expensive. When then number of measurements is extremely large, the solutions of the least squares problem are difficult to compute. 

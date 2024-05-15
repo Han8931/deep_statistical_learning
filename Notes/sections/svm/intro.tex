@@ -1,26 +1,28 @@
 \chapter{Support Vector Machine}
-\section{Introduction}
+\section{Preliminary}
 
 \subsection{Orthogonal Projection}
 Given two vectors $x$ and $y$, we would like to find the orthogonal projection of $x$ onto $y$.
 
 By definition:
-$$||z|| = ||x||cos(\theta).$$
+$$\|z\| = \|x\|cos(\theta).$$
 Note that the dot product of $x$ and $y$ is 
-$$cos(\theta)= \frac{x\cdot y}{||x||\cdot||y||}.$$
+$$cos(\theta)= \frac{x\cdot y}{\|x\|\cdot\|y\|}.$$
 So we can replace the cosine 
-$$||z|| = ||x||\frac{x\cdot y}{||x||\cdot||y||}.$$
+$$\|z\| = \|x\|\frac{x\cdot y}{\|x\|\cdot\|y\|}.$$
 This results in 
 $$||z|| = u\cdot x,$$
 where $u$ is an unit vector of $y$, which has the same direction as $z$. Therefore we can express $z$ as follows: 
-$$z = ||z||\cdot u,$$
+$$z = \|z\|\cdot u,$$
 Then, 
 \begin{align*}
-	z &= (u\cdot x)u.
+	z &= (u\cdot x)\cdot u.
 \end{align*}
 Equivalently, 
 \begin{align*}
-	\textrm{Proj}_yx &= \Bigg(\frac{y\cdot x}{||y||^2}\Bigg)y.
+	\textrm{Proj}_yx &= \Bigg(\frac{y\cdot x}{\|y\|^2}\Bigg)y\\
+					 &= \Bigg(\frac{y\cdot x}{\|y\|}\Bigg)\frac{y}{\|y\|}\\
+					 &= (u\cdot x)\cdot u
 \end{align*}
 
 \section{Decision Boundary with Margin}
