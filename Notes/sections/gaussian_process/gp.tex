@@ -29,12 +29,89 @@ The joint distribution of $\rvf$ and $\rvf_*$ can be modeled as:
 		\end{pmatrix}
 		\end{pmatrix},
 \end{align*}
-where 
-
-However, what we want is $\rvf_*$, predictions for new observations, which is a conditional distribution over $\rvf_*$. 
-
-
+% where 
+% However, what we want is $\rvf_*$, predictions for new observations, which is a conditional distribution over $\rvf_*$. 
 % Let $f(x) = \phi(x)^Tw$, with $w\sim \mathcal{N}(0, \alpha^{-1}\mathbf{I})$. Then, $m(x) = \mathbb{E}[f(x)] = \mathbb{E}[w]^T\phi(x) = 0$
-
 % $k(x, x') = \mathbb{E}[(f(x)-m(x))(f(x')-m(x'))] =\mathbb{E}[f(x)(f(x')] $
+where 
+\begin{align*}
+	\mathbf{K }&= \kappa(\mathbf{X,X})\\
+	\mathbf{K}_* &= \kappa(\mathbf{X},\mathbf{X}_*)\\
+	\mathbf{K}_{**} &= \kappa(\mathbf{X}_*,\mathbf{X}_*).
+\end{align*}
+The mean is assumed to be $(m(\mathbf{X}), m(\mathbf{X}_*))=0$. 
+
+While this equation describes the joint probability distribution $P(\rvf, \rvf_*|\mathbf{X}, \mathbf{X}_*)$ over $\rvf$ and $\rvf_*$ in regressions, we need the conditional distribution $P(\rvf_*|\rvf, \mathbf{X}, \mathbf{X}_*)$ from the joint distribution. The conditional distribution can be achieved by the Marginal and conditional distributions of MVN theorem:
+
+\begin{theorem} Marginals and conditionals of an MVN:
+A random vector \(\mathbf{X}\) follows a multivariate normal distribution:
+\[
+\mathbf{X} \sim \mathcal{N}(\mathbf{\mu}, \mathbf{\Sigma})
+\]
+where \(\mathbf{X}\) is partitioned as:
+\[
+\mathbf{X} = \begin{bmatrix}
+\mathbf{X}_1 \\
+\mathbf{X}_2
+\end{bmatrix}
+\]
+with corresponding partitions of the mean vector \(\mathbf{\mu}\) and the covariance matrix \(\mathbf{\Sigma}\):
+\[
+\mathbf{\mu} = \begin{bmatrix}
+\mathbf{\mu}_1 \\
+\mathbf{\mu}_2
+\end{bmatrix}, \quad
+\mathbf{\Sigma} = \begin{bmatrix}
+\mathbf{\Sigma}_{11} & \mathbf{\Sigma}_{12} \\
+\mathbf{\Sigma}_{21} & \mathbf{\Sigma}_{22}
+\end{bmatrix}
+\]
+
+Marginal Distributions:
+The marginal distribution of \(\mathbf{X}_1\) is:
+\[
+\mathbf{X}_1 \sim \mathcal{N}(\mathbf{\mu}_1, \mathbf{\Sigma}_{11})
+\]
+The marginal distribution of \(\mathbf{X}_2\) is:
+\[
+\mathbf{X}_2 \sim \mathcal{N}(\mathbf{\mu}_2, \mathbf{\Sigma}_{22})
+\]
+
+Conditional Distributions:
+The conditional distribution of \(\mathbf{X}_1\) given \(\mathbf{X}_2 = \mathbf{x}_2\) is:
+\[
+\mathbf{X}_1 | \mathbf{X}_2 = \mathbf{x}_2 \sim \mathcal{N}(\mathbf{\mu}_{1|2}, \mathbf{\Sigma}_{1|2})
+\]
+where the conditional mean \(\mathbf{\mu}_{1|2}\) and the conditional covariance \(\mathbf{\Sigma}_{1|2}\) are given by:
+\[
+\mathbf{\mu}_{1|2} = \mathbf{\mu}_1 + \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1} (\mathbf{x}_2 - \mathbf{\mu}_2)
+\]
+\[
+\mathbf{\Sigma}_{1|2} = \mathbf{\Sigma}_{11} - \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1}\mathbf{\Sigma}_{21}
+\]
+
+\end{theorem}
+
+By using the theorem, we get
+$$\rvf_*|\rvf, \mathbf{X}, \mathbf{X}_*\sim \mathcal{N}(\mathbf{K}_*^T\mathbf{K}\rvf, \mathbf{K}_{**}-\mathbf{K}_*^T\mathbf{K}^{-1}\mathbf{K}_{*})$$
+
+In practice, we typically have noisy estimations of target functions, $y = f(x)+\epsilon$. By assuming the i.i.d., Gaussian noise with variance $\sigma_n^2$, the prior on these noisy observations then becomes $cov(y) = \mathbf{K}+\sigma_n^2\mathbf{I}$. The joint distribution of the observed target values and the function values at the test locations under the prior as 
+\begin{align*}
+	\begin{bmatrix}
+		\rvy\\
+		\rvf_*
+	\end{bmatrix} \sim \mathcal{N}
+	\begin{bmatrix}
+		\mathbf{0}, \begin{bmatrix}
+			\mathbf{K}+\sigma_n^2\mathbf{I} & \mathbf{K}_*\\
+			\mathbf{K}_*^T & \mathbf{K}_{**}
+		\end{bmatrix}
+	\end{bmatrix}
+\end{align*}
+By deriving the condional distribution, we get the predictive equations for Gaussian process regression:
+
+
+
+
+
 
