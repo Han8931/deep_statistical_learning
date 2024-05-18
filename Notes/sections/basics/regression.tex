@@ -61,7 +61,7 @@ Recall that the linear regression problem is an optimization problem of finding 
 $$\boldsymbol{\theta}_{opt} = \argmin_{\boldsymbol{\theta}\in \mathbb{R}^d}||y-\mathbf{X}\boldsymbol{\theta}||^2.$$
 We say the optimization problem is \textit{overdetermined} if $\mathbf{X}\in \mathbb{R}^{m\times d}$ is tall and skinny, \ie $m>d$. This problem has a unique solution $\boldsymbol{\theta}	&= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy$ if and only if $\mathbf{X}^T\mathbf{X}$ is invertible. Equivalently, $\mathbf{X}$ should be linearly independent (\ie full rank). 
 
-The problem is called \textit{underdetermined} if $\mathbf{X}$ is fat and short, \ie $N<d$. This problem will have infinitely many solutions.  This problem will have infinitely many solutions. Among all the feasible solutions, we pick the one that minimizes the squared norm. The solution is called the \textit{minimum-norm} least squares. Consider a underdetermined linear regression problem:  
+The problem is called \textit{underdetermined} if $\mathbf{X}$ is fat and short, \ie $N<d$. \textbf{This problem will have infinitely many solutions}. Among all the feasible solutions, we will pick the one that minimizes the squared norm. The solution is called the \textit{minimum-norm} least squares. Consider an underdetermined linear regression problem:  
 \begin{align*}
 	\boldsymbol{\theta} = \argmin_{\boldsymbol{\theta}\in \mathbb{R}^d} \|\boldsymbol{\theta}\|^2, \,\textrm{subject to}\ \rvy = \mathbf{X}\boldsymbol{\theta},
 \end{align*}
@@ -107,7 +107,7 @@ With the ridge regression principle, we can optimize it as follows:
 	\item If $\lambda\to 0$, then $\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2_2 + \underbrace{\lambda \|\boldsymbol{\theta}\|^2_2}_{=0}$ 
 	\item $\lambda\to \infty$, then $\underbrace{\frac{1}{\lambda}\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2_2}_{=0} + \|\boldsymbol{\theta}\|^2_2$, since what we want to do is to minimize the objective function, we can divide it by $\lambda$. Therefore, the solution will be $\boldsymbol{\theta}=0$, because it is the smallest value the squared function can achieve. 
 \end{itemize}
-Note that $\mathbf{X}^T\mathbf{X}$ is always symmetric \footnote{$(\mathbf{X}^T\mathbf{X})^T = \mathbf{X}^T\mathbf{X}$.}. Thus, it can be decomposed as $Q\Lambda Q^T$ by the Spectral theorem, where $Q and \Lambda$ are eigenvector and eigenvalue matrices. Then, the inverse operation in the ridge regression can be expressed as follows:
+Note that $\mathbf{X}^T\mathbf{X}$ is always symmetric \footnote{$(\mathbf{X}^T\mathbf{X})^T = \mathbf{X}^T\mathbf{X}$.}. Thus, it can be decomposed as $Q\Lambda Q^T$ by the Spectral theorem, where $Q$ and $\Lambda$ are eigenvector and eigenvalue matrices. Then, the inverse operation in the ridge regression can be expressed as follows:
 \begin{align*}
 	\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I} &= \mathbf{Q}\mathbf{\Lambda}\mathbf{Q}^T+\lambda\mathbf{I}\\
 											 &= \mathbf{Q}\mathbf{\Lambda}\mathbf{Q}^T+\lambda\mathbf{Q}\mathbf{Q}^T\\
@@ -152,6 +152,21 @@ $$J(\tilda{\rvx}) = \boldsymbol{\epsilon}^TR^{-1}\boldsymbol{\epsilon}=\frac{\bo
 The best estimate of the parameter is given by
 $$\boldsymbol{\theta} = (\mathbf{X}^TR^{-1}\mathbf{X})^{-1}\mathbf{X}^TR^{-1}\rvy.$$
 Note that the measurement noise matrix $R$ must be non-singular for a solution to exist.
+
+\section{Robust Linear Regression}
+\label{sec:robust_linear_regression}
+
+The linear regression is based on the squared error criterion. This criterion often suffers from a serious drawback caused by outliers. By the definition of a squared error, our training loss is given by
+
+\begin{align*}
+	\mathcal{L}(\boldsymbol{\theta}) = \sum_{n=1}^N\bigg(y_n-g_{\boldsymbol{\theta}}(x_n)\bigg)^2.
+\end{align*}
+Let's assume that one of these error terms is large due to an outlier. 
+\begin{align*}
+	\mathcal{L}(\boldsymbol{\theta}) = \bigg(y_1-g_{\boldsymbol{\theta}}(x_1)\bigg)^2+\underbrace{\bigg(y_2-g_{\boldsymbol{\theta}}(x_2)\bigg)^2}_{\textrm{Large}}+\cdots
+\end{align*}
+If one or a few of these individual error terms are large, the square operation will amplify them.  Consequently, the outliers suddenly have a very large contribution to the error. Since the goal of linear regression is to minimize the total loss, the presence of the outliers will drive the optimization solution to compensate for the large error.
+
 
 \section{Recursive Least Squares}
 \label{sec:recursive_least_square}
