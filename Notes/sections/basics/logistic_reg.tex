@@ -1,12 +1,20 @@
 \section{Logistic Regression}
 \label{sec:logistic_regression}
 
-Logistic regression corresponds to the following binary classification model:
+Logistic regression corresponds to the following binary classification model parameterized by $\rvw$:
 $$p(y|\mathbf{x},\mathbf{w})=\textrm{Ber}(y|\sigma(\mathbf{w}^T\mathbf{x}))$$
 
-Logistic regression modles a logit (log odds) through a linear model. For binary data, the goal is to model the probability $p$ that one of two outcomes occurs. The logit function is $\textrm{log}\frac{p}{1-p}$, which varies between $-\infty$ and $+\infty$ as $p$ varies between $0$ and $1$.
+Logistic regression modles a logit (log odds) through a linear model. For binary data, the goal is to model the probability $p$ that one of two outcomes occurs. Recall that an ordinary linear regression model is not bounded. Thus, we will pass a linear model through a sigmoid function, which is also known as logistic function. 
+
+$$\sigma(z) = \frac{1}{1+\exp^{z}},$$
+where $z=wx+b.$
+The sigmoid function has the property
+$$\sigma(-x) = 1-\sigma(x).$$
+The $z$ is often called the logit. Note that the inverse of the sigmoid is the log of the odds ratio $\frac{p}{1-p}.$
+
+The logit function is $\textrm{log}\frac{p}{1-p}$, which varies between $-\infty$ and $+\infty$ as $p$ varies between $0$ and $1$.
 $$\textrm{log}\frac{p}{1-p} = w_0x_0 +  w_1x_1 + ... + w_nx_n$$
-Note that the logistic regression model assumes that the log-odds (\textit{logit}) of an observation $y$ can be expressed as a linear function. In this context, the logit function is called the \textbf{\textit{link function}} because it ``links'' the probability to the linear function of the predictor variables.
+Note that \textbf{the logistic regression model assumes that the log-odds (\textit{logit}) of an observation $y$ can be expressed as a linear function}. In this context, the logit function is called the \textbf{\textit{link function}} because it ``links'' the probability to the linear function of the predictor variables.
 
 % Simplest solution to model a dependant variable $y$ is a linear regression. However, $y$ should be in a range of $[0,1]$. So we need to introduce the logit function. 
 

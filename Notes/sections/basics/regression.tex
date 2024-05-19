@@ -23,8 +23,11 @@ We can optimize this in a closed-form as follows:
 To find the $\boldsymbol{\theta}$ that minimizes the objective function, we will compute a derivative of the function while setting it equal to zero:
 \begin{align*}
 	\frac{\partial J}{\partial \boldsymbol{\theta}}&= -\mathbf{X}^T\rvy-\mathbf{X}^T\rvy+\mathbf{X}^T\mathbf{X}\boldsymbol{\theta}+\mathbf{X}^T\mathbf{X}\boldsymbol{\theta} = 0\\
+	&\Rightarrow \mathbf{X}^T(\mathbf{X}\boldsymbol{\theta}-\rvy)= 0\\
 	\boldsymbol{\theta}	&= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy
 \end{align*}
+Note that the $\mathbf{X}^T(\mathbf{X}\boldsymbol{\theta}-\rvy)$ is called the \textit{normal equation}.
+
 \begin{lstlisting}[language=Python]
 import numpy as np
 import matplotlib.pyplot as plt
@@ -222,5 +225,6 @@ Next, we have to compute $K_k$ that minimizes the cost function given by error e
 
 
 
+\input{./sections/basics/logistic_reg}
 
 

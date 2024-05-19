@@ -2,7 +2,12 @@
 \section{Naive Bayes}
 \label{sec:naive_bayes}
 
-  In this section, we discuss how to classify vectors of discrete-valued features $\mathbf{x}$. Recall that we discussed how to classify a feature vector $\mathbf{x}$ by applying Bayes rule to a generative classifier of the form 
+Let's say we have a prediction model and it gives us a prediction. We want to measure the precision of the prediction. For example, the prediction has 90\% chance of being a correct prediction. This can be modeled probabilistically. Given data $\rvx$, we want to know the probability of it being $y$. Similarly, if we have $N$ data, then with an i.i.d., assumption,
+$$\prod_{i=1}^N p(y_i|\mathbf{x}_i).$$
+
+What we want to is to build such a probabilistic model parameterized by some parameters. 
+
+In this section, we discuss how to classify vectors of discrete-valued features $\mathbf{x}$. Recall that we discussed how to classify a feature vector $\mathbf{x}$ by applying Bayes rule to a generative classifier of the form 
   $$p(y=c|\mathbf{x},\boldsymbol{\theta})\propto p(\mathbf{x}|y=c, \boldsymbol{\theta})p(y=c|\boldsymbol{\theta})$$
   The key to using such models is specifying a suitable form for the class-conditional density $p(\mathbf{x}|y=c, \boldsymbol{\theta})$, which defines what kind of data we expect to see in each class. 
   \begin{itemize}
