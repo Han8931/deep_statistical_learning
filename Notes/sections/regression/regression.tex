@@ -1,5 +1,5 @@
-\chapter{Regression}
-\label{sec:basic_regression}
+\section{Introduction}
+\label{sec:regression}
 Suppose a noisy measurement $\rvy = [y_1, \dots, y_m]^T$ with noise $\boldsymbol{\eta} = [\eta_1, \dots, \eta_d]^T$ and we want to estimate parameter $\boldsymbol{\theta} = [\theta_1,\dots,\theta_d]^T$ by using our input $\rvx = [x_1, \dots, x_d]$. 
 
 The measurement $\rvy$ can be modeled as follows:
@@ -64,7 +64,7 @@ Recall that the linear regression problem is an optimization problem of finding 
 $$\boldsymbol{\theta}_{opt} = \argmin_{\boldsymbol{\theta}\in \mathbb{R}^d}||y-\mathbf{X}\boldsymbol{\theta}||^2.$$
 We say the optimization problem is \textit{overdetermined} if $\mathbf{X}\in \mathbb{R}^{m\times d}$ is tall and skinny, \ie $m>d$. This problem has a unique solution $\boldsymbol{\theta}	&= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy$ if and only if $\mathbf{X}^T\mathbf{X}$ is invertible. Equivalently, $\mathbf{X}$ should be linearly independent (\ie full rank). 
 
-The problem is called \textit{underdetermined} if $\mathbf{X}$ is fat and short, \ie $N<d$. \textbf{This problem will have infinitely many solutions}. Among all the feasible solutions, we will pick the one that minimizes the squared norm. The solution is called the \textit{minimum-norm} least squares. Consider an underdetermined linear regression problem:  
+If $\mathbf{X}$ is fat and short (\ie $N<d$), a problem is called \textit{underdetermined}. \textbf{This problem will have infinitely many solutions}. Among all the feasible solutions, we will pick the one that minimizes the squared norm. The solution is called the \textit{minimum-norm} least squares. Consider an underdetermined linear regression problem:  
 \begin{align*}
 	\boldsymbol{\theta} = \argmin_{\boldsymbol{\theta}\in \mathbb{R}^d} \|\boldsymbol{\theta}\|^2, \,\textrm{subject to}\ \rvy = \mathbf{X}\boldsymbol{\theta},
 \end{align*}
@@ -85,7 +85,7 @@ The first equation gives us $\boldsymbol{\theta} = -\mathbf{X}^T\boldsymbol{\lam
 \begin{align*}
 	\boldsymbol{\theta} = \mathbf{X}^T(\mathbf{X}\mathbf{X}^T)^{-1}\rvy.
 \end{align*}
-
+Note that $\mathbf{X}\mathbf{X}^T$ is often called a \textit{Gram matrix}, $\mathbf{G}$ (\cf \Cref{sec:kernel:kernel_trick}). 
 
 \section{Overfitting}
 We examine the relationship between the number of training samples and the complexity of the model.
@@ -110,7 +110,7 @@ With the ridge regression principle, we can optimize it as follows:
 	\item If $\lambda\to 0$, then $\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2_2 + \underbrace{\lambda \|\boldsymbol{\theta}\|^2_2}_{=0}$ 
 	\item $\lambda\to \infty$, then $\underbrace{\frac{1}{\lambda}\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2_2}_{=0} + \|\boldsymbol{\theta}\|^2_2$, since what we want to do is to minimize the objective function, we can divide it by $\lambda$. Therefore, the solution will be $\boldsymbol{\theta}=0$, because it is the smallest value the squared function can achieve. 
 \end{itemize}
-Note that $\mathbf{X}^T\mathbf{X}$ is always symmetric \footnote{$(\mathbf{X}^T\mathbf{X})^T = \mathbf{X}^T\mathbf{X}$.}. Thus, it can be decomposed as $Q\Lambda Q^T$ by the Spectral theorem, where $Q$ and $\Lambda$ are eigenvector and eigenvalue matrices. Then, the inverse operation in the ridge regression can be expressed as follows:
+Note that $\mathbf{X}^T\mathbf{X}$ is always symmetric \footnote{$(\mathbf{X}^T\mathbf{X})^T = \mathbf{X}^T\mathbf{X}$.}. Thus, it can be decomposed as $Q\Lambda Q^T$ by the Spectral theorem. The $Q$ and $\Lambda$ are eigenvector and eigenvalue matrices, respectively. Then, the inverse operation in the ridge regression can be expressed as follows:
 \begin{align*}
 	\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I} &= \mathbf{Q}\mathbf{\Lambda}\mathbf{Q}^T+\lambda\mathbf{I}\\
 											 &= \mathbf{Q}\mathbf{\Lambda}\mathbf{Q}^T+\lambda\mathbf{Q}\mathbf{Q}^T\\
@@ -118,7 +118,7 @@ Note that $\mathbf{X}^T\mathbf{X}$ is always symmetric \footnote{$(\mathbf{X}^T\
 \end{align*}
 Even if the symmetric matrix is not invertible or close to not invertible, the regularization constant $\lambda$ makes it invertible (by making it to be a full-rank). 
 
-We can change this into a dual form:
+Note that we can change the ridge regression into a dual form:
 \begin{align}
 	(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})\boldsymbol{\theta}	&= (\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})^{-1}\mathbf{X}^T\rvy\\
 	(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})\boldsymbol{\theta} &= \mathbf{X}^T\rvy\\ 
@@ -129,10 +129,10 @@ We can change this into a dual form:
 	&= (\rvy-\mathbf{X}\mathbf{X}^T\alpha)\\
 	\rvy &= (\mathbf{X}\mathbf{X}^T\alpha+\lambda\alpha)\\
 	\alpha &= (\mathbf{X}\mathbf{X}^T+\lambda)^{-1}\rvy\\
-	\alpha &= (\mathbf{G}+\lambda)^{-1}\rvy,
+	\alpha &= (\mathbf{G}+\lambda)^{-1}\rvy.
 	\label{eq:dual_regression}
 \end{align}
-where $\mathbf{G} = \mathbf{X}\mathbf{X}^T$ is a \textit{Gram matrix}. Thus, we just have to solve $m\times m$ matrix (\cf \Cref{sec:kernel:kernel_trick}).  
+This gives us the solution of the underdetermined problems.  
 
 
 
@@ -170,61 +170,5 @@ Let's assume that one of these error terms is large due to an outlier.
 \end{align*}
 If one or a few of these individual error terms are large, the square operation will amplify them.  Consequently, the outliers suddenly have a very large contribution to the error. Since the goal of linear regression is to minimize the total loss, the presence of the outliers will drive the optimization solution to compensate for the large error.
 
-
-\section{Recursive Least Squares}
-\label{sec:recursive_least_square}
-
-\begin{itemize}
-	\item $H==X$
-	\item $x==\theta$
-\end{itemize}
-
-The ordinary least-squares assumes that all measurements are available at a certain time. However, this often might not be the case in practice. More often, we obtain measurements sequentially and want to update our estimate with each new measurement. In this case, the matrix $H$ needs to be augmented. This update can be very expensive. When then number of measurements is extremely large, the solutions of the least squares problem are difficult to compute. 
-
-These motivate the RLS. Suppose we have an estimate $\tilda{\rvx}_{k-1}$ after $k-1$ measurements, and obtain a new measurement $\rvy_k$. To be general, every measurements is now an $m$-vector with values yielded by, say, several measuring instruments. 
-
-A linear recursive estimator can be written in the following form:
-\begin{align*}
-	\rvy_k &= H_k\rvx+\eta_k\\
-	\tilda{\rvx}_k &= \tilda{\rvx}_{k-1}+K_k (\rvy_k-H_k\tilda{\rvx}_{k-1})
-\end{align*}
-Here $H_k$ is an $m\times n$ matrix, and $K_k$ is $n\times m$ and referred to as the \textit{estimator gain matrix}. We refer to $\rvy_k-H_k\tilda{\rvx}_{k-1}$ as the \textit{correction term}. Namely, the new estimate is modified from the previous estimate $\tilda{\rvx}_{k-1}$ with a correction via the gain vector. 
-
-The current estimation error is
-
-\begin{align*}
-	\boldsymbol{\epsilon}_k	&= \rvx-\tilda{\rvx}_k \\
-							&= \rvx-\tilda{\rvx}_{k-1} - K_k (\rvy_k-H_k\tilda{\rvx}_{k-1})\\
-							&= \boldsymbol{\epsilon}_{k-1}-K_k (H_k\rvx+\eta_k-H_k\tilda{\rvx}_{k-1})\\
-							&= \boldsymbol{\epsilon}_{k-1}-K_k H_k(\rvx-\tilda{\rvx}_{k-1})-K_k\eta_k\\
-							&= (I-K_k H_k)\boldsymbol{\epsilon}_{k-1}-K_k\eta_k,
-\end{align*}
-where $I$ is the $n\times n$ identity matrix. The mean of this error is then
-$$\mathbb{E}[\boldsymbol{\epsilon}_{k}] = (I-K_k H_k)\mathbb{E}[\boldsymbol{\epsilon}_{k-1}]-K_k\mathbb{E}[\boldsymbol{\eta}_{k}]$$
-If $\mathbb{E}[\boldsymbol{\eta}_{k}]=0$ and $\mathbb{E}[\boldsymbol{\epsilon}_{k-1}]=0$, then $\mathbb{E}[\boldsymbol{\epsilon}_{k}]=0$. So if the measurement noise has zero mean for all $k$, and the initial estimate of $\rvx$ is set equal to its expected value, then $\tilda{\rvx}_k=\rvx_k, \forall k$. With this property, the estimator $\tilda{\rvx}_k &= \tilda{\rvx}_{k-1}+K_k (\rvy_k-H_k\tilda{\rvx}_{k-1})$ is \textit{unbiased}. The property holds regardless of the value of the gain vector $K_k$. This means the estimate will be equal to the true value $\rvx$ on average. 
-
-The key is to determine the optimal value of the gain vector $K_k$. The optimality criterion used by us is to minimize the aggregated variance of the estimation errors at time $k$: 
-\begin{align*}
-	J_k &= \mathbb{E}[||\rvx-\tilda{\rvx}_k||^2]\\
-		&= \mathbb{E}[\boldsymbol{\epsilon}_{k}^T\boldsymbol{\epsilon}_{k}]\\
-		&= \mathbb{E}[tr(\boldsymbol{\epsilon}_{k}\boldsymbol{\epsilon}_{k}^T)]\\
-		&= tr(P_k),
-\end{align*}
-where $P_k=\mathbb{E}[\boldsymbol{\epsilon}_{k}\boldsymbol{\epsilon}_{k}^T]$ is the estimation-error covariance and the third line is done by the trace of a product (or cyclic property). The expectation in the third line can go into the trace operator by its linearity. Next, we can obtain $P_k$ by
-\begin{align*}
-	P_k &= \mathbb{E}\bigg[\big((I-K_k H_k)\boldsymbol{\epsilon}_{k-1}-K_k\eta_k\big)\big((I-K_k H_k)\boldsymbol{\epsilon}_{k-1}-K_k\eta_k\big)^T\bigg]
-\end{align*}
-By rearranging the above equation with the property that the mean of noise is zero, we can get
-$P_k = (I-K_k H_k)P_{k-1}(I-K_k H_k)^T+K_kR_kK_k^T.$
-
-This equation is the recurrence for the covariance of the least squares estimation error. It is consistent with the intuition that as the measurement noise $R_k$ increases, the uncertainty $P_k$ increases. 
-
-Next, we have to compute $K_k$ that minimizes the cost function given by error equation. 
-
-
-
-
-
-\input{./sections/basics/logistic_reg}
 
 
