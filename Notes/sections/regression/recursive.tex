@@ -1,11 +1,6 @@
 \section{Recursive Least Squares}
 \label{sec:recursive_least_square}
 
-\begin{itemize}
-	\item $H==X$
-	\item $x==\theta$
-\end{itemize}
-
 The ordinary least-squares assumes that all measurements are available at a certain time. However, this often might not be the case in practice. More often, we obtain measurements sequentially and want to update our estimate with each new measurement. In this case, the matrix $H$ needs to be augmented. This update can be very expensive. When then number of measurements is extremely large, the solutions of the least squares problem are difficult to compute. 
 
 These motivate the RLS. Suppose we have an estimate $\boldsymbol{\theta}_{k-1}$ after $k-1$ measurements, and obtain a new measurement $\rvy_k$. To be general, every measurements is now a vector with values yielded by, say, several measuring instruments. 
@@ -56,13 +51,12 @@ Next, we have to compute $K_k$ that minimizes the cost function given by error e
 \end{align*}
 Next, we are going to take a derivative to the objective function:
 \begin{align*}
-	\frac{\partial J_k}{\partial K_k} &= \frac{\partial}{\partial K_k} tr\big(P_{k-1}- K_k\mathbf{X}_k P_{k-1} - P_{k-1}\mathbf{X}_k^TK_k^T+K_k\big(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T\big)K_k^T\big)\\
-									  &+ \frac{\partial}{\partial K_k}tr\big(K_k R_k K_k^T\big)\\
+	\frac{\partial J_k}{\partial K_k} &= \frac{\partial}{\partial K_k} tr\big(P_{k-1}- K_k\mathbf{X}_k P_{k-1} - P_{k-1}\mathbf{X}_k^TK_k^T+K_k\big(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T\big)K_k^T\big)+ \frac{\partial}{\partial K_k}tr\big(K_k R_k K_k^T\big)\\
 									  &= -2\frac{\partial}{\partial K_k} tr\big(P_{k-1}\mathbf{X}_k^TK_k^T\big)+2K_k\big(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T\big)+2K_kR_k\\
 									  &= -2P_{k-1}\mathbf{X}_k^T+ 2K_k\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+2K_kR_k\\
 									  &= -2P_{k-1}\mathbf{X}_k^T+ 2K_k(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k).
 \end{align*}
-In the second step, we also used the property that $P_{k-1}$ is independent of $K_k$ and that $K_k\mathbf{X}_kP_{k-1}$ and $P_{k-1}\mathbf{X}_k^T$ are transpose of each other, since $P_{k-1}$ is symmetric. Thus, they have the same trace. By setting the partial derivative to zero, we get
+In the second step, we also used the property that $P_{k-1}$ is independent of $K_k$. Thus, the derivative of $P_{k-1}$ with respect to $K_k$ is zero. We also used that $K_k\mathbf{X}_kP_{k-1}$ and $P_{k-1}\mathbf{X}_k^TK_k^T$ are transpose of each other, since $P_{k-1}$ is symmetric. Thus, they have the same trace. By setting the partial derivative to zero, we get
 $$K_k = P_{k-1}\mathbf{X}_k^T(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k)^{-1}.$$
 By setting $\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k = S_k$, we get 
 $$K_k = P_{k-1}\mathbf{X}_k^TS_k^{-1}.$$
@@ -80,6 +74,22 @@ $$P_{k-1}^{-1} = \bigg(\underbrace{P_{k-1}}_{A}-\underbrace{P_{k-1}\mathbf{X}_k^
 Next, we apply the matrix inversion lemma which is known as \textit{Sherman-Morrison-Woodbury} identity: 
 $$(A-BD^{-1}C)^{-1} = A^{-1}+A^{-1}B(D-CA^{-1}B)^{-1}CA^{-1}.$$
 Then, rewrite $P_k^{-1}$ as follows:
+\begin{align*}
+	P_k^{-1} &= P_{k-1}^{-1}+P_{k-1}^{-1}P_{k-1}\mathbf{X}_k^T\big((\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k)-\mathbf{X}_kP_{k-1}P_{k-1}^{-1}(P_{k-1}\mathbf{X}_k^T)\big)^{-1}\mathbf{X}_kP_{k-1}P_{k-1}^{-1}\\ 
+			 &= P_{k-1}^{-1}+\mathbf{X}_k^TR_{k}^{-1}\mathbf{X}_k
+\end{align*}
+This yields an alternative expression for the covariance matrix:
+\begin{align*}
+	P_k = \big(P_{k-1}^{-1}\mathbf{X}_k^TR_{k}^{-1}\mathbf{X}_k\big)^{-1}
+\end{align*}
+We can also get
+\begin{align*}
+	K_k = P_{k}\mathbf{X}_k^TR_{k}^{-1}
+\end{align*}
+
+\subsection{The Estimation Algorithm}
+
+First, initialize the estimator:
 
 
 
