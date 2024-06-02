@@ -175,18 +175,43 @@ The Linear State-Space Layer (LSSL) is a simple sequence model that maps a one-d
 	y(t) &= \mathbf{C}x(t)+\mathbf{D}u(t).
 \end{align*}
 
-It maps a single dimensional input signal $u(t)$ to an $N$-dim latent state (or hidden state) $x(t)$ before projecting to a one-dim output signal $y(t)$.  
+The first equation maps a single dimensional input signal $u(t)$ (or sequence) to an $N$-dim latent state (or hidden state) $x'(t)$ with the current state $x(t)$. The $\mathbf{A}$ and $\mathbf{B}$ can be considered as an non-linear mapping or transition matrices (\ie learnable parameters) to reflect the impact of the current state and the input, respectively. Finally, we project the input and the updated state to a one-dim output signal $y(t)$ (\ie sequence).  
 
-Our goal is to simply use the SSM as a black-box representation in a deep sequence model, where $\rmA, \rmB, \rmC$, and $\rmD$ are parameters learned by gradient descent. We will omit the parameter $\rmD$ for exposition (or equivalently, assume $\rmD=0$, because the term $\rmD u$ can be viewed as a skip connection and is easy to compute).
+Our goal is to simply use the SSM as a black-box representation in a deep sequence model, where $\rmA, \rmB, \rmC$, and $\rmD$ are parameters learned by gradient descent. We will omit the parameter $\rmD$ for exposition (or equivalently, assume $\rmD=0$, because the term $\rmD u$ can be viewed as a \textit{skip connection} and is easy to compute).
 
 An SSM maps a input $u(t)$ to a state representation vector $x(t)$ and an output $y(t)$. For simplicity, we assume the input and output are one-dimensional, and the state representation is $N$-dimensional. The first equation defines the change in $x(t)$ over time.
 
 \paragraph{Discretization} Then the discrete-time state-space model is given by
 \begin{align*}
 	x'(t) &= \overline{\mathbf{A}}x(t)+\overline{\mathbf{B}}u(t),\\
-	y(t) &= \mathbf{C}x(t)+\mathbf{D}u(t),
+	y(t) &= \mathbf{C}x(t)+\underbrace{\mathbf{D}u(t)}_{=0},
 \end{align*}
-where $\overline{\mathbf{A}} = \mathbf{I}+\Delta \mathbf{A}$
+where $\overline{\mathbf{A}} = \mathbf{I}+\Delta \mathbf{A}$ and $\Delta \mathbf{B}$. To see how $\overline{\mathbf{A}}$ is derived:
+
+\begin{align*}
+	x'(t) &= \overline{\mathbf{A}}x(t)+\overline{\mathbf{B}}u(t)\\
+		  &= \lim_{\Delta\to 0} \frac{x(t+\Delta)-x(t)}{\Delta}.
+\end{align*}
+Thus, 
+\begin{align*}
+	x(t+\Delta)-x(t) = \Delta x'(t).
+\end{align*}
+Equivalently, 
+\begin{align*}
+	x(t+\Delta) = \Delta x'(t)+x(t). 
+\end{align*}
+Plugging $x'(t)$ into the above equation, we get:
+\begin{align*}
+	x(t+\Delta) &= \Delta (\mathbf{A}x(t)+\mathbf{B}u(t)) +x(t) \\
+				&= \underbrace{(\mathbf{I}+\Delta \mathbf{A})}_{\overline{\mathbf{A}}}x(t)+\underbrace{\Delta \mathbf{B}}_{\overline{\mathbf{B}}}u(t).
+\end{align*}
+We can say $x(t+\Delta)=x(t+1)$, since it is the next state we care. Thus, 
+\begin{align*}
+	x(t+1)= (\mathbf{I}+\Delta \mathbf{A})x(t)+\Delta \mathbf{B}u(t).
+\end{align*}
+
+
+
 
 \begin{figure}[h]
 	\centering
@@ -194,13 +219,65 @@ where $\overline{\mathbf{A}} = \mathbf{I}+\Delta \mathbf{A}$
 	\caption{S4 Model}
 	\label{fig:nlp_s4_model}
 \end{figure}
-\paragraph{As a Convolution} 
 
-% \begin{lstlisting}[language=Python]
-% 	def random_SSM(rng, N):
-% 		a_r, b_r, c_r = jax.random.split(rng, 3)
-% 		A = jax.random.uniform(a_r, (N, N))
-% 		B = jax.random.uniform(b_r, (N, 1))
-% 		C = jax.random.uniform(c_r, (1, N))
-%     return A, B, C
-% \end{lstlisting}
+We can represent the update process as follows:
+
+At $t=0$
+\begin{align*}
+	x(0) &= \overline{\mathbf{B}}u(0),\\
+	y(0) &= \mathbf{C}x(0)
+\end{align*}
+
+At $t=1$
+\begin{align*}
+	x(1) &= \overline{\mathbf{A}}x(0)+\overline{\mathbf{B}}u(1),\\
+	y(1) &= \mathbf{C}x(1)
+\end{align*}
+
+At $t=2$
+\begin{align*}
+	x(2) &= \overline{\mathbf{A}}x(1)+\overline{\mathbf{B}}u(2),\\
+	y(2) &= \mathbf{C}x(2).
+\end{align*}
+Note that this update process is equivalent to the RNN's update process. 
+
+\paragraph{As a Convolution} 
+The above process can be viewed as an one-dimensional convolution. 
+
+\begin{align*}
+	x(0) &= \overline{\mathbf{B}}u(0),\\
+	y(0) &= \mathbf{C}x(0) = \mathbf{C}\overline{\mathbf{B}}u(0)\\
+		 &\\
+	x(1) &= \overline{\mathbf{A}}x(0)+\overline{\mathbf{B}}u(1)=\overline{\mathbf{A}}\overline{\mathbf{B}}u(0)+\overline{\mathbf{B}}u(1)\\
+	y(1) &= \mathbf{C}x(1) = \mathbf{C}(\overline{\mathbf{A}}\overline{\mathbf{B}}u(0)+\overline{\mathbf{B}}u(1)) = \mathbf{C}\overline{\mathbf{A}}\overline{\mathbf{B}}u(0)+\mathbf{C}\overline{\mathbf{B}}u(1)\\
+		 &\\
+	x(2) &= \overline{\mathbf{A}}x(1)+\overline{\mathbf{B}}u(2)=\overline{\mathbf{A}}(\overline{\mathbf{A}}\overline{\mathbf{B}}u(0)+\overline{\mathbf{B}}u(1))+\overline{\mathbf{B}}u(2)=\overline{\mathbf{A}}^2\overline{\mathbf{B}}u(0)+\overline{\mathbf{A}}\overline{\mathbf{B}}u(1)+\overline{\mathbf{B}}u(2)\\
+	y(2) &= \mathbf{C}x(2)=\mathbf{C}(\overline{\mathbf{A}}^2\overline{\mathbf{B}}u(0)+\overline{\mathbf{A}}\overline{\mathbf{B}}u(1)+\overline{\mathbf{B}}u(2))=\mathbf{C}\overline{\mathbf{A}}^2\overline{\mathbf{B}}u(0)+\mathbf{C}\overline{\mathbf{A}}\overline{\mathbf{B}}u(1)+\mathbf{C}\overline{\mathbf{B}}u(2)\\
+\end{align*}
+We get a general formula:
+\begin{align*}
+	y(t) &= \mathbf{C}\overline{\mathbf{A}}^t\overline{\mathbf{B}}u(0)+\mathbf{C}\overline{\mathbf{A}}^{t-1}\overline{\mathbf{B}}u(1)+\dots+\mathbf{C}\overline{\mathbf{B}}u(t)\\
+		 &= \sum_{t=0}^T \mathbf{C}\overline{\mathbf{A}}^{T-t}\overline{\mathbf{B}}u(t)
+\end{align*}
+It turns out that the above equation is a one-dimensional convolution by a Kernel $K$:
+\begin{align*}
+	y = x*\overline{K}.
+\end{align*}
+Let's say the kernel size is 4 with zero-padding,  (See \Cref{fig:mamba_conv}).
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.95]{./images/state_space/mamba_conv.pdf}
+	\caption{}
+	\label{fig:mamba_conv}
+\end{figure}
+
+During training, we can train the model as a convolutional neural network so that we can leverage the parallel training. During inference (\ie decoding stage), we can switch to the recurrent mode for near-constant time inference. Please note here, that if you look at the kernels you can see that they are fixed. And since the kernels are fixed, so we can also term these models as \textit{time-invariant} SSMs. 
+
+
+https://blog.premai.io/s4-and-mamba/
+
+
+
+
+
