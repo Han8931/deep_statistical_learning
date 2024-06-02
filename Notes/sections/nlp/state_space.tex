@@ -186,8 +186,7 @@ An SSM maps a input $u(t)$ to a state representation vector $x(t)$ and an output
 	x'(t) &= \overline{\mathbf{A}}x(t)+\overline{\mathbf{B}}u(t),\\
 	y(t) &= \mathbf{C}x(t)+\underbrace{\mathbf{D}u(t)}_{=0},
 \end{align*}
-where $\overline{\mathbf{A}} = \mathbf{I}+\Delta \mathbf{A}$ and $\Delta \mathbf{B}$. To see how $\overline{\mathbf{A}}$ is derived:
-
+where $\overline{\mathbf{A}} = \mathbf{I}+\Delta \mathbf{A}$ and $\overline{\mathbf{B}} = \Delta \mathbf{B}$, respectively. They can be obtained by
 \begin{align*}
 	x'(t) &= \overline{\mathbf{A}}x(t)+\overline{\mathbf{B}}u(t)\\
 		  &= \lim_{\Delta\to 0} \frac{x(t+\Delta)-x(t)}{\Delta}.
@@ -274,10 +273,20 @@ Let's say the kernel size is 4 with zero-padding,  (See \Cref{fig:mamba_conv}).
 
 During training, we can train the model as a convolutional neural network so that we can leverage the parallel training. During inference (\ie decoding stage), we can switch to the recurrent mode for near-constant time inference. Please note here, that if you look at the kernels you can see that they are fixed. And since the kernels are fixed, so we can also term these models as \textit{time-invariant} SSMs. 
 
+The Mamba represents the matrix $A$ via a HiPPO matrix. The HiPPO is a $N x N$ matrix specifically designed to memorize the history of inputs. 
+\begin{align*}
+	\mathbf{A}_{nk} = 
+\begin{cases}
+	(2n+1)^{1/2}(2k+1)^{1/2}\, &\textrm{ if } n>k\\
+	n+1\, &\textrm{ if } n=k\\
+	0\, &\textrm{ else }
+\end{cases}
+\end{align*}
+This matrix helps to compress the history of the information by masking the next tokens, which is similar to the masked self-attention. Note that the matrix just needs to be computed once. 
 
+
+\section{Mamba: Linear-Time Sequence Modeling with Selective State Spaces}
+\label{sec:ssm_mamba}
 https://blog.premai.io/s4-and-mamba/
-
-
-
 
 
