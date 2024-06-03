@@ -1,20 +1,85 @@
 \chapter{Fourier Analysis}
-Reference: Y.D. Chong 2021, NTU Lecture Note
 
-The Fourier transform is one of the most important mathematical tools used for analyzing functions. Given an arbitrary function $f(x)$, with a real domain $(x \in \mathbb{R})$, we can express it as a linear combination of complex waves
+Fourier analysis is a mathematical tool used to understand and analyze periodic phenomena. It is named after the French mathematician Joseph Fourier, it's based on the idea that any periodic function can be represented as a sum of sine and cosine functions with different frequencies, amplitudes, and phases.
+
+The Fourier transform is one of the most important mathematical tools used for analyzing functions. Given an arbitrary function $f(x)$, with a real domain $(x \in \mathbb{R})$, we can express it as a linear combination of complex waves. 
+
+\begin{itemize}
+	\item Periodic Functions: Fourier analysis deals with functions that repeat over regular intervals. This repetition could be over time (like sound waves or electrical signals) or space (like patterns on a surface).
+	\item Fourier Series: It states that any periodic function can be represented as an infinite sum of sine and cosine functions. The Fourier series expansion expresses the original function as a weighted sum of sinusoids.
+	\item Frequency Domain: While the original function is in the time or spatial domain, Fourier analysis allows us to examine it in the frequency domain. This means we can understand the different frequency components present in the signal and their respective strengths.
+	\item Fast Fourier Transform (FFT): This is an efficient algorithm for calculating the Fourier transform of a discrete signal. It's widely used in digital signal processing due to its speed and accuracy.
+	\item Continuous vs. Discrete Fourier Transform: While Fourier series deals with periodic continuous functions, Fourier transforms extend the concept to non-periodic functions or signals. The discrete Fourier transform (DFT) is used for discrete, sampled signals, as in digital signal processing.
+	\item Inverse Fourier Transform: Just as you can transform a function into the frequency domain using Fourier analysis, you can also transform it back using the inverse Fourier transform. This allows you to reconstruct the original function from its frequency components.
+\end{itemize}
+
+
 
 \section{Fourier Series}
 \label{sec:fourier_series}
 
-We begin by discussing the Fourier series, which is used to analyze functions that are periodic in their inputs. A periodic function $f(x)$ is a function of a real variable $x$ that repeats itself every time $x$ changes by $a$. The constant $a$ is called the \textit{period}. We can write the periodicity condition as
-$$f(x+a) = f(x), \forall x\in \mathbb{R}.$$
+We begin by discussing the Fourier series, which is used to analyze functions that are periodic in their inputs. A periodic function $f(x)$ is a function of a real variable $x$ that repeats itself every time $x$ changes by $T$. The constant $T$ is called the \textit{period}. We can write the periodicity condition as
+$$f(x+T) = f(x), \forall x\in \mathbb{R}.$$
 The value of $f(x)$ can be real or complex, but $x$ should be real.
 
-Let's consider what it means to specify a periodic function $f(x)$. One way to specify the function is to give an explicit mathematical formula for it. Another approach might be to specify the function values in $−a/2 \leq x < a/2$. Since there's an uncountably infinite number of points in this domain, we can generally only achieve an approximate specification of $f$ this way, by giving the values of $f$ at a large but finite set $x$ points. 
+Let's consider what it means to specify a periodic function $f(x)$. One way to specify the function is to give an explicit mathematical formula for it. Another approach might be to specify the function values in $−T/2 \leq x < T/2$. Since there's an uncountably infinite number of points in this domain, we can generally only achieve an approximate specification of $f$ this way, by giving the values of $f$ at a large but finite set $x$ points. 
 
 There is another interesting approach to specifying $f$. We can express it as a linear combination of simpler periodic functions, consisting of sines and cosines:
-$$f(x) = \sum_{n=1}^{\infty} \alpha_n \sin\bigg(\frac{2\pi n x}{a}\bigg)+\sum_{m=0}^{\infty}\beta_m \cos\bigg(\frac{2\pi m x}{a}\bigg).$$
-Note that the index $n$ does not include 0; since the sine term with $n = 0$ vanishes for all $x$, it's redundant. The above formula is called a \textit{Fourier series}. Given the numbers $\{\alpha_n, \beta_m\}$, which are called the \textit{Fourier coefficients}, $f(x)$ can be calculated for any $x$. The Fourier coefficients are real if $f(x)$ is a real function, or complex if $f(x)$ is complex.
+\begin{align}
+	f(x) = \frac{a_0}{2}+\sum_{n=1}^{\infty} a_n \cos\bigg(\frac{2\pi n x}{T}\bigg)+\sum_{m=1}^{\infty}b_m \sin\bigg(\frac{2\pi m x}{T}\bigg),
+	\label{eq:fourier_series}
+\end{align}
+where $a_0$, $a_n$, and $b_m$ are coefficients determined by integrating $f(x)$ over one period. The coefficients are given by
+\begin{align*}
+	a_0 &= \frac{1}{T}\int_0^Tf(x)dx\\
+	a_n	&= \frac{2}{T}\int_0^Tf(x)\cos\bigg(\frac{2\pi nx}{T}\bigg)dx\\
+	b_m	&= \frac{2}{T}\int_0^Tf(x)\sin\bigg(\frac{2\pi nx}{T}\bigg)dx
+\end{align*}
+The above formula is called a \textit{Fourier series}. Given the numbers $\{a_n, b_m\}$, which are called the \textit{Fourier coefficients}, $f(x)$ can be calculated for any $x$. The Fourier coefficients are real if $f(x)$ is a real function, or complex if $f(x)$ is complex.
+
+
+\paragraph{Example: }Consider a periodic function $f(x)$ defined on the interval $-\pi\leq x \leq\pi$ as follows:
+\begin{align*}
+f(x)= 
+\begin{cases}
+	0 & \text{if } -\pi \leq x < 0 \\
+	x & \text{if } 0 \leq x \leq \pi
+\end{cases}
+\end{align*}
+
+We want to find the Fourier series representation of \( f(x) \).
+\paragraph{Solution:} Step 1: Determine the coefficients \( a_0 \), \( a_n \), and \( b_n \).
+\begin{enumerate}
+	\item Calculate \( a_0 \):
+		\begin{align*}
+			a_0 &= \frac{1}{\pi} \int_{-\pi}^{\pi} f(x) dx \\
+				&= \frac{1}{\pi} \left( \int_{-\pi}^{0} 0 \, dx + \int_{0}^{\pi} x \, dx \right) \\
+				&= \frac{1}{\pi} \left( \int_{0}^{\pi} x \, dx \right) \\
+				&= \frac{1}{\pi} \left( \frac{1}{2} \pi^2 \right) \\
+				&= \frac{\pi}{2} 
+		\end{align*}
+	\item Calculate \( a_n \): \[ a_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f(x) \cos(nx) \, dx \]
+Since \( f(x) \) is odd and \( \cos(nx) \) is even, \( a_n \) will be zero for all \( n \).
+	\item Calculate \( b_n \):
+		\begin{align*}
+			b_n &= \frac{1}{\pi} \int_{-\pi}^{\pi} f(x) \sin(nx) \, dx \\
+				&= \frac{1}{\pi} \left( \int_{0}^{\pi} x \sin(nx) \, dx \right) \\
+		\end{align*}
+		This integral can be evaluated using integration by parts:
+\[ u = x, \quad dv = \sin(nx) \, dx \]
+\[ du = dx, \quad v = -\frac{1}{n} \cos(nx) \]
+\begin{align*}
+	b_n &= \frac{1}{\pi} \left( \left[ -\frac{x}{n} \cos(nx) \right]_{0}^{\pi} - \frac{1}{n} \int_{0}^{\pi} -\cos(nx) \, dx \right)\\
+		&= \frac{1}{\pi} \left( \frac{\pi}{n} - \frac{1}{n^2} \left[ \sin(nx) \right]_{0}^{\pi} \right)\\
+		&= \frac{1}{\pi} \left( \frac{\pi}{n} \right) \\
+		&= \frac{1}{n} 
+\end{align*}
+	\item Write the Fourier series:
+\[ f(x) = \frac{\pi}{2} + \sum_{n=1}^{\infty} \frac{1}{n} \sin(nx) \]
+\end{enumerate}
+
+
+
 
 \subsection{Square-integrable functions}
 Can arbitrary periodic functions always be expressed as a Fourier series? It turns out that a certain class of periodic functions, commonly encountered in physical contexts, are guaranteed to always be expressible as Fourier series. These are called square-integrable functions such that the integral of the square of the absolute value is finite:
@@ -35,12 +100,137 @@ We have written the Fourier series as a sum of sine and cosine functions. Howeve
 	\item $\sin x=\frac{e^{ix}-e^{-ix}}{2i}$
 \end{itemize}
 Thus, Fourier series can be expressed as follows:
-$$f(x) = \sum_{n=-\infty}^{\infty}e^{2\pi i n x/a}f_n$$
+$$f(x) = \sum_{n=-\infty}^{\infty} c_n e^{inx},$$
+where the complex Fourier coefficients \( c_n \) are given by:
+\[ c_n = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(x) e^{-inx} \, dx \]
+
 \begin{itemize}
 	\item $i$: complex number
 	\item $n$: integer
-	\item $a$: period
-	\item $f_n$: Fourier coefficient
 \end{itemize}
 
+\paragraph{Example: }Consider the periodic function \( f(x) \) defined on the interval \( -\pi \leq x \leq \pi \):
+
+\[ f(x) = \begin{cases} 
+0 & \text{if } -\pi \leq x < 0 \\
+x & \text{if } 0 \leq x \leq \pi 
+\end{cases} \]
+
+We will find the complex form of the Fourier series for this function.
+
+#### Step 1: Calculate the complex Fourier coefficients \( c_n \).
+
+\[ c_n = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(x) e^{-inx} \, dx \]
+
+Since \( f(x) \) is piecewise, we split the integral into two parts:
+
+\[ c_n = \frac{1}{2\pi} \left( \int_{-\pi}^{0} 0 \cdot e^{-inx} \, dx + \int_{0}^{\pi} x e^{-inx} \, dx \right) \]
+
+The first integral is zero, so we focus on the second part:
+
+\[ c_n = \frac{1}{2\pi} \int_{0}^{\pi} x e^{-inx} \, dx \]
+
+This integral can be solved using integration by parts. Let:
+
+\[ u = x \quad \text{and} \quad dv = e^{-inx} \, dx \]
+
+Then:
+
+\[ du = dx \quad \text{and} \quad v = \frac{e^{-inx}}{-in} = -\frac{1}{in} e^{-inx} \]
+
+Applying integration by parts:
+
+\[ \int u \, dv = uv - \int v \, du \]
+
+So,
+
+\[ \int_{0}^{\pi} x e^{-inx} \, dx = \left[ -\frac{x}{in} e^{-inx} \right]_{0}^{\pi} + \frac{1}{in} \int_{0}^{\pi} e^{-inx} \, dx \]
+
+Evaluating the boundary terms:
+
+\[ \left[ -\frac{x}{in} e^{-inx} \right]_{0}^{\pi} = -\frac{\pi}{in} e^{-in\pi} - 0 = -\frac{\pi}{in} e^{-in\pi} \]
+
+And for the integral:
+
+\[ \frac{1}{in} \int_{0}^{\pi} e^{-inx} \, dx = \frac{1}{in} \left[ \frac{e^{-inx}}{-in} \right]_{0}^{\pi} = -\frac{1}{n^2} \left( e^{-in\pi} - 1 \right) \]
+
+Combining these results:
+
+\[ \int_{0}^{\pi} x e^{-inx} \, dx = -\frac{\pi}{in} e^{-in\pi} + \frac{1}{n^2} (1 - e^{-in\pi}) \]
+
+Thus, the Fourier coefficient \( c_n \) is:
+
+\[ c_n = \frac{1}{2\pi} \left( -\frac{\pi}{in} e^{-in\pi} + \frac{1}{n^2} (1 - e^{-in\pi}) \right) \]
+\[ c_n = \frac{1}{2\pi} \left( -\frac{\pi}{in} (-1)^n + \frac{1}{n^2} (1 - (-1)^n) \right) \]
+
+This expression simplifies to:
+
+\[ c_n = \frac{i(-1)^n}{2n} + \frac{1}{2\pi n^2} (1 - (-1)^n) \]
+
+### Step 2: Write the Complex Fourier Series:
+
+\[ f(x) = \sum_{n=-\infty}^{\infty} c_n e^{inx} \]
+
+With \( c_n \) now calculated, you can substitute these coefficients back into the Fourier series expression to represent \( f(x) \).
+
+\section{Fourier Transform}
+\label{sec:fourier_transform}
+
+\subsection{Fourier Series v.s. Fourier Transform}
+
+The Fourier series is used to represent periodic functions as a sum of sine and cosine functions. On the other hand, the Fourier transform extends the idea to non-periodic functions or signals. The Fourier transform of a function \( f(t) \) is given by:
+\[ F(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i \omega t} \, dt, \]
+where \( F(\omega) \) is the frequency domain representation of the signal \( f(t) \).
+
+\subsection{Equations of Fourier Transform}
+The Fourier transform and its inverse are defined as follows:
+\begin{itemize}
+	\item Fourier Transform:
+	\[ F(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i \omega t} \, dt \]
+	\item Inverse Fourier Transform:
+	\[ f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(\omega) e^{i \omega t} \, d\omega \]
+\end{itemize}
+These equations show how a time-domain signal \( f(t) \) can be transformed into its frequency-domain representation \( F(\omega) \), and vice versa.
+
+\paragraph{Example: }The Fourier transform of a rectangular pulse.
+Define a rectangular pulse function \( f(t) \) as:
+\[ f(t) = \begin{cases} 
+1 & \text{if } |t| \leq \frac{1}{2} \\
+0 & \text{otherwise} 
+\end{cases} \]
+
+To find its Fourier transform \( F(\omega) \):
+
+\[ F(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i \omega t} \, dt \]
+
+Since \( f(t) \) is non-zero only between \( -\frac{1}{2} \) and \( \frac{1}{2} \), the integral becomes:
+
+\[ F(\omega) = \int_{-\frac{1}{2}}^{\frac{1}{2}} e^{-i \omega t} \, dt \]
+
+This integral can be evaluated as:
+
+\[ F(\omega) = \left[ \frac{e^{-i \omega t}}{-i \omega} \right]_{-\frac{1}{2}}^{\frac{1}{2}} = \frac{e^{-i \omega / 2} - e^{i \omega / 2}}{-i \omega} = \frac{2 \sin(\omega / 2)}{\omega} \]
+
+Thus, the Fourier transform of the rectangular pulse is:
+
+\[ F(\omega) = \frac{\sin(\omega / 2)}{\omega / 2} = \text{sinc}\left(\frac{\omega}{2}\right) \]
+
+where \(\text{sinc}(x) = \frac{\sin(x)}{x}\).
+
+% ### Practice Problem
+
+% Find the Fourier transform of the function \( f(t) = e^{-a|t|} \) for \( a > 0 \).
+
+% #### Solution Outline
+
+% 1. **Define the function**:
+% \[ f(t) = e^{-a|t|} \]
+
+% 2. **Apply the Fourier transform**:
+% \[ F(\omega) = \int_{-\infty}^{\infty} e^{-a|t|} e^{-i \omega t} \, dt \]
+
+% 3. **Split the integral**:
+% \[ F(\omega) = \int_{-\infty}^{0} e^{at} e^{-i \omega t} \, dt + \int_{0}^{\infty} e^{-at} e^{-i \omega t} \, dt \]
+
+% 4. **Solve each part** and combine the results.
 
