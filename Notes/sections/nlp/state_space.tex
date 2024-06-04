@@ -24,7 +24,7 @@ For a continuous-time system, the state-space model is typically expressed as fo
 	% \frac{dX}{dt} &= {A}X+{B}U,\\
 	y(t) &= {C}x(t)+Du(t).
 \end{align*}
-The first and the second equations are known as \textit{state equation} and \textit{output equation}, respectively. The state equation tells us that how the state vector changes with the state vector and the (external) input. 
+The first and the second equations are known as \textit{state equation} and \textit{output equation}, respectively. The state equation tells us that how the state vector changes with the state vector and the (external) input. The state space model is \textbf{linear} and \textbf{time invariant}, since the equations are linear and the parameter matrices do not change over time. Such systems are referred as a LTI system. 
 
 \begin{itemize}
 	\item $x(t)\in \mathbb{R}^n$: A state vector. This variable describes the state of the system at any given time.
@@ -177,21 +177,21 @@ The Linear State-Space Layer (LSSL) is a simple sequence model that maps a one-d
 
 The first equation maps a single dimensional input signal $u(t)$ (or sequence) to an $N$-dim latent state (or hidden state) $x'(t)$ with the current state $x(t)$. The $\mathbf{A}$ and $\mathbf{B}$ can be considered as an non-linear mapping or transition matrices (\ie learnable parameters) to reflect the impact of the current state and the input, respectively. Finally, we project the input and the updated state to a one-dim output signal $y(t)$ (\ie sequence).  
 
-Our goal is to simply use the SSM as a black-box representation in a deep sequence model, where $\rmA, \rmB, \rmC$, and $\rmD$ are parameters learned by gradient descent. We will omit the parameter $\rmD$ for exposition (or equivalently, assume $\rmD=0$, because the term $\rmD u$ can be viewed as a \textit{skip connection} and is easy to compute).
+Our goal is to simply use the SSM as a black-box representation in a deep sequence model, where $\rmA, \rmB, \rmC$, and $\rmD$ are parameters learned by gradient descent. We will omit the parameter $\rmD$ for exposition (or equivalently, assume $\rmD=0$, because the term $\rmD u$ can be viewed as a \textit{skip connection} that doesn't depend on the hidden state ($x$)).
 
 An SSM maps a input $u(t)$ to a state representation vector $x(t)$ and an output $y(t)$. For simplicity, we assume the input and output are one-dimensional, and the state representation is $N$-dimensional. The first equation defines the change in $x(t)$ over time.
 
-\paragraph{Discretization} Then the discrete-time state-space model is given by
+\paragraph{Discretization} We want to find a discrete-time state-space model. We can represent it by approximating a continuous model (\ie $h(t_k) \approx h(k\Delta)$) as follows:
 \begin{align*}
 	x'(t) &= \overline{\mathbf{A}}x(t)+\overline{\mathbf{B}}u(t),\\
 	y(t) &= \mathbf{C}x(t)+\underbrace{\mathbf{D}u(t)}_{=0},
 \end{align*}
-where $\overline{\mathbf{A}} = \mathbf{I}+\Delta \mathbf{A}$ and $\overline{\mathbf{B}} = \Delta \mathbf{B}$, respectively. They can be obtained by
+where $\overline{\mathbf{A}} = \mathbf{I}+\Delta \mathbf{A}$ and $\overline{\mathbf{B}} = \Delta \mathbf{B}$, respectively. They are derived by
 \begin{align*}
 	x'(t) &= \overline{\mathbf{A}}x(t)+\overline{\mathbf{B}}u(t)\\
-		  &= \lim_{\Delta\to 0} \frac{x(t+\Delta)-x(t)}{\Delta}.
+		  &= \lim_{\Delta\to 0} \frac{x(t+\Delta)-x(t)}{\Delta},
 \end{align*}
-Thus, 
+where $\Delta$ is a step size. Note that $\Delta$ is a learnable parameter to be determined during a training phase. Subsequently, we get 
 \begin{align*}
 	x(t+\Delta)-x(t) = \Delta x'(t).
 \end{align*}
@@ -208,6 +208,7 @@ We can say $x(t+\Delta)=x(t+1)$, since it is the next state we care. Thus,
 \begin{align*}
 	x(t+1)= (\mathbf{I}+\Delta \mathbf{A})x(t)+\Delta \mathbf{B}u(t).
 \end{align*}
+Note that the original paper utilizes a special rule called \textit{Zero-Order Hold} to approximate the $\overline{A}$ and $\overline{B}$. 
 
 
 
@@ -271,9 +272,16 @@ Let's say the kernel size is 4 with zero-padding,  (See \Cref{fig:mamba_conv}).
 	\label{fig:mamba_conv}
 \end{figure}
 
-During training, we can train the model as a convolutional neural network so that we can leverage the parallel training. During inference (\ie decoding stage), we can switch to the recurrent mode for near-constant time inference. Please note here, that if you look at the kernels you can see that they are fixed. And since the kernels are fixed, so we can also term these models as \textit{time-invariant} SSMs. 
+During training, we can train the model as a convolutional neural network so that we can leverage the parallel training. During inference (\ie decoding stage), we can switch to the recurrent mode for near-constant time inference. Please note here, that if you look at the kernels you can see that they are fixed. 
 
-The Mamba represents the matrix $A$ via a HiPPO matrix. The HiPPO is a $N x N$ matrix specifically designed to memorize the history of inputs. 
+Note that we can scale the single-dimensional SSM to multi-dimensional vector by putting a SSM for each dimension. For instance, there is going to be 256 SSMs if we want to learn a 256 embeddings.  
+
+
+\section{Mamba: Linear-Time Sequence Modeling with Selective State Spaces}
+\label{sec:ssm_mamba}
+https://blog.premai.io/s4-and-mamba/
+
+We can immediately notice the importance of the matrix $\mathbf{A}$. The Mamba leverages a special matrix called HiPPO. The HiPPO is a $N x N$ matrix specifically designed to approximate all the input signals by using Legendre polynomials (like Fourier series). 
 \begin{align*}
 	\mathbf{A}_{nk} = 
 \begin{cases}
@@ -283,10 +291,5 @@ The Mamba represents the matrix $A$ via a HiPPO matrix. The HiPPO is a $N x N$ m
 \end{cases}
 \end{align*}
 This matrix helps to compress the history of the information by masking the next tokens, which is similar to the masked self-attention. Note that the matrix just needs to be computed once. 
-
-
-\section{Mamba: Linear-Time Sequence Modeling with Selective State Spaces}
-\label{sec:ssm_mamba}
-https://blog.premai.io/s4-and-mamba/
 
 
