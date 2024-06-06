@@ -31,6 +31,9 @@ $$a_i = \frac{\exp(s_i)}{\sum_j \exp(s_j)}$$
 \subsection{Self-Attention}
 $$attn(Q,K,V) = softmax\bigg(\frac{Q^TK}{\sqrt{d_k}}\bigg)V$$
 
+Here, $Q, K, V\in \mathbb{R}^{N\times d}$, $QK^T$'s time complexity is $O(N^2d)$. This quadratic cost is massive for long input-sequences such as documents to be summarized or character-level inputs.
+
+
 \subsection{Masked attention}
 The masked attention is often referred to cross-attention. This is just a self-attention in decoder.
 $$\textrm{MA}(Q,K,V) = softmax\bigg(\frac{Q^TK+M}{\sqrt{d_k}}\bigg)V,$$

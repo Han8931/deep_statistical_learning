@@ -186,7 +186,7 @@ With \( c_n \) now calculated, you can substitute these coefficients back into t
 
 The Fourier series is used to represent periodic functions as a sum of sine and cosine functions. On the other hand, the Fourier transform extends the idea to non-periodic functions or signals. The Fourier transform of a function \( f(t) \) is given by:
 \[ F(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i \omega t} \, dt, \]
-where \( F(\omega) \) is the frequency domain representation of the signal \( f(t) \).
+where \( F(\omega) \) is the frequency domain representation of the signal \( f(t) \) and $\omega=2\pi f$, where $f$ is a frequency.
 
 \subsection{Equations of Fourier Transform}
 The Fourier transform and its inverse are defined as follows:
@@ -222,6 +222,86 @@ Thus, the Fourier transform of the rectangular pulse is:
 \[ F(\omega) = \frac{\sin(\omega / 2)}{\omega / 2} = \text{sinc}\left(\frac{\omega}{2}\right) \]
 
 where \(\text{sinc}(x) = \frac{\sin(x)}{x}\).
+
+\section{Fourier Transform as a Change of Basis}
+A change of basis in linear algebra is a fundamental concept that involves transitioning from one coordinate system to another within a vector space. This can simplify calculations, provide deeper insights, or align with different geometric interpretations. Let's break down the concept with definitions and steps:
+
+Fourier analysis is closely related to the concept of change of basis in linear algebra. In Fourier analysis, we are essentially changing the basis from the standard basis of functions (e.g., the time domain for signals) to a basis of sinusoidal functions (\eg the frequency domain). Here’s how this relationship works:
+
+The Fourier transform (both continuous and discrete versions) can be seen as a change of basis from the time domain to the frequency domain. When we apply the Fourier transform to a signal x(t)x(t), we express it as a linear combination of sinusoidal basis functions.
+
+\begin{itemize}
+	\item Standard Basis in Time Domain: In the time domain, a signal or function can be represented as a sum of basis functions, which are typically \( \delta \) functions (impulse functions) or other simple functions like polynomial terms. For example, a discrete-time signal \( x[n] \) can be considered in terms of standard basis vectors.
+
+	\item Fourier Basis in Frequency Domain: In the frequency domain, the basis functions are complex exponentials or sinusoidal functions \( e^{i \omega t} \) (where \( i \) is the imaginary unit and \( \omega \) is the angular frequency). The Fourier transform decomposes a signal into a sum of these sinusoidal basis functions.
+\end{itemize}
+
+The Fourier transform (both continuous and discrete versions) can be seen as a change of basis from the time domain to the frequency domain. When we apply the Fourier transform to a signal \( x(t) \), we express it as a linear combination of sinusoidal basis functions.
+
+\paragraph{Continuous Fourier Transform:} The continuous Fourier transform of a function \( x(t) \) is given by:
+  \[
+  X(f) = \int_{-\infty}^{\infty} x(t) e^{-i 2 \pi f t} \, dt
+  \]
+  Here, \( X(f) \) represents the coordinates of the function \( x(t) \) in the new basis (frequency domain). The inverse Fourier transform reconstructs the original signal from its frequency domain representation:
+  \[
+  x(t) = \int_{-\infty}^{\infty} X(f) e^{i 2 \pi f t} \, df
+  \]
+  This process is analogous to converting coordinates from the new basis back to the original basis.
+
+\subsection{Change of Basis}
+\begin{itemize}
+	\item Vector Space: A collection of vectors where vector addition and scalar multiplication are defined and satisfy specific axioms.
+	\item Basis: A set of linearly independent vectors that span the entire vector space. Every vector in the space can be uniquely represented as a linear combination of the basis vectors.
+	\item Coordinate Vector: The representation of a vector in terms of the basis vectors, typically given as a column of coefficients.
+\end{itemize}
+
+\paragraph{Steps for Change of Basis: }
+
+
+\begin{enumerate}
+	\item Representing Vectors in Original Basis: Given a vector space \( V \) with a basis \( B = \{\mathbf{b}_1, \mathbf{b}_2, \ldots, \mathbf{b}_n\} \), any vector \( \mathbf{v} \) in \( V \) can be written as:
+\[ \mathbf{v} = c_1 \mathbf{b}_1 + c_2 \mathbf{b}_2 + \cdots + c_n \mathbf{b}_n \]
+Here, \( c_1, c_2, \ldots, c_n \) are the coordinates of \( \mathbf{v} \) relative to basis \( B \), often written as \( [\mathbf{v}]_B \).
+	\item Defining the New Basis: Suppose we want to change to a new basis \( B' = \{\mathbf{b}'_1, \mathbf{b}'_2, \ldots, \mathbf{b}'_n\} \). We need to express the original basis vectors in terms of the new basis vectors. Let:
+\[ \mathbf{b}_i = a_{i1} \mathbf{b}'_1 + a_{i2} \mathbf{b}'_2 + \cdots + a_{in} \mathbf{b}'_n \]
+for \( i = 1, 2, \ldots, n \).
+	\item Constructing the Change of Basis Matrix:
+The coefficients \( a_{ij} \) form the columns of the change of basis matrix \( P \) from \( B \) to \( B' \):
+\[ P = \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} \\
+a_{21} & a_{22} & \cdots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{n1} & a_{n2} & \cdots & a_{nn}
+\end{bmatrix} \]
+\item Converting Coordinates: To convert the coordinates of a vector \( \mathbf{v} \) from the original basis \( B \) to the new basis \( B' \), we use the change of basis matrix \( P \):
+\[ [\mathbf{v}]_{B'} = P^{-1} [\mathbf{v}]_B \]
+where \( P^{-1} \) is the inverse of the change of basis matrix and $[\mathbf{v}]_B = (c_1, \dots, c_n)$ is a coordinate vector.
+\end{enumerate}
+
+Conversely, to convert coordinates from the new basis \( B' \) back to the original basis \( B \), we use:
+\[ [\mathbf{v}]_B = P [\mathbf{v}]_{B'} \]
+
+\paragraph{Example:} Consider a vector space \( \mathbb{R}^2 \) with an original basis \( B = \{\mathbf{b}_1, \mathbf{b}_2\} \) and a new basis \( B' = \{\mathbf{b}'_1, \mathbf{b}'_2\} \). Let:
+\[ \mathbf{b}_1 = \begin{bmatrix} 1 \\ 0 \end{bmatrix}, \; \mathbf{b}_2 = \begin{bmatrix} 0 \\ 1 \end{bmatrix} \]
+and
+\[ \mathbf{b}'_1 = \begin{bmatrix} 1 \\ 1 \end{bmatrix}, \; \mathbf{b}'_2 = \begin{bmatrix} 1 \\ -1 \end{bmatrix} \]
+
+To find the change of basis matrix \( P \) from \( B \) to \( B' \), express the original basis vectors in terms of \( B' \):
+\[ \mathbf{b}_1 = \frac{1}{2} \mathbf{b}'_1 + \frac{1}{2} \mathbf{b}'_2 \]
+\[ \mathbf{b}_2 = \frac{1}{2} \mathbf{b}'_1 - \frac{1}{2} \mathbf{b}'_2 \]
+
+So, the change of basis matrix \( P \) is:
+\[ P = \begin{bmatrix}
+\frac{1}{2} & \frac{1}{2} \\
+\frac{1}{2} & -\frac{1}{2}
+\end{bmatrix} \]
+
+To convert a vector \( \mathbf{v} \) with coordinates \( [\mathbf{v}]_B = \begin{bmatrix} x \\ y \end{bmatrix} \) to the new basis \( B' \), we compute:
+\[ [\mathbf{v}]_{B'} = P^{-1} [\mathbf{v}]_B \]
+
+And to revert to the original basis:
+\[ [\mathbf{v}]_B = P [\mathbf{v}]_{B'} \]
+
 
 % ### Practice Problem
 
