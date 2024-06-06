@@ -28,7 +28,7 @@ We begin by discussing the Fourier series, which is used to analyze functions th
 $$f(x+T) = f(x), \forall x\in \mathbb{R}.$$
 The value of $f(x)$ can be real or complex, but $x$ should be real.
 
-Let's consider what it means to specify a periodic function $f(x)$. One way to specify the function is to give an explicit mathematical formula for it. Another approach might be to specify the function values in $−T/2 \leq x < T/2$. Since there's an uncountably infinite number of points in this domain, we can generally only achieve an approximate specification of $f$ this way, by giving the values of $f$ at a large but finite set $x$ points. 
+Let's consider what it means to specify a periodic function $f(x)$. One way to specify the function is to give an explicit mathematical formula for it. Another approach might be to specify the function values in $-T/2 \leq x < T/2$. Since there's an uncountably infinite number of points in this domain, we can generally only achieve an approximate specification of $f$ this way, by giving the values of $f$ at a large but finite set $x$ points. 
 
 There is another interesting approach to specifying $f$. We can express it as a linear combination of simpler periodic functions, consisting of sines and cosines:
 \begin{align}
@@ -124,7 +124,7 @@ x & \text{if } 0 \leq x \leq \pi
 
 We will find the complex form of the Fourier series for this function.
 
-#### Step 1: Calculate the complex Fourier coefficients \( c_n \).
+Step 1: Calculate the complex Fourier coefficients \( c_n \).
 
 \[ c_n = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(x) e^{-inx} \, dx \]
 
@@ -173,7 +173,7 @@ This expression simplifies to:
 
 \[ c_n = \frac{i(-1)^n}{2n} + \frac{1}{2\pi n^2} (1 - (-1)^n) \]
 
-### Step 2: Write the Complex Fourier Series:
+Step 2: Write the Complex Fourier Series:
 
 \[ f(x) = \sum_{n=-\infty}^{\infty} c_n e^{inx} \]
 
@@ -303,7 +303,7 @@ And to revert to the original basis:
 \[ [\mathbf{v}]_B = P [\mathbf{v}]_{B'} \]
 
 
-% ### Practice Problem
+% Practice Problem
 
 % Find the Fourier transform of the function \( f(t) = e^{-a|t|} \) for \( a > 0 \).
 

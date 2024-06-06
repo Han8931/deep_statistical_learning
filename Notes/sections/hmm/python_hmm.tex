@@ -13,17 +13,17 @@ Assuming we have an HMM with N hidden states and T observations, the Viterbi alg
     Initialization: At time t=1, we set the probability of the most likely path ending in state i for each state i to the product of the initial state probability pi and the emission probability of the first observation given state i. This is denoted by: delta[1,i] = pi * b[i,1].
     Recursion: For each time step t from 2 to T, and for each state i, we compute the probability of the most likely path ending in state i at time t by considering all possible paths that could have led to state i. This probability is given by:
 
-delta[t,i] = max_j(delta[t-1,j] * a[j,i] * b[i,t])
+$$delta[t,i] = max_j(delta[t-1,j] * a[j,i] * b[i,t])$$
 
 Here, a[j,i] is the probability of transitioning from state j to state i, and b[i,t] is the probability of observing the t-th observation given state I.
 
 We also keep track of the most likely previous state that led to the current state i, which is given by:
 
-psi[t,i] = argmax_j(delta[t-1,j] * a[j,i])
+$$psi[t,i] = argmax_j(delta[t-1,j] * a[j,i])$$
 
 \begin{itemize}
-	\item Termination: The probability of the most likely path overall is given by the maximum of the probabilities of the most likely paths ending in each state at time T. That is, P* = max_i(delta[T,i]).
-	\item Backtracking: Starting from the state i* that gave the maximum probability at time T, we recursively follow the psi values back to time t=1 to obtain the most likely path of hidden states.
+	\item Termination: The probability of the most likely path overall is given by the maximum of the probabilities of the most likely paths ending in each state at time $T$. That is, $P* = max_i(delta[T,i])$.
+	\item Backtracking: Starting from the state $i*$ that gave the maximum probability at time $T$, we recursively follow the psi values back to time $t=1$ to obtain the most likely path of hidden states.
 \end{itemize}
 
 The Viterbi algorithm is an efficient and powerful tool that can handle long sequences of observations using dynamic programming.

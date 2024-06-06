@@ -22,25 +22,27 @@ Pseudocode: ID3 is a greedy algorithm that grows the tree top-down, at each node
 The pseudocode assumes that the attributes are discrete and that the classification is binary. Examples are the training example. Target attribute is the attribute whose value is to be predicted by the tree. Attributes is a list of other attributes that may be tested by the learned decision tree. Finally, it returns a decision tree that correctly classifies the given Examples.
 
 \subsection{Information Gain}
-Information gain is a statistical property that measures how well a given attribute separates the training examples according to their target classification. As you can see in the Fig. \ref{fig:info_gain}, attribute with low information gain (right) splits the data relatively evenly and as a result doesn't bring us any closer to a decision. Whereas, an attribute with high information gain (left) splits the data into groups with an uneven number of positives and negatives and as a result helps in separating the two from each other.
+Information gain is a statistical property that measures how well a given attribute separates the training examples according to their target classification. As you can see in the Fig. , attribute with low information gain (right) splits the data relatively evenly and as a result doesn't bring us any closer to a decision. Whereas, an attribute with high information gain (left) splits the data into groups with an uneven number of positives and negatives and as a result helps in separating the two from each other.
 
-\begin{figure}[h]
-    \centering
-    \begin{subfigure}{.4\textwidth}
-        \centering
-        \includegraphics[scale=.45]{./images/decision_tree/high_gain.png}
-        \caption{High information gain.}
-        \label{fig:high_gain}
-    \end{subfigure}
-    \begin{subfigure}{.4\textwidth}
-        \centering
-        \includegraphics[scale=.45]{./images/decision_tree/low_gain.png}
-        \caption{Low information gain.}
-        \label{fig:low_gain}
-    \end{subfigure}
-    \caption{Information gain comparison.}
-    \label{fig:info_gain}
-\end{figure}
+% Fig \Cref{fig:info_gain}
+
+% \begin{figure}[h]
+%     \centering
+%     \begin{subfigure}{.4\textwidth}
+%         \centering
+%         \includegraphics[scale=.45]{./images/decision_tree/high_gain.png}
+%         \caption{High information gain.}
+%         \label{fig:high_gain}
+%     \end{subfigure}
+%     \begin{subfigure}{.4\textwidth}
+%         \centering
+%         \includegraphics[scale=.45]{./images/decision_tree/low_gain.png}
+%         \caption{Low information gain.}
+%         \label{fig:low_gain}
+%     \end{subfigure}
+%     \caption{Information gain comparison.}
+%     \label{fig:info_gain}
+% \end{figure}
 
 To define information gain precisely, we need to define a measure commonly used in information theory called entropy that measures the level of impurity in a group of examples. Mathematically, it is defined as:
 $$Entropy = -\sum_i p_i \log p_i$$

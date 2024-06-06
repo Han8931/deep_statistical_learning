@@ -32,3 +32,4 @@ main.bib:
 clean:
 	latexmk -CA
 	rm main.bbl
+	rm main.out

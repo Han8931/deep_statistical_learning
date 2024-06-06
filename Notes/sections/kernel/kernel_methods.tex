@@ -79,11 +79,25 @@ For symmetric matrices all of the above are equivalent.
 Some of the most popular kernels are
 \begin{itemize}
 	\item Linear kernel: $k(\rvx, \rvx') = \rvx^T\rvx'$
-	\item Polynomial kernel: $k(\rvx, \rvx') = (1+\rvx^T\rvx')^{\tilda{d}}$, where $\tilda{d}$ is the degree of the polynomial
+	\item Polynomial kernel: $k(\rvx, \rvx') = (1+\rvx^T\rvx')^{\tilde{d}}$, where $\tilde{d}$ is the degree of the polynomial
 	% \item RBF: $k(\rvx, \rvx') = ||\rvx-\rvx'||^2$
 \end{itemize}
 
-Note that some kernels such as the RBF kernel have an infinite-dimensional feature space transformation. Hence, it is impossible to compute the feature space transformation explicitly. 
+Note that some kernels such as the RBF kernel have an infinite-dimensional feature space transformation. Hence, it is impossible to compute the feature space transformation explicitly. The RBF kernel is given by
+\begin{align*}
+	k(\rvx, \rvx') = \exp(-\gamma \|\rvx-\rvx'\|^2)
+\end{align*}
+Let, $\gamma=\frac{1}{2}$, 
+\begin{align*}
+	k(\rvx, \rvx') &= \exp(-\frac{1}{2} \|\rvx-\rvx'\|^2)\\
+				   &= \exp\bigg[-\frac{1}{2} \langle \rvx-\rvx', \rvx-\rvx' \rangle \bigg]\\
+				   &= \exp\bigg[-\frac{1}{2} \langle \rvx, \rvx-\rvx' \rangle-\langle \rvx', \rvx-\rvx' \rangle\bigg]\\
+				   &= \exp\bigg[-\frac{1}{2} \big(\|\rvx\|^2+\|\rvx'\|^2-2 \langle \rvx, \rvx' \rangle\big) \bigg]\\
+				   &= C\exp\langle \rvx, \rvx' \rangle\\
+				   &= C\sum_{n=0}^\infty \frac{\langle \rvx, \rvx' \rangle}{n!}\\
+				   &= C\sum_{n=0}^\infty \frac{k_{\textrm{poly}}(\rvx, \rvx')}{n!}\\
+\end{align*}
+The second to last step is by Taylor expansion of $e^x$.
 
 \subsection{Some Intuitions}
 
@@ -91,7 +105,7 @@ Let $y=f(\rvx)+\epsilon$. Then $f$ does not vary a lot if $\rvx$, $\rvx'$ are cl
 
 Let's represent the co-variance of the outputs in terms of the co-variance of the inputs. 
 
-$$cov(y,y') = k(\rvx, \rvx')+\underbracket{\sigma_n^2\delta_{\rvx,\rvx'}}_{\textrm{noise term}}.$$
+$$cov(y,y') = k(\rvx, \rvx')+\underbrace{\sigma_n^2\delta_{\rvx,\rvx'}}_{\textrm{noise term}}.$$
 
 As $y$ is a function values of $f(\rvx)$, the kernel function can be viewed as an extension of the covariance matrix $\Sigma$ of random vectors to the covariance of (random) functions. 
 
