@@ -1,4 +1,7 @@
-\section{Least Square SVM}
+\chapter{Least Square SVM}
+\label{ch:ls_svm}
+
+\section{Introduction}
 \label{sec:ls_svm}
 Least Squares Support Vector Machine (LS-SVM) is a modified version of the traditional Support Vector Machine (SVM) that simplifies the optimization process by using a least squares cost function. LS-SVM transforms the quadratic programming problem in classical SVM into a set of linear equations, which are easier and faster to solve. Here’s a breakdown of the key concepts and steps involved in LS-SVM:
 
@@ -19,9 +22,15 @@ The LS-SVM optimization problem is formulated as:
    	   \item \( e_i \) are the error variables. In LS-SVM, the error terms $e_i$ serve a similar purpose to the slack variables ($\xi$) in traditional SVMs. However, instead of using hinge loss as in traditional SVM, LS-SVM uses a squared error loss function. 
    	   \item \( \gamma \) is a regularization parameter.
    	   \item \( \phi(x_i) \) is the feature mapping function.
+	   \item Note that $y_i^{-1} = y_i$ since $y_i = \pm 1$. 
    \end{itemize}
 
 \subsection{Lagrangian Function}
+The least-squares SVM (LS-SVM) classifier formulation above implicitly corresponds to a regression interpretation with binary targets $y_i=\pm 1$. Using $y_i^2=1$,
+
+$$\sum_{i=1}^N e_i^2 = \sum_{i=1}^N (y_ie_i)^2 = \sum_{i=1}^N (y_i-(w^T \phi(x_i) + b) )^2.$$
+
+
    The Lagrangian for the above primal problem is:
    \[
    L(w, b, e, \alpha) = \min_{w, b, e} \frac{1}{2} \|w\|^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2 - \sum_{i=1}^n \alpha_i \left[ y_i (w^T \phi(x_i) + b) - 1 + e_i \right]
@@ -44,46 +53,18 @@ To find the stationary points of the Lagrangian, we take the partial derivatives
    \]
 \item \( \alpha_i \):
    \[
-   \frac{\partial L}{\partial \alpha_i} = - \left[ y_i (w^T \phi(x_i) + b) - 1 + e_i \right] = 0 \implies y_i (w^T \phi(x_i) + b) = 1 - e_i
+   \frac{\partial L}{\partial \alpha_i} = - \left[ y_i (w^T \phi(x_i) + b) - 1 + e_i \right] = 0 \implies y_i (w^T \phi(x_i) + b) = 1 - e_i, i=1,\dots, N.
    \]
 \end{itemize}
 
-   % Solving the KKT conditions leads to a set of linear equations:
-   % \[
-   % \begin{bmatrix}
-   % 0 & y^T \\
-   % y & \Omega + \frac{1}{\gamma} I
-   % \end{bmatrix}
-   % \begin{bmatrix}
-   % b \\
-   % \alpha
-   % \end{bmatrix}
-   % =
-   % \begin{bmatrix}
-   % 0 \\
-   % 1
-   % \end{bmatrix}
-   % \]
-   % where \( \Omega \) is the kernel matrix, \( I \) is the identity matrix, and \( \alpha \) is the vector of Lagrange multipliers.
-
-From the KKT conditions, we substitute \( w \) and \( \alpha_i = \gamma e_i \) back into the constraints:
-
-\[
-y_i \left( \sum_{j=1}^n \alpha_j y_j \phi(x_j)^T \phi(x_i) + b \right) = 1 - \frac{\alpha_i}{\gamma}
-\]
-
-Let \( K(x_i, x_j) = \phi(x_i)^T \phi(x_j) \) be the kernel function, then we can rewrite the above equation as:
-
-\[
-y_i \left( \sum_{j=1}^n \alpha_j y_j K(x_i, x_j) + b \right) = 1 - \frac{\alpha_i}{\gamma}
-\]
 
 We can express this in matrix form. Define:
 \begin{itemize}
 	\item \( \alpha = [\alpha_1, \alpha_2, \ldots, \alpha_n]^T \)
 	\item \( y = [y_1, y_2, \ldots, y_n]^T \)
 	\item \( 1_n \) as a column vector of ones of length \( n \)
-	\item \( K \) as the kernel matrix, where \( K_{ij} = K(x_i, x_j) \)
+	% \item \( K \) as the kernel matrix, where \( K_{ij} = K(x_i, x_j) \)
+	\item \( Z = [\phi(x_1)^Ty_1, \dots, \phi{x_n}^Ty_n] \)  
 \end{itemize}
 
 
@@ -92,7 +73,7 @@ Then the linear system becomes:
 \[
 \begin{bmatrix}
 0 & y^T \\
-y & K + \frac{1}{\gamma} I
+y & \Omega + \frac{1}{\gamma} I
 \end{bmatrix}
 \begin{bmatrix}
 b \\
@@ -103,24 +84,33 @@ b \\
 0 \\
 1_n
 \end{bmatrix}
-\]
+\], 
+where 
+\begin{align*}
+	\Omega &= ZZ^T,\\  
+	\Omega_{kl}&= y_ky_l\phi(x_k)^T\phi(x_l)\\ 
+			   &= y_ky_lK(x_k, x_l)
+\end{align*}
 Note that the dimension of the matrix on the left-hand side is $(N+1)\times (N+1)$
 
-Once we have \( b \) and \( \alpha \), the decision function for a new input \( x \) is given by:
+Once we have \( b \) and \( \alpha \), the decision function for \textbf{a new input} \( x \) is given by:
 \[
 f(x) = \sum_{i=1}^n \alpha_i y_i K(x_i, x) + b.
 \]
 
 \paragraph{Example: }Suppose we have a small dataset with \( n = 3 \) training samples. Then the dimensions of the matrix and vectors would be as follows:
 
-- \( y \) is a \( 3 \times 1 \) vector (e.g., \( y = \begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix} \)).
-- \( y^T \) is a \( 1 \times 3 \) row vector (e.g., \( y^T = \begin{bmatrix} y_1 & y_2 & y_3 \end{bmatrix} \)).
-- \( K \) is a \( 3 \times 3 \) kernel matrix.
-- \( I \) is a \( 3 \times 3 \) identity matrix.
-- \( \frac{1}{\gamma} I \) is a \( 3 \times 3 \) scaled identity matrix.
-- \( K + \frac{1}{\gamma} I \) is a \( 3 \times 3 \) matrix.
-- \( \alpha \) is a \( 3 \times 1 \) vector.
-- \( 1_3 \) is a \( 3 \times 1 \) vector of ones.
+\begin{itemize}
+	\item \( y \) is a \( 3 \times 1 \) vector (e.g., \( y = \begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix} \)).
+	\item \( y^T \) is a \( 1 \times 3 \) row vector (e.g., \( y^T = \begin{bmatrix} y_1 & y_2 & y_3 \end{bmatrix} \)).
+	\item \( K \) is a \( 3 \times 3 \) kernel matrix.
+	\item \( I \) is a \( 3 \times 3 \) identity matrix.
+	\item \( \frac{1}{\gamma} I \) is a \( 3 \times 3 \) scaled identity matrix.
+	\item \( K + \frac{1}{\gamma} I \) is a \( 3 \times 3 \) matrix.
+	\item \( \alpha \) is a \( 3 \times 1 \) vector.
+	\item \( 1_3 \) is a \( 3 \times 1 \) vector of ones.
+\end{itemize}
+
 
 The full matrix becomes:
 
@@ -136,3 +126,60 @@ y_3 & K_{31} & K_{32} & K_{33} + \frac{1}{\gamma}
 This matrix has dimensions \( 4 \times 4 \).
 
 So, the dimension of the matrix on the left-hand side in the system of linear equations for LS-SVM is \( (n + 1) \times (n + 1) \), where \( n \) is the number of training samples.
+
+\section{LS-SVMs for function estimation}
+LS-SVM model as feature space representation:
+$$y(x) = w^T\phi(x)+b.$$
+Given a training set $\{x_k, y_k\}^N$, the optimization problem is 
+\[
+\min_{w, b, e} \frac{1}{2} \|w\|^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2
+\]
+subject to:
+\[
+y_k = w^T \phi(x_k) + b + e_k, \quad k = 1,\dots, N. \]
+Then, 
+\[
+L(w, b, e, \alpha) = \min_{w, b, e} \frac{1}{2} \|w\|^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2 - \sum_{i=1}^n \alpha_i \left[ w^T \phi(x_i) + b + e_k - y_k \right],
+\]
+with $\alpha_k$ Lagrange multipliers. Then, we can get conditions for optimality as follows:
+
+\begin{itemize}
+	\item \( w \): \[
+   \frac{\partial L}{\partial w} = 0 \implies w = \sum_{k=1}^n \alpha_k \phi(x_k)
+   \]
+	\item \( b \):
+   \[
+   \frac{\partial L}{\partial b} = \sum_{i=k}^n \alpha_k = 0
+   \]
+\item \( e_k \):
+   \[
+   \frac{\partial L}{\partial e_k} = \implies \alpha_k = \gamma e_k
+   \]
+\item \( \alpha_k \):
+   \[
+   \frac{\partial L}{\partial \alpha_k} = 0  \implies  w^T \phi(x_k) + b + e_k- y_k =0, \quad k=1,\dots, N.
+   \]
+\end{itemize}
+
+Then, the linear system becomes:
+
+\[
+\begin{bmatrix}
+\mathbf{0} & \mathbf{1}^T \\
+\mathbf{1} & \Omega + \frac{1}{\gamma} I
+\end{bmatrix}
+\begin{bmatrix}
+b \\
+\alpha
+\end{bmatrix}
+=
+\begin{bmatrix}
+\mathbf{0} \\
+y
+\end{bmatrix}
+\], 
+where 
+\begin{align*}
+	\Omega_{kl}&= \phi(x_k)^T\phi(x_l), \quad k,l=1,\dots,N\\ 
+			   &= K(x_k, x_l)
+\end{align*}
