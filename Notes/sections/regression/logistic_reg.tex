@@ -4,7 +4,7 @@
 Logistic regression corresponds to the following binary classification model parameterized by $\rvw$:
 $$p(y|\mathbf{x},\mathbf{w})=\textrm{Ber}(y|\sigma(\mathbf{w}^T\mathbf{x}))$$
 
-Logistic regression modles a logit (log odds) through a linear model. For binary data, the goal is to model the probability $p$ that one of two outcomes occurs. Recall that an ordinary linear regression model is not bounded. Thus, we will pass a linear model through a sigmoid function, which is also known as logistic function. 
+Logistic regression models \textit{logit}s (log odds) through a linear model. For binary data, the goal is to model the probability $p$ that one of two outcomes occurs. Recall that an ordinary linear regression model is not bounded. Thus, we will pass a linear model through a sigmoid function, which is also known as logistic function. 
 
 $$\sigma(z) = \frac{1}{1+\exp^{z}},$$
 where $z=wx+b.$
@@ -27,11 +27,39 @@ Note that \textbf{the logistic regression model assumes that the log-odds (\text
 
 The negative log-likelihood for logistic regression is given by
 \begin{align*}
-	\textrm{NLL}(\mathbf{w}) &= -\sum_{i=1}^{N}\textrm{log}[\mu_i^{\mathds{I}(y_i=1)}\times (1-\mu_i)^{\mathds{I}(y_i=0)}]\\
-	&=-\sum_{i=1}^{N}[y_i\textrm{log}\mu_i + (1-y_i) \textrm{log}(1-\mu_i)], \textrm{ }\footnotemark
+	\textrm{NLL}(\mathbf{w}) &= -\ln \prod_{i=1}^N p(\rvx)^{\mathds{I}(y_i=1)}(1-p(\rvx))^{\mathds{I}(y_i=0)}\,\footnotemark\\
+							 &= -\ln \prod_{i=1}^N \sigma(\mathbf{w}^T\rvx)^{\mathds{I}(y_i=1)}(1-\sigma(\mathbf{w}^T\rvx))^{\mathds{I}(y_i=0)}\\
+							 &= -\sum_{i=1}^N y_i\ln\sigma(\mathbf{w}^T\rvx)+\ln(1-y_i)(1-\sigma(\mathbf{w}^T\rvx)).
+							 % &= -\sum_{i=1}^{N}\textrm{log}[\mu_i^{\mathds{I}(y_i=1)}\times (1-\mu_i)^{\mathds{I}(y_i=0)}]\\
+	% &=-\sum_{i=1}^{N}[y_i\textrm{log}\mu_i + (1-y_i) \textrm{log}(1-\mu_i)], \textrm{ }
 \end{align*}
-where $\mu=\sigma(\mathbf{w}^T\mathbf{x})$. This is also called \textbf{cross-entropy} error function. 
-\footnotetext{$\mathds{I}(y_i=1) = y_i$, because $y_i\in \{0, 1\}$ is a binary variable}
+This is also called \textbf{cross-entropy} error function. 
+\footnotetext{$\mathds{I}(y_i=1) = y_i$, because $y_i\in \{0, 1\}$ is a binary variable} 
+
+To compute the derivative of NLL, we first need to know the following tricks:
+\begin{itemize}
+	\item The derivative of $\ln (x)$:
+$$\frac{\partial }{\partial x}\ln (x) = \frac{1}{x}.$$
+\item The derivative of the sigmoid is given by:
+$$\frac{\partial \sigma(z)}{\partial x} = \sigma(x)(1-\sigma(x)).$$
+\item Finally, the chain rule of derivative. Suppose we are computing the derivative of a composite function $f(x) = u(v(x))$. The derivative of $f(x)$ is the derivative of $u(x)$ with respect to $v(x)$ times the derivative of $v(x)$ with respect to $x$.
+$$\frac{\partial f}{\partial x} = \frac{\partial u}{\partial v} \frac{\partial v}{\partial x}$$
+\end{itemize}
+The derivative of the loss function w.r.t., a single weight $w_j$ is given by
+\begin{align*}
+	\frac{\partial \mathcal{L}}{\partial w_j} &= \frac{\partial }{\partial w_j} -[y\ln \sigma(wx + b)+(1-y) \ln (1-\sigma(wx+b))]\\
+											  &=  -[\frac{\partial }{\partial w_j}y\ln \sigma(wx + b)+\frac{\partial }{\partial w_j}(1-y) \ln (1-\sigma(wx+b))]\\
+											  &= -\frac{y}{\sigma(wx + b)}\frac{\partial }{\partial w_j}\sigma(wx + b) - \frac{1-y}{1-\sigma(wx+b)} \frac{\partial }{\partial w_j}1-\sigma(wx+b)\\
+											  &= -\bigg[\frac{y}{\sigma(wx + b)}-\frac{1-y}{1-\sigma(wx + b)}\bigg]\frac{\partial }{\partial w_j}\sigma(wx + b)\\
+											  &= -\bigg[\frac{y-\sigma(wx + b)}{\sigma(wx + b)[1-\sigma(wx + b)]}\bigg]\sigma(wx + b)[1-\sigma(wx + b)]\frac{\partial \sigma(wx + b)}{\partial w_j}\\
+											  &= -\bigg[\frac{y-\sigma(wx + b)}{\sigma(wx + b)[1-\sigma(wx + b)]}\bigg]\sigma(wx + b)[1-\sigma(wx + b)]x_j\\ 
+											  &= -( y-\sigma(wx + b) )x_j\\
+											  &= ( \sigma(wx + b)-y )x_j.
+\end{align*}
+
+
+
+
 
 Another way to express \textrm{NLL} is as follows. Suppose $\hat{y}_i\in\{-1,+1\}$ instead of $y_i\in\{0,1\}$. We have $p(y=1)=\frac{1}{1+\mathrm{exp}(-\mathbf{w}^T\mathbf{x})}$ and $p(y=-1)=\frac{1}{1+\mathrm{exp}(+\mathbf{w}^T\mathbf{x})}$. Hence
 \begin{align*}
