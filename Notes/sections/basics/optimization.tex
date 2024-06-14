@@ -5,9 +5,9 @@
 
 Gradient is a vector function that represents a direction of steepest increase of a function to be differentiated at a certain point. For example, a convex function $z = ax^2+by^2$ has a gradient $[2ax, 2by]$. Its steepest descent direction is $[-2ax, -2by]$. At the point $x_0,y_0$, the gradient direction for the function is $2ax_0(y-y_0) = 2by_0(x-x_0)$. But then the lowest point $(x,y) = (0,0)$ does not lie on the line. Thus, we cannot find that minimum point in one step of ``gradient descent''. The steepeset direction does not lead to the bottom of the bowl. 
 
-\subsection{Gradient Descent Proof}
+\subsection{Direction of Gradient Descent}
 
-Most deep learning algorithms involve \textbf{optimization}.
+% Most deep learning algorithms involve \textbf{optimization}.
 
 \begin{itemize}
 	\item The derivative of the objective function $f(\mathbf{x})$ provides the slope of $f(\mathbf{x})$ at the point $f(\mathbf{x})$.
@@ -16,20 +16,18 @@ Most deep learning algorithms involve \textbf{optimization}.
 
 	A function $f(\mathbf{x})$ can be approximated by its first-order Taylor expansion at $\bar{\mathbf{x}}$:
 	$$f(\mathbf{x})\approx f(\bar{\mathbf{x}})+\nabla f(\bar{\mathbf{x}})^T(x-\bar{\mathbf{x}})$$
-	Now let $\mathbf{d}\neq0, ||\mathbf{d}||=1$ be a direction, and in consideration of a new point $\mathbf{x}:=\bar{\mathbf{x}}+\mathbf{d}$, we define:
+	Now let $\mathbf{d}\neq0, \|\mathbf{d}\|=1$ be a direction, and in consideration of a new point $\mathbf{x}:=\bar{\mathbf{x}}+\mathbf{d}$, we define:
 	$$f(\bar{\mathbf{x}}+\mathbf{d})\approx f(\bar{\mathbf{x}})+\nabla f(\bar{\mathbf{x}})^T\mathbf{d}$$
 
-We would like to choose $\mathbf{d}$ that minimizes the function $f$. From the Cauchy-Schwarz inequality \footnote{Cauchy-Schwarz Inequaility: $|\mathbf{a}\cdot \mathbf{b}|\leq ||\mathbf{a}||\textrm{ } ||\mathbf{b}||$. Equality holds if and only if either $\mathbf{a}$ or $\mathbf{b}$ is a multiple of the other.}, we know that
-$$\nabla f(\bar{\mathbf{x}})^T\mathbf{d}\leq ||\nabla f(\bar{\mathbf{x}})||\textrm{ }||\mathbf{d}||$$
-with equality when $\mathbf{d}=\lambda \nabla f(\bar{\mathbf{x}})$, where $\lambda\in \mathbb{R}$.
-
-	Since we want to minimize the function $f$, we negate the steepest direction $\mathbf{d}^{*}$ so the iterations of steepest descent becomes
+We would like to choose $\mathbf{d}$ that minimizes the function $f$. From the Cauchy-Schwarz inequality \footnote{Cauchy-Schwarz Inequaility: $|\mathbf{a}\cdot \mathbf{b}|\leq \|\mathbf{a}\|\textrm{ } \|\mathbf{b}\|$. Equality holds if and only if either $\mathbf{a}$ or $\mathbf{b}$ is a multiple of the other.}, we know that
+$$|\nabla f(\bar{\mathbf{x}})^T\mathbf{d}|\leq \|\nabla f(\bar{\mathbf{x}})\|\textrm{ }\|\mathbf{d}\|.$$
+The equality holds if and only if $\mathbf{d}=\lambda \nabla f(\bar{\mathbf{x}})$, where $\lambda\in \mathbb{R}$. Since we want to minimize the function $f$, we negate the steepest direction $\mathbf{d}^{*}$ so the iterations of steepest descent becomes
 	$$\mathbf{x}^{(k+1)} = \mathbf{x}^{(k)} - \eta \nabla f(\mathbf{x}^{(k)})$$
 	, where $k$ is the index of iteration step and $\eta$ is the learning rate parameter.
 
 
 
-%	$\nabla f(\bar{\mathbf{x}})^T\mathbf{d}/||\mathbf{d}||\geq ||\nabla f(\bar{\mathbf{x}})||=\nabla f(\bar{\mathbf{x}})^T\Bigg(\frac{\nabla f(\bar{\mathbf{x}})}{||\nabla f(\bar{\mathbf{x}})||}\Bigg)$
+%	$\nabla f(\bar{\mathbf{x}})^T\mathbf{d}/\|\mathbf{d}\|\geq \|\nabla f(\bar{\mathbf{x}})\|=\nabla f(\bar{\mathbf{x}})^T\Bigg(\frac{\nabla f(\bar{\mathbf{x}})}{\|\nabla f(\bar{\mathbf{x}})\|}\Bigg)$
 
 \section{Normalized Gradient Descent}
 
@@ -37,30 +35,30 @@ The underlying issue of the vanila gradient descent is the presence of saddle po
 
 
 However, in the normalized gradient descent
-$$ \frac{\nabla f(x)}{||\nabla f(x)||}$$
+$$ \frac{\nabla f(x)}{\|\nabla f(x)\|}$$
 The normalized gradient preserves the direction of the gradient but ignores magnitude, because the normalization does not vanish near saddle points, the intuitive expectation is that NGD should not slow down in the neighborhood of saddle points and should therefore escape quickly. 
 
 \section{Projected Gradient Descent}
 Gradient Descent (GD) is a standard way to solve unconstrained optimization problem. Starting from an initial point $x\in \mathbb{R}^n$, GD itereates until a stopping criterion is met. Projected Gradient Descent (PGD) is a way to solve constrained optimization problem. Consider a constraint set $\mathcal{Q}$, starting from a initial point $x_0 \in \mathcal{Q}$, PGD iterates the following equation until a stopping condition is met:
 $$x_{k+1} = P_\mathcal{Q} \Big(x_k - t_k \nabla f(x_k)\Big),$$
 where $P_\mathcal{Q}$ is the projection operator
-$$P_\mathcal{Q}(x_0) = \argmin_{x\in \mathcal{Q}} \frac{1}{2}||x-x_0||^2_2$$
+$$P_\mathcal{Q}(x_0) = \argmin_{x\in \mathcal{Q}} \frac{1}{2}\|x-x_0\|^2_2$$
 In other words, given a point $x_0$, $P_\mathcal{Q}$ tries to to find a point $x\in \mathcal{Q}$ which is ``closest''to $x_0$.
 
 
 Note that a vector projection can be expressed as follows:
-$$a_1 = ||\mathbf{a}||\cos \theta = \mathbf{a}\cdot \hat{\mathbf{b}} = \mathbf{a}\cdot \frac{\mathbf{b}}{||\mathbf{b}||}$$
+$$a_1 = \|\mathbf{a}\|\cos \theta = \mathbf{a}\cdot \hat{\mathbf{b}} = \mathbf{a}\cdot \frac{\mathbf{b}}{\|\mathbf{b}\|}$$
 Thus, a projection for unit $L_2$ ball is given by the solution of the equation as follows:
-$$\mathbf{x} = \mathcal{P}_{||x||_2\leq 1}(\mathbf{y})$$
+$$\mathbf{x} = \mathcal{P}_{\|x\|_2\leq 1}(\mathbf{y})$$
 The solution is
-$$\mathbf{x} = \frac{\mathbf{y}}{\max \{1,||\mathbf{y}||_2\}}$$
-The ``geometric'' proof is given as follows: Let $\mathcal{S} = \{\mathbf{x}\in \mathbb{R}^n: ||\mathbf{x}||_2 \leq 1\}.$
+$$\mathbf{x} = \frac{\mathbf{y}}{\max \{1,\|\mathbf{y}\|_2\}}$$
+The ``geometric'' proof is given as follows: Let $\mathcal{S} = \{\mathbf{x}\in \mathbb{R}^n: \|\mathbf{x}\|_2 \leq 1\}.$
 \begin{itemize}
-		\item If $\mathbf{y}\in \mathcal{S}$, then $||y||_2\leq 1$ and $\mathbf{y}$ itself is the closest point to $\mathbf{y}$.
-		\item If $\mathbf{y}\notin \mathcal{S}$, then $||y||_2> 1$ and the closest point $\mathbf{x}\in \mathcal{S}$ to $\mathbf{y}$ will be simply $\frac{\mathbf{y}}{||\mathbf{y}||_2}$ as the norm of $\frac{\mathbf{y}}{||\mathbf{y}||_2}=1$.
+		\item If $\mathbf{y}\in \mathcal{S}$, then $\|y\|_2\leq 1$ and $\mathbf{y}$ itself is the closest point to $\mathbf{y}$.
+		\item If $\mathbf{y}\notin \mathcal{S}$, then $\|y\|_2> 1$ and the closest point $\mathbf{x}\in \mathcal{S}$ to $\mathbf{y}$ will be simply $\frac{\mathbf{y}}{\|\mathbf{y}\|_2}$ as the norm of $\frac{\mathbf{y}}{\|\mathbf{y}\|_2}=1$.
 \end{itemize}
 By combining the bost cases, we have
-$$\mathbf{x} = \frac{\mathbf{y}}{\max \{1,||\mathbf{y}||_2\}}$$
+$$\mathbf{x} = \frac{\mathbf{y}}{\max \{1,\|\mathbf{y}\|_2\}}$$
 
 
 \section{Exponentially Weighted Average}
