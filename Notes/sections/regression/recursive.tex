@@ -24,14 +24,14 @@ where $I$ is the $d\times d$ identity matrix. The mean of this error is then
 $$\mathbb{E}[\boldsymbol{\epsilon}_{k}] = (I-K_k \mathbf{X}_k)\mathbb{E}[\boldsymbol{\epsilon}_{k-1}]-K_k\mathbb{E}[\boldsymbol{\eta}_{k}]$$
 If $\mathbb{E}[\boldsymbol{\eta}_{k}]=0$ and $\mathbb{E}[\boldsymbol{\epsilon}_{k-1}]=0$, then $\mathbb{E}[\boldsymbol{\epsilon}_{k}]=0$. So if the measurement noise has zero mean for all $k$, and the initial estimate of $\boldsymbol{\theta}$ is set equal to its expected value, then $\boldsymbol{\theta}_k=\boldsymbol{\theta}_k, \forall k$. This property tells us that the estimator $\boldsymbol{\theta}_k = \boldsymbol{\theta}_{k-1}+K_k (\rvy_k-\mathbf{X}_k\boldsymbol{\theta}_{k-1})$ is \textit{unbiased}. This property holds regardless of the value of the gain vector $K_k$. This means the estimate will be equal to the true value $\boldsymbol{\theta}$ on average. 
 
-The key is to determine the optimal value of the gain vector $K_k$. The optimality criterion is to minimize the aggregated variance of the estimation errors at time $k$: 
+The key is to \textbf{determine the optimal value of the gain vector} $K_k$. The optimality criterion is to \textbf{minimize the aggregated variance of the estimation errors at time} $k$: 
 \begin{align*}
 	J_k &= \mathbb{E}[\|\boldsymbol{\theta}-\boldsymbol{\theta}_k\|^2]\\
 		&= \mathbb{E}[\boldsymbol{\epsilon}_{k}^T\boldsymbol{\epsilon}_{k}]\\
 		&= \mathbb{E}[tr(\boldsymbol{\epsilon}_{k}\boldsymbol{\epsilon}_{k}^T)]\\
 		&= tr(P_k),
 \end{align*}
-where $P_k=\mathbb{E}[\boldsymbol{\epsilon}_{k}\boldsymbol{\epsilon}_{k}^T]$ is the estimation-error covariance. Note that the third line is done by the trace of a product (\ie cyclic property) and the expectation in the third line can go into the trace operator by its linearity. Next, we can obtain $P_k$ by
+where $P_k=\mathbb{E}[\boldsymbol{\epsilon}_{k}\boldsymbol{\epsilon}_{k}^T]$ is the estimation-error covariance (\ie covariance matrix). Note that the third line is done by the trace of a product (\ie cyclic property) and the expectation in the third line can go into the trace operator by its linearity. Next, we can obtain $P_k$ by
 \begin{align*}
 	P_k &= \mathbb{E}\bigg[\big((I-K_k \mathbf{X}_k)\boldsymbol{\epsilon}_{k-1}-K_k\boldsymbol{\eta}_k\big)\big((I-K_k \mathbf{X}_k)\boldsymbol{\epsilon}_{k-1}-K_k\boldsymbol{\eta}_k\big)^T\bigg]
 \end{align*}
@@ -63,7 +63,7 @@ $$K_k = P_{k-1}\mathbf{X}_k^TS_k^{-1}.$$
 By putting this into \Cref{eq:rls_estimation_cov},
 \begin{align*}
 	P_k &= (I-P_{k-1}\mathbf{X}_k^TS_k^{-1} \mathbf{X}_k)P_{k-1}(I-P_{k-1}\mathbf{X}_k^TS_k^{-1} \mathbf{X}_k)^T+P_{k-1}\mathbf{X}_k^TS_k^{-1} R_k S_k^{-1}\mathbf{X}_kP_{k-1}\\ 
-		&= \\
+		&\quad \vdots\\
 		&= P_{k-1}-P_{k-1}\mathbf{X}_k^TS_k^{-1}\mathbf{X}_k^TP_{k-1}\\
 		&= (I-K_k\mathbf{X}_k)P_{k-1}.
 \end{align*}
@@ -71,7 +71,7 @@ Note that $P_k$ is symmetric (\cf $P_k=\boldsymbol{\epsilon}_{k}\boldsymbol{\eps
 
 We take the inverse of both sides of 
 $$P_{k-1}^{-1} = \bigg(\underbrace{P_{k-1}}_{A}-\underbrace{P_{k-1}\mathbf{X}_k^T}_{B}\big(\underbrace{\mathbf{X}_kP_{k-1}\mathbf{X}_k^T}_{D}\big)^{-1}\underbrace{\mathbf{X}_kP_{k-1}}_{C}\bigg)^{-1}.$$
-Next, we apply the matrix inversion lemma which is known as \textit{Sherman-Morrison-Woodbury} identity: 
+Next, we apply the matrix inversion lemma which is known as \textit{Sherman-Morrison-Woodbury matrix identity} (or \textit{matrix inversion lemma}) identity: 
 $$(A-BD^{-1}C)^{-1} = A^{-1}+A^{-1}B(D-CA^{-1}B)^{-1}CA^{-1}.$$
 Then, rewrite $P_k^{-1}$ as follows:
 \begin{align*}
@@ -80,16 +80,34 @@ Then, rewrite $P_k^{-1}$ as follows:
 \end{align*}
 This yields an alternative expression for the covariance matrix:
 \begin{align*}
-	P_k = \big(P_{k-1}^{-1}\mathbf{X}_k^TR_{k}^{-1}\mathbf{X}_k\big)^{-1}
+	P_k = \big(P_{k-1}^{-1}+\mathbf{X}_k^TR_{k}^{-1}\mathbf{X}_k\big)^{-1}
 \end{align*}
 We can also get
 \begin{align*}
 	K_k = P_{k}\mathbf{X}_k^TR_{k}^{-1}
 \end{align*}
+By
+\begin{align*}
+	P_k &= (I-K_k\mathbf{X}_k)P_{k-1}\\
+	P_kP_{k-1}^{-1} &= (I-K_k\mathbf{X}_k)\\
+	P_kP_k^{-1} &= P_kP_{k-1}^{-1}+P_k\mathbf{X}_k^TR_{k}^{-1}\mathbf{X}_k=I\\
+	I &= (I-K_k\mathbf{X}_k)+P_k\mathbf{X}_k^TR_{k}^{-1}\mathbf{X}_k\\
+	K_k &= P_{k}\mathbf{X}_k^TR_{k}^{-1}.
+\end{align*}
 
-\subsection{The Estimation Algorithm}
+In sum, RLS can be updated as follows: 
+\begin{itemize}
+	\item Update the gain matrix: $K_k = P_{k-1}\mathbf{X}_k^T(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k)^{-1}$
+	\item Update estimate: $\boldsymbol{\theta}_k &= \boldsymbol{\theta}_{k-1}+K_k (\rvy_k-\mathbf{X}_k\boldsymbol{\theta}_{k-1})$
+	\item Update error covariance matrix by either: 
+		\begin{itemize}
+			\item $P_k &= (I-K_k\mathbf{X}_k)P_{k-1}$.
+		\end{itemize}
+\end{itemize}
 
-First, initialize the estimator:
+
+% \paragraph{Example: }
+
 
 
 
