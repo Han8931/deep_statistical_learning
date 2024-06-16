@@ -1,7 +1,53 @@
-\section{Kalman Filter}
+\chapter{Kalman Filter}
 \label{sec:advanced_kalman}
 
 % \href{https://www.kalmanfilter.net/default.aspx}{Ref: Kalman Filter Tutorial}
+
+\section{Propagation of States and Covariances}
+% \label{sec:}
+
+Let's assume that $\mathbb{E}[\mathbf{w}_{k-1}]=0$, then we have
+\begin{align*}
+	\boldsymbol{\theta}_{k}=F_{k-1}\overline{\boldsymbol{\theta}}_{k-1}+G_{k-1}\mathbf{u}_{k-1}+w_k,
+\end{align*}
+where $w_k$ is a Gaussian zero-mean white noise with covariance $Q_k$. How does the mean of the state $\boldsymbol{\theta}_k$ changes over time? The expectation is given by
+\begin{align*}
+	\mathbb{E}[\boldsymbol{\theta}_{k}]=\mathbb{E}[F_{k-1}\boldsymbol{\theta}_{k-1}]+\mathbb{E}[G_{k-1}\mathbf{u}_{k-1}]+\mathbb{E}[\mathbf{w}_{k-1}]
+\end{align*}
+For simplicity, we can write it as
+\begin{align*}
+	\overline{\boldsymbol{\theta}}_{k}=F_{k-1}\overline{\boldsymbol{\theta}}_{k-1}+G_{k-1}\mathbf{u}_{k-1}+w_k.
+\end{align*}
+How does the state covariance of $\boldsymbol{\theta}_k$ change with time? The state covariance matrix propagation is given by
+\begin{align*}
+	P_{k}&=\mathbb{E}[(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})^{T}]\\
+	&= (\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})^{T}
+\end{align*}
+and then compute the expectation of every term in that expression. 
+\begin{align*}
+	(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})^{T} & = (F_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})+\mathbf{w}_{k-1})(F_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})+\mathbf{w}_{k-1})^{T}\\ 
+																							 & = F_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})^{T}F_{k-1}^{T}+F_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})\mathbf{w}_{k-1}^{T} \\ 
+																							 & +\mathbf{w}_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})^{T}F_{k-1}^{T}+\mathbf{w}_{k-1}\mathbf{w}_{k-1}^{T}
+\end{align*}
+Since $(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})$ is uncorrelated to $\mathbf{w}_{k-1}$, we have
+\begin{align*}
+	E[F_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})\mathbf{w}_{k-1}^{T}]=0 \\E[\mathbf{w}_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})^{T}F_{k-1}^{T}]=0
+\end{align*}
+Also, we have
+\begin{align*}
+	E[\mathbf{w}_{k-1}\mathbf{w}_{k-1}^{T}]=Q_{k-1}
+\end{align*}
+\begin{align*}
+	P_{k-1}=E[(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})^{T}]
+\end{align*}
+
+By using these expressions, we obtain the final equation for the propagation of the state covariance matrix
+\begin{align*}
+	P_{k}=F_{k-1}P_{k-1}F_{k-1}^{T}+Q_{k-1}
+\end{align*}
+
+
+
 
 We are considering the following state-space model of a dynamical system:
 
@@ -61,45 +107,6 @@ where we excluded the disturbance part since the disturbance vector is not known
 	P_{k}=F_{k-1}P_{k-1}F_{k-1}^{T}+Q_{k-1}
 \end{align*}
 
-The state vector expectation propagation can be obtained as follows:
-\begin{align*}
-	\mathbb{E}[\boldsymbol{\theta}_{k}]=\mathbb{E}[F_{k-1}\boldsymbol{\theta}_{k-1}]+\mathbb{E}[G_{k-1}\mathbf{u}_{k-1}]+\mathbb{E}[\mathbf{w}_{k-1}]
-\end{align*}
-Let's assume that $\mathbb{E}[\mathbf{w}_{k-1}]=0$, then we have
-\begin{align*}
-	\overline{\boldsymbol{\theta}}_{k}=F\overline{\boldsymbol{\theta}}_{k-1}+G_{k-1}\mathbf{u}_{k-1}
-\end{align*}
-The state covariance matrix propagation is given by
-\begin{align*}
-	P_{k}=\mathbb{E}[(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})^{T}]
-\end{align*}
-\begin{align*}
-	(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})^{T}
-\end{align*}
-and then compute the expectation of every term in that expression. By substituting the equations (1) and (4) in (10), we obtain
-
-\begin{align*}
-	(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})^{T} & = (F_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})+\mathbf{w}_{k-1})(F_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})+\mathbf{w}_{k-1})^{T}\\ 
-																							 & = F_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})^{T}F_{k-1}^{T}+F_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})\mathbf{w}_{k-1}^{T} \\ 
-																							 & +\mathbf{w}_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})^{T}F_{k-1}^{T}+\mathbf{w}_{k-1}\mathbf{w}_{k-1}^{T}
-\end{align*}
-Since $(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})$ is uncorrelated to $\mathbf{w}_{k-1}$, we have
-\begin{align*}
-	E[F_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})\mathbf{w}_{k-1}^{T}]=0 \\E[\mathbf{w}_{k-1}(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})^{T}F_{k-1}^{T}]=0
-\end{align*}
-
-Also, we have
-\begin{align*}
-	E[\mathbf{w}_{k-1}\mathbf{w}_{k-1}^{T}]=Q_{k-1}
-\end{align*}
-\begin{align*}
-	P_{k-1}=E[(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})(\boldsymbol{\theta}_{k-1}-\overline{\boldsymbol{\theta}}_{k-1})^{T}]
-\end{align*}
-
-By using these expressions, we obtain the final equation for the propagation of the state covariance matrix
-\begin{align*}
-	P_{k}=F_{k-1}P_{k-1}F_{k-1}^{T}+Q_{k-1}
-\end{align*}
 
 
 By using this expression, we obtain the following equation for$P_{1}^{-}$.
