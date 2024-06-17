@@ -1,0 +1,12 @@
+\section{Introduction}
+An area where the chain rule is used extensively is deep learning, where the function value \( y \) is computed as a many-level function composition:
+\[ 
+y = (f_K \circ f_{K-1} \circ \cdots \circ f_1)(x) = f_K(f_{K-1}(\cdots (f_1(x)) \cdots )),
+\]
+where \( x \) are the inputs (e.g., images), \( y \) are the observations (e.g., class labels), and every function \( f_i \), \( i = 1, \ldots, K \), possesses its own parameters.
+
+In neural networks with multiple layers, we have functions $f_i(\rvx_{i-1}) = \sigma(\mathbf{A}_{i-1}\rvx_{i-1}+\rvb_{i-1})$ in the $i$-th layer. Here $\rvx_{i-1}$ is the output of layer $i-1$ and $\sigma$ an activation function (\eg ReLU or sigmoid).  In order to train these models, we require the gradient of a loss function $\mathcal{L}$ with respect to all model parameters $A_j$, $b_j$ for $j=1,\dots,K$. This also requires us to compute the gradient of $\mathcal{L}$ with respect to the inputs of each layer. For example, if we have inputs $\rvx$ and observations $\rvy$ and a network structure defined by
+\begin{align*}
+	\rvf_0&=\rvx\\
+		  \rvf_i&=\sigma_i(\mathbf{A}_{i-1}\rvf_{i-1}+\rvb_{i-1})
+\end{align*}

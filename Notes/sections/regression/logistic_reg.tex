@@ -57,29 +57,137 @@ The derivative of the loss function w.r.t., a single weight $w_j$ is given by
 											  &= ( \sigma(wx + b)-y )x_j.
 \end{align*}
 
+\section*{Gradient of Logistic Regression}
 
+Logistic regression is used for binary classification problems. The logistic function (or sigmoid function) is used to model the probability that a given input belongs to a particular class.
 
+Given:
+\begin{itemize}
+    \item $\mathbf{X}$ is the input matrix of size $m \times n$ (m examples, n features).
+    \item $\mathbf{y}$ is the vector of labels of size $m \times 1$.
+    \item $\boldsymbol{\theta}$ is the vector of weights of size $n \times 1$.
+\end{itemize}
 
+The hypothesis for logistic regression is given by the sigmoid function applied to the linear combination of inputs and weights:
 
-Another way to express \textrm{NLL} is as follows. Suppose $\hat{y}_i\in\{-1,+1\}$ instead of $y_i\in\{0,1\}$. We have $p(y=1)=\frac{1}{1+\mathrm{exp}(-\mathbf{w}^T\mathbf{x})}$ and $p(y=-1)=\frac{1}{1+\mathrm{exp}(+\mathbf{w}^T\mathbf{x})}$. Hence
-\begin{align*}
-	\textrm{NLL}(\mathbf{w}) &= -\frac{1}{N}\sum_{n=1}^N [\mathbb{I}(\hat{y}_n=1)\log(\sigma(a_n))+\mathbb{I}(\hat{y}_n=-1)\log(\sigma(-a_n))]\\
-							 &= -\frac{1}{N}\sum_{n=1}^N \log(\sigma(\hat{y}_na_n))\\
-							 &=  \frac{1}{N}\sum_{i=1}^{N}\textrm{log}(1+\mathrm{exp}(-\hat{y}_i\mathbf{w}^T\mathbf{x}_i).
-\end{align*}
-Note that the sigmoid is used for compressing the output into $[0,1]$ and $\sigma(-a_n) = 1-\sigma(a_n)$. Unlike the linear regression, there is no closed from solution for logistic regression, thus we need optimization algorithms for it. Typically, optimization process involves the gradient and Hessian. 
-\begin{align*}
-	\mathbf{g}&=\frac{d}{d\mathbf{w}}\mathrm{NLL}(\mathbf{w})=\frac{d}{d\mu_i}\mathrm{NLL}(\mathbf{w})\frac{d\mu_i}{d\mathbf{h}}\frac{d\mathbf{h}}{d\mathbf{w}}\\
-	& = \sum_{i=1}\Bigg[-\frac{y_i}{\mu_i} + \frac{(1-y_i) }{(1-\mu_i)}\Bigg]\frac{d\mu_i}{d\mathbf{h}}\frac{d\mathbf{h}}{d\mathbf{w}}=\sum_{i=1}\Bigg[\frac{\mu_i-y_i }{\mu_i(1-\mu_i)}\Bigg]\frac{d\mu_i}{d\mathbf{h}}\frac{d\mathbf{h}}{d\mathbf{w}}\\
-	&=\sum_{i}(\mu_i-y_i)\mathbf{x}_i=\mathbf{X}^T(\boldsymbol{\mu}-\mathbf{y})\\
-	\frac{d\mu_i}{d\mathbf{h}}& = \mu_i(1-\mu_i)\\
-	\frac{d\mathbf{h}}{d\mathbf{w}}& = \mathbf{x}_i
-\end{align*}
-where $\mathbf{h}=\mathbf{w}^T\mathbf{x}$. 
+\[
+h_{\boldsymbol{\theta}}(\mathbf{x}) = \sigma(\mathbf{X} \boldsymbol{\theta})
+\]
 
-We can also use the second-order method. 
-\begin{align*}
-\mathbf{H}&=\frac{d}{d\mathbf{w}}g(\mathbf{w})^T=\sum_{i}(\nabla_{\mathbf{w}}\mu_i)\mathbf{x}_i^T=\sum_{i}\mu_i(1-\mu_i)\mathbf{x}_i\mathbf{x}_i^T\\
-&=\mathbf{X}^T\mathbf{S}\mathbf{X},
-\end{align*}
-where $\mathbf{S}\triangleq \mathrm{diag}(\mu_i(1-\mu_i))$. Note that $\mathbf{H}$ is positive definite, because the \textrm{NLL} is convex and has a global minimum. 
+where the sigmoid function $\sigma(z)$ is defined as:
+
+\[
+\sigma(z) = \frac{1}{1 + e^{-z}}
+\]
+
+\subsection*{Cost Function}
+
+The cost function for logistic regression is the logistic loss (also known as log loss):
+
+\[
+J(\boldsymbol{\theta}) = -\frac{1}{m} \sum_{i=1}^m \left[ y^{(i)} \log(h_{\boldsymbol{\theta}}(x^{(i)})) + (1 - y^{(i)}) \log(1 - h_{\boldsymbol{\theta}}(x^{(i)})) \right]
+\]
+
+\subsection*{Gradient of the Cost Function}
+
+To minimize the cost function $J(\boldsymbol{\theta})$, we need to compute its gradient with respect to $\boldsymbol{\theta}$.
+
+Let's denote $h_{\boldsymbol{\theta}}(\mathbf{x})$ simply as $h$ for simplicity. The partial derivative of $J(\boldsymbol{\theta})$ with respect to $\theta_j$ (the j-th component of $\boldsymbol{\theta}$) is:
+
+\[
+\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j}
+\]
+
+First, rewrite the hypothesis in terms of the sigmoid function:
+
+\[
+h = \sigma(\mathbf{X} \boldsymbol{\theta})
+\]
+
+Then, the cost function can be rewritten as:
+
+\[
+J(\boldsymbol{\theta}) = -\frac{1}{m} \sum_{i=1}^m \left[ y^{(i)} \log(\sigma(\mathbf{x}^{(i)} \boldsymbol{\theta})) + (1 - y^{(i)}) \log(1 - \sigma(\mathbf{x}^{(i)} \boldsymbol{\theta})) \right]
+\]
+
+To find the gradient, we calculate the partial derivative of $J(\boldsymbol{\theta})$ with respect to $\theta_j$:
+
+\[
+\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j} = -\frac{1}{m} \sum_{i=1}^m \left[ \frac{y^{(i)} \frac{\partial}{\partial \theta_j} \log(\sigma(\mathbf{x}^{(i)} \boldsymbol{\theta})) + (1 - y^{(i)}) \frac{\partial}{\partial \theta_j} \log(1 - \sigma(\mathbf{x}^{(i)} \boldsymbol{\theta}))}{\partial \theta_j} \right]
+\]
+
+Now, we need the derivatives of the log terms. Using the chain rule and the fact that the derivative of the sigmoid function $\sigma(z)$ is $\sigma(z)(1 - \sigma(z))$:
+
+\[
+\frac{\partial}{\partial \theta_j} \log(\sigma(z)) = \frac{1}{\sigma(z)} \cdot \sigma(z)(1 - \sigma(z)) \cdot x_j = (1 - \sigma(z)) x_j
+\]
+\[
+\frac{\partial}{\partial \theta_j} \log(1 - \sigma(z)) = \frac{1}{1 - \sigma(z)} \cdot (-\sigma(z)(1 - \sigma(z))) \cdot x_j = -\sigma(z) x_j
+\]
+
+Combining these results:
+
+\[
+\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j} = -\frac{1}{m} \sum_{i=1}^m \left[ y^{(i)} (1 - \sigma(\mathbf{x}^{(i)} \boldsymbol{\theta})) x_j^{(i)} - (1 - y^{(i)}) \sigma(\mathbf{x}^{(i)} \boldsymbol{\theta}) x_j^{(i)} \right]
+\]
+
+Simplifying further, noticing that $\sigma(\mathbf{x}^{(i)} \boldsymbol{\theta}) = h^{(i)}$:
+
+\[
+\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j} = -\frac{1}{m} \sum_{i=1}^m \left[ y^{(i)} x_j^{(i)} - y^{(i)} h^{(i)} x_j^{(i)} - h^{(i)} x_j^{(i)} + y^{(i)} h^{(i)} x_j^{(i)} \right]
+\]
+
+\[
+\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j} = -\frac{1}{m} \sum_{i=1}^m \left[ y^{(i)} x_j^{(i)} - h^{(i)} x_j^{(i)} \right]
+\]
+
+\[
+\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j} = \frac{1}{m} \sum_{i=1}^m \left[ (h^{(i)} - y^{(i)}) x_j^{(i)} \right]
+\]
+
+This can be written more compactly in vector form:
+
+\[
+\nabla_{\boldsymbol{\theta}} J(\boldsymbol{\theta}) = \frac{1}{m} \mathbf{X}^T (\mathbf{h} - \mathbf{y})
+\]
+
+where:
+\begin{itemize}
+    \item $\mathbf{h}$ is the vector of predictions $\mathbf{h} = \sigma(\mathbf{X} \boldsymbol{\theta})$.
+\end{itemize}
+
+Thus, the gradient of the cost function $J(\boldsymbol{\theta})$ with respect to the weights $\boldsymbol{\theta}$ is:
+
+\[
+\nabla_{\boldsymbol{\theta}} J(\boldsymbol{\theta}) = \frac{1}{m} \mathbf{X}^T (\sigma(\mathbf{X} \boldsymbol{\theta}) - \mathbf{y})
+\]
+
+This gradient is used in gradient descent to update the weights $\boldsymbol{\theta}$:
+
+\[
+\boldsymbol{\theta} := \boldsymbol{\theta} - \alpha \nabla_{\boldsymbol{\theta}} J(\boldsymbol{\theta}),
+\]
+where $\alpha$ is the learning rate.
+
+% Another way to express \textrm{NLL} is as follows. Suppose $\hat{y}_i\in\{-1,+1\}$ instead of $y_i\in\{0,1\}$. We have $p(y=1)=\frac{1}{1+\mathrm{exp}(-\mathbf{w}^T\mathbf{x})}$ and $p(y=-1)=\frac{1}{1+\mathrm{exp}(+\mathbf{w}^T\mathbf{x})}$. Hence
+% \begin{align*}
+% 	\textrm{NLL}(\mathbf{w}) &= -\frac{1}{N}\sum_{n=1}^N [\mathbb{I}(\hat{y}_n=1)\log(\sigma(a_n))+\mathbb{I}(\hat{y}_n=-1)\log(\sigma(-a_n))]\\
+% 							 &= -\frac{1}{N}\sum_{n=1}^N \log(\sigma(\hat{y}_na_n))\\
+% 							 &=  \frac{1}{N}\sum_{i=1}^{N}\textrm{log}(1+\mathrm{exp}(-\hat{y}_i\mathbf{w}^T\mathbf{x}_i).
+% \end{align*}
+% Note that the sigmoid is used for compressing the output into $[0,1]$ and $\sigma(-a_n) = 1-\sigma(a_n)$. Unlike the linear regression, there is no closed from solution for logistic regression, thus we need optimization algorithms for it. Typically, optimization process involves the gradient and Hessian. 
+% \begin{align*}
+% 	\mathbf{g}&=\frac{d}{d\mathbf{w}}\mathrm{NLL}(\mathbf{w})=\frac{d}{d\mu_i}\mathrm{NLL}(\mathbf{w})\frac{d\mu_i}{d\mathbf{h}}\frac{d\mathbf{h}}{d\mathbf{w}}\\
+% 	& = \sum_{i=1}\Bigg[-\frac{y_i}{\mu_i} + \frac{(1-y_i) }{(1-\mu_i)}\Bigg]\frac{d\mu_i}{d\mathbf{h}}\frac{d\mathbf{h}}{d\mathbf{w}}=\sum_{i=1}\Bigg[\frac{\mu_i-y_i }{\mu_i(1-\mu_i)}\Bigg]\frac{d\mu_i}{d\mathbf{h}}\frac{d\mathbf{h}}{d\mathbf{w}}\\
+% 	&=\sum_{i}(\mu_i-y_i)\mathbf{x}_i=\mathbf{X}^T(\boldsymbol{\mu}-\mathbf{y})\\
+% 	\frac{d\mu_i}{d\mathbf{h}}& = \mu_i(1-\mu_i)\\
+% 	\frac{d\mathbf{h}}{d\mathbf{w}}& = \mathbf{x}_i
+% \end{align*}
+% where $\mathbf{h}=\mathbf{w}^T\mathbf{x}$. 
+
+% We can also use the second-order method. 
+% \begin{align*}
+% \mathbf{H}&=\frac{d}{d\mathbf{w}}g(\mathbf{w})^T=\sum_{i}(\nabla_{\mathbf{w}}\mu_i)\mathbf{x}_i^T=\sum_{i}\mu_i(1-\mu_i)\mathbf{x}_i\mathbf{x}_i^T\\
+% &=\mathbf{X}^T\mathbf{S}\mathbf{X},
+% \end{align*}
+% where $\mathbf{S}\triangleq \mathrm{diag}(\mu_i(1-\mu_i))$. Note that $\mathbf{H}$ is positive definite, because the \textrm{NLL} is convex and has a global minimum. 

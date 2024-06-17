@@ -1,0 +1,122 @@
+\section{Differentiate}
+
+\subsection{Differentiation Rules}
+
+\begin{itemize}
+	\item Product rule: 
+		$$(f(x)g(x))' = f'(x)g(x)+f(x)g'(x)$$
+	\item Quotient rule: 
+		$$\left(\frac{f(x)}{g(x)}\right)' = \frac{f'(x)g(x)+f(x)g'(x)}{(g(x))^2}$$
+	\item Sum rule: 
+		$$(f(x)+g(x))' = f'(x)+g'(x)$$
+	\item Chain rule:
+		$$(g(f(x)))' = g'(f(x))f'(x)$$
+\end{itemize}
+
+The generalization of the derivative to functions of several variables is the \textit{gradient}. We find the gradient of the function $f$ with respect to $x$ by varying one variable at a time and keeping the others constant. \textbf{The gradient is then the collection of these partial derivatives}.
+
+For example, partial derivatives using the chain rule of $f(x,y) = (x+2y^3)^2$ is given by
+\[ \frac{\partial f(x, y)}{\partial x} = 2(x + 2y^3) \frac{\partial}{\partial x}(x + 2y^3) = 2(x + 2y^3) \]
+
+\paragraph{Basic rules of Partial Differentiation:} 
+\begin{itemize}
+	\item Product rule:
+	\[ \frac{\partial}{\partial \rvx} \big[f(\rvx)g(\rvx)\big] = \frac{\partial f}{\partial \rvx} g(\rvx) + f(\rvx) \frac{\partial g}{\partial \rvx} \]
+	\item Sum rule:
+	\[ \frac{\partial}{\partial \rvx} \big[f(\rvx) + g(\rvx)\big] = \frac{\partial f}{\partial \rvx} + \frac{\partial g}{\partial \rvx} \]
+	\item Chain rule:
+	\[ \frac{\partial}{\partial \rvx} (g \circ f)(\rvx) = \frac{\partial}{\partial \rvx} \big[g(f(\rvx))\big] = \frac{\partial g}{\partial f} \frac{\partial f}{\partial \rvx} \]
+\end{itemize}
+
+\section{Chain Rule}
+
+Consider a function $f: \mathbb{R}^2\to \mathbb{R}$ of two variables $x_1$ and $x_2$. They are functions of $t$, $x_1(t)$ and $x_2(t)$. To compute the gradient of $f$ with respect to $t$, we need to apply the chain rule for multivariate functions as 
+\begin{align*}
+	\frac{\partial f}{\partial t} = \begin{bmatrix}
+		\frac{\partial f}{\partial x_1} & \frac{\partial f}{\partial x_2}
+		\end{bmatrix}\begin{bmatrix}
+		\frac{\partial x_1(t)}{\partial t}\\
+		\frac{\partial x_2(t)}{\partial t}
+	\end{bmatrix} = \frac{\partial f}{\partial x_1}\frac{\partial x_1(t)}{\partial t}+\frac{\partial f}{\partial x_2}\frac{\partial x_2(t)}{\partial t}
+\end{align*}
+
+Given that \( f(x_1, x_2) \) is a function of \( x_1 \) and \( x_2 \), where \( x_1 = x_1(s, t) \) and \( x_2 = x_2(s, t) \) are themselves functions of two variables \( s \) and \( t \), the chain rule can be used to find the partial derivatives of \( f \) with respect to \( s \) and \( t \).
+
+\[ \frac{\partial f}{\partial s} = \frac{\partial f}{\partial x_1} \frac{\partial x_1}{\partial s} + \frac{\partial f}{\partial x_2} \frac{\partial x_2}{\partial s} \]
+
+\[ \frac{\partial f}{\partial t} = \frac{\partial f}{\partial x_1} \frac{\partial x_1}{\partial t} + \frac{\partial f}{\partial x_2} \frac{\partial x_2}{\partial t} \]
+
+The gradient of \( f \) is obtained by the matrix multiplication as follows:
+
+\begin{align*}
+\frac{d f}{d(s, t)} = \frac{\partial f}{\partial x} \frac{\partial x}{\partial (s, t)} = 
+\begin{pmatrix}
+\frac{\partial f}{\partial x_1} & \frac{\partial f}{\partial x_2}
+\end{pmatrix}
+\begin{pmatrix}
+\frac{\partial x_1}{\partial s} & \frac{\partial x_1}{\partial t} \\
+\frac{\partial x_2}{\partial s} & \frac{\partial x_2}{\partial t}
+\end{pmatrix}
+\end{align*}
+
+
+\section{Vector Notations}
+
+\begin{itemize}
+	\item $\rvx = (x_1, x_2,..., x_n)$ or
+	\item 
+		\begin{align*}
+			\rvx = \begin{bmatrix}x_1\\ \vdots\\ x_n\end{bmatrix}
+		\end{align*}
+\end{itemize}
+
+Differentiate a vector $y$ by a scalar $\rvx$:
+\begin{align*}
+	\frac{\partial \rvy}{\partial x} = \begin{bmatrix}\frac{\partial y_1}{\partial x}\\ \vdots\\ \frac{\partial y_n}{\partial x}\end{bmatrix}
+\end{align*}
+
+Differentiate a scalar $y$ by a vector $\rvx$:
+\begin{align*}
+	\frac{\partial y}{\partial \rvx} = \bigg[\frac{\partial y}{\partial x_1}, \cdots, \frac{\partial y}{\partial x_n}\bigg]
+\end{align*}
+
+Differentiate a vector $y$ by a vector $\rvx$:
+\begin{align*}
+	\frac{\partial \rvy}{\partial \rvx} = \begin{bmatrix}
+		\frac{\partial y_1}{\partial x_1} & \cdots & \frac{\partial y_1}{\partial x_n}\\ 
+		\vdots & \ddots & \vdots\\ 
+		\frac{\partial y_n}{\partial x_1} & \cdots & \frac{\partial y_n}{\partial x_n}
+\end{bmatrix}
+\end{align*}
+
+$\rva^T\rvx$ is a scalar value, so 
+
+\begin{align*}
+	\frac{\partial \rva^T\rvx}{\partial \rvx} &= \bigg[\frac{\partial (\rva^T\rvx)}{\partial x_1} \cdots \frac{\partial (\rva^T\rvx)}{\partial x_n}\bigg] = \bigg[\frac{\partial (a_1x_1+\dots+a_nx_n)}{\partial x_1}, \cdots, \frac{\partial (a_1x_1+\dots+a_nx_n)}{\partial x_n}\bigg]\\ 
+	&= [a_1, \dots, a_n] = \rva^T
+\end{align*}
+
+\begin{align*}
+	A\rvx = \begin{bmatrix}
+		a_{11} & \dots & a_{1n}\\
+		\vdots & \ddots & \vdots\\
+		a_{m1} & \dots & a_{mn}\\
+	\end{bmatrix}\times
+	\begin{bmatrix}
+		x_1\\
+		\vdots\\
+		x_n
+		\end{bmatrix} = \begin{bmatrix}
+		\sum_{i=1}^n a_{1i}x_i\\
+		\vdots\\
+		\sum_{i=1}^n a_{mi}x_i\\
+	\end{bmatrix}
+\end{align*}
+Thus, 
+\begin{align*}
+	\frac{\partial A\rvx}{\partial \rvx} =\begin{bmatrix}
+		\frac{\partial \sum_{i=1}^n a_{1i}x_i}{\partial x_1}& \dots & \frac{\partial \sum_{i=1}^n a_{1i}x_i}{\partial x_n}\\
+		\vdots & \ddots & \vdots\\
+		\frac{\partial \sum_{i=1}^n a_{mi}x_i}{\partial x_1} & \dots & \frac{\partial \sum_{i=1}^n a_{mi}x_i}{\partial x_n}
+	\end{bmatrix} = A
+\end{align*}
