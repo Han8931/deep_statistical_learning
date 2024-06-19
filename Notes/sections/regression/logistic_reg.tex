@@ -47,115 +47,15 @@ $$\frac{\partial f}{\partial x} = \frac{\partial u}{\partial v} \frac{\partial v
 \end{itemize}
 The derivative of the loss function w.r.t., a single weight $w_j$ is given by
 \begin{align*}
-	\frac{\partial \mathcal{L}}{\partial w_j} &= \frac{\partial }{\partial w_j} -[y\ln \sigma(wx + b)+(1-y) \ln (1-\sigma(wx+b))]\\
+	\frac{\partial \mathcal{L}}{\partial w_j} &= \frac{\partial }{\partial w_j} -[\rvy\ln \sigma(\rvw\rvx + \rvb)+(1-\rvy) \ln (1-\sigma(\rvw\rvx+\rvb))]\\
 											  &=  -[\frac{\partial }{\partial w_j}y\ln \sigma(wx + b)+\frac{\partial }{\partial w_j}(1-y) \ln (1-\sigma(wx+b))]\\
-											  &= -\frac{y}{\sigma(wx + b)}\frac{\partial }{\partial w_j}\sigma(wx + b) - \frac{1-y}{1-\sigma(wx+b)} \frac{\partial }{\partial w_j}1-\sigma(wx+b)\\
+											  &= -\frac{y}{\sigma(wx + b)}\frac{\partial }{\partial w_j}\sigma(wx + b) - \frac{1-y}{1-\sigma(wx+b)} \frac{\partial }{\partial w_j}\left[1-\sigma(wx+b)\right]\\
 											  &= -\bigg[\frac{y}{\sigma(wx + b)}-\frac{1-y}{1-\sigma(wx + b)}\bigg]\frac{\partial }{\partial w_j}\sigma(wx + b)\\
 											  &= -\bigg[\frac{y-\sigma(wx + b)}{\sigma(wx + b)[1-\sigma(wx + b)]}\bigg]\sigma(wx + b)[1-\sigma(wx + b)]\frac{\partial \sigma(wx + b)}{\partial w_j}\\
 											  &= -\bigg[\frac{y-\sigma(wx + b)}{\sigma(wx + b)[1-\sigma(wx + b)]}\bigg]\sigma(wx + b)[1-\sigma(wx + b)]x_j\\ 
 											  &= -( y-\sigma(wx + b) )x_j\\
 											  &= ( \sigma(wx + b)-y )x_j.
 \end{align*}
-
-\section*{Gradient of Logistic Regression}
-
-Logistic regression is used for binary classification problems. The logistic function (or sigmoid function) is used to model the probability that a given input belongs to a particular class.
-
-Given:
-\begin{itemize}
-    \item $\mathbf{X}$ is the input matrix of size $m \times n$ (m examples, n features).
-    \item $\mathbf{y}$ is the vector of labels of size $m \times 1$.
-    \item $\boldsymbol{\theta}$ is the vector of weights of size $n \times 1$.
-\end{itemize}
-
-The hypothesis for logistic regression is given by the sigmoid function applied to the linear combination of inputs and weights:
-
-\[
-h_{\boldsymbol{\theta}}(\mathbf{x}) = \sigma(\mathbf{X} \boldsymbol{\theta})
-\]
-
-where the sigmoid function $\sigma(z)$ is defined as:
-
-\[
-\sigma(z) = \frac{1}{1 + e^{-z}}
-\]
-
-\subsection*{Cost Function}
-
-The cost function for logistic regression is the logistic loss (also known as log loss):
-
-\[
-J(\boldsymbol{\theta}) = -\frac{1}{m} \sum_{i=1}^m \left[ y^{(i)} \log(h_{\boldsymbol{\theta}}(x^{(i)})) + (1 - y^{(i)}) \log(1 - h_{\boldsymbol{\theta}}(x^{(i)})) \right]
-\]
-
-\subsection*{Gradient of the Cost Function}
-
-To minimize the cost function $J(\boldsymbol{\theta})$, we need to compute its gradient with respect to $\boldsymbol{\theta}$.
-
-Let's denote $h_{\boldsymbol{\theta}}(\mathbf{x})$ simply as $h$ for simplicity. The partial derivative of $J(\boldsymbol{\theta})$ with respect to $\theta_j$ (the j-th component of $\boldsymbol{\theta}$) is:
-
-\[
-\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j}
-\]
-
-First, rewrite the hypothesis in terms of the sigmoid function:
-
-\[
-h = \sigma(\mathbf{X} \boldsymbol{\theta})
-\]
-
-Then, the cost function can be rewritten as:
-
-\[
-J(\boldsymbol{\theta}) = -\frac{1}{m} \sum_{i=1}^m \left[ y^{(i)} \log(\sigma(\mathbf{x}^{(i)} \boldsymbol{\theta})) + (1 - y^{(i)}) \log(1 - \sigma(\mathbf{x}^{(i)} \boldsymbol{\theta})) \right]
-\]
-
-To find the gradient, we calculate the partial derivative of $J(\boldsymbol{\theta})$ with respect to $\theta_j$:
-
-\[
-\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j} = -\frac{1}{m} \sum_{i=1}^m \left[ \frac{y^{(i)} \frac{\partial}{\partial \theta_j} \log(\sigma(\mathbf{x}^{(i)} \boldsymbol{\theta})) + (1 - y^{(i)}) \frac{\partial}{\partial \theta_j} \log(1 - \sigma(\mathbf{x}^{(i)} \boldsymbol{\theta}))}{\partial \theta_j} \right]
-\]
-
-Now, we need the derivatives of the log terms. Using the chain rule and the fact that the derivative of the sigmoid function $\sigma(z)$ is $\sigma(z)(1 - \sigma(z))$:
-
-\[
-\frac{\partial}{\partial \theta_j} \log(\sigma(z)) = \frac{1}{\sigma(z)} \cdot \sigma(z)(1 - \sigma(z)) \cdot x_j = (1 - \sigma(z)) x_j
-\]
-\[
-\frac{\partial}{\partial \theta_j} \log(1 - \sigma(z)) = \frac{1}{1 - \sigma(z)} \cdot (-\sigma(z)(1 - \sigma(z))) \cdot x_j = -\sigma(z) x_j
-\]
-
-Combining these results:
-
-\[
-\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j} = -\frac{1}{m} \sum_{i=1}^m \left[ y^{(i)} (1 - \sigma(\mathbf{x}^{(i)} \boldsymbol{\theta})) x_j^{(i)} - (1 - y^{(i)}) \sigma(\mathbf{x}^{(i)} \boldsymbol{\theta}) x_j^{(i)} \right]
-\]
-
-Simplifying further, noticing that $\sigma(\mathbf{x}^{(i)} \boldsymbol{\theta}) = h^{(i)}$:
-
-\[
-\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j} = -\frac{1}{m} \sum_{i=1}^m \left[ y^{(i)} x_j^{(i)} - y^{(i)} h^{(i)} x_j^{(i)} - h^{(i)} x_j^{(i)} + y^{(i)} h^{(i)} x_j^{(i)} \right]
-\]
-
-\[
-\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j} = -\frac{1}{m} \sum_{i=1}^m \left[ y^{(i)} x_j^{(i)} - h^{(i)} x_j^{(i)} \right]
-\]
-
-\[
-\frac{\partial J(\boldsymbol{\theta})}{\partial \theta_j} = \frac{1}{m} \sum_{i=1}^m \left[ (h^{(i)} - y^{(i)}) x_j^{(i)} \right]
-\]
-
-This can be written more compactly in vector form:
-
-\[
-\nabla_{\boldsymbol{\theta}} J(\boldsymbol{\theta}) = \frac{1}{m} \mathbf{X}^T (\mathbf{h} - \mathbf{y})
-\]
-
-where:
-\begin{itemize}
-    \item $\mathbf{h}$ is the vector of predictions $\mathbf{h} = \sigma(\mathbf{X} \boldsymbol{\theta})$.
-\end{itemize}
-
 Thus, the gradient of the cost function $J(\boldsymbol{\theta})$ with respect to the weights $\boldsymbol{\theta}$ is:
 
 \[

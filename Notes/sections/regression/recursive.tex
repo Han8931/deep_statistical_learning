@@ -98,10 +98,10 @@ By
 In sum, RLS can be updated as follows: 
 \begin{itemize}
 	\item Update the gain matrix: $K_k = P_{k-1}\mathbf{X}_k^T(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k)^{-1}$
-	\item Update estimate: $\boldsymbol{\theta}_k &= \boldsymbol{\theta}_{k-1}+K_k (\rvy_k-\mathbf{X}_k\boldsymbol{\theta}_{k-1})$
+	\item Update estimate: $\boldsymbol{\theta}_k = \boldsymbol{\theta}_{k-1}+K_k (\rvy_k-\mathbf{X}_k\boldsymbol{\theta}_{k-1})$
 	\item Update error covariance matrix by either: 
 		\begin{itemize}
-			\item $P_k &= (I-K_k\mathbf{X}_k)P_{k-1}$.
+			\item $P_k = (I-K_k\mathbf{X}_k)P_{k-1}$.
 		\end{itemize}
 \end{itemize}
 
