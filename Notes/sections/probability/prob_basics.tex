@@ -1,6 +1,12 @@
 \section{Probability}
 \label{sec:intro_prob}
 
+The probability of event $A$ as
+\begin{align*}
+	P(A) = \frac{\text{Number of times A occurs}}{\text{Total number of outcomes}}
+\end{align*}
+This commonsense understanding of probability is called the \textit{relative frequency definition}.
+
 \begin{definition}{Independence}
 	\begin{align*}
 		X\perp Y \leftrightarrow p(X,Y)=p(X)p(Y)
@@ -53,6 +59,13 @@ On the other hand, if it is monotonically decreasing, then the pdf of $Y$ is giv
 $$f_Y(y) = - f_X(g^{-1}(y))\frac{d}{dy}g^{-1}(y)$$
 Compactly, the above two equations can be combined into a following equation:
 $$f_Y(y) = f_X(g^{-1}(y))\Bigg|\frac{d}{dy}g^{-1}(y)\Bigg|$$
+
+Let's look at what happens to the pdf of an RV when we pass the RV through some function. Suppose that we have two RVs, $X$ and $Y$, related to one another by the monotonic functions $g(\cdot)$ and $h(\cdot)$:
+\begin{align*}
+	Y &= g(X)\\
+	X &= g^{-1}(X) = h(Y)
+\end{align*}
+If we know the pdf (probability density function) of $X$ 
 
 \subsection{Intuition}
 Given a random variable $z$ and its known probability density function $z\sim \pi(z)$, we would like to construct a new random variable using a one-to-one mapping function $x=f(z)$. The function $f$ is invertible, so $z = f^{-1}(x)$. Now the question is how to infer the unknown probability density function of the new variable, $p(x)$?
