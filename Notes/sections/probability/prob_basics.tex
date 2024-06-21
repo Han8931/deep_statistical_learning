@@ -43,8 +43,18 @@ Now, if $k=23$, this probability is only $P(B)=0.0586$, which is much smaller th
 \end{align*}
 which is denoted $n!$. We can rewrite as 
 \begin{align*}
-	P^n_k = \frac{n!}{(n-k)!}
+	P^n_k = \frac{n!}{(n-k)!}.
 \end{align*}
+
+\subsection{Unordered Sampling without Replacement: Combinations}
+Here we have a set with $n$ elements, \eg $A=\{1,2,3,\dots, n\}$ and we want to draw $k$ samples from the set such that ordering does not matter and repetition is not allowed. Thus, we basically want to choose a $k$-element subset of $A$, which we also call a $k$-combination of the set $A$. For example if $A=\{1,2,3\}$ and $k=2$, there are 3 different possibilities. We show the number of $k$-element subsets of $A$ by
+$$\binom{n}{k} = \frac{n!}{k!(n-k)!}.$$
+This is also called the \textit{binomial coefficient}. This is because the coefficients in the binomial theorem are given by 
+$$(a+b)^n = \sum_{k=0}^n\binom{n}{k}a^kb^{n-k}.$$
+An intuitive way to understand this is that there are $n\times (n-1)\times \dots \times (n-k+1)$ ways to place items and the $k\times \dots \times 1$ ways to order the times, which can be ignored.  
+
+A simple way to find $\binom{n}{k}$ is to compare it with $P_k^n$. Note that the difference between the two is ordering. 
+$$P^n_k={n \choose k}\times k!.$$
 
 
 \paragraph{Bayes' Rule }is often written by rearranging the above equation to obtain 
