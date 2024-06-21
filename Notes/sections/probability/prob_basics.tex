@@ -4,13 +4,50 @@
 
 \href{https://www.probabilitycourse.com/chapter5/5_2_3_conditioning_independence.php}{Reference: Introduction to Probability, Statistics, and Random Processes.}
 
+
 The probability of event $A$ as
 \begin{align*}
 	P(A) = \frac{\text{Number of times A occurs}}{\text{Total number of outcomes}}
 \end{align*}
 This commonsense understanding of probability is called the \textit{relative frequency definition}.
 
-Bayes'Rule is often written by rearranging the above equation to obtain
+
+\section{Combinatorics}
+
+\subsection{Multiplication Principle}
+Suppose that we perform $r$ experiments such that the $k$-th experiment has $n_k$ possible outcomes, for $k=1,2,\dots,r$. Then there are a total of $n_1\times n_2\times n_3\times \dots \times n_r$ possible outcomes for the sequence of r experiments.
+
+\subsection{Ordered Sampling with Replacement}
+Here we have a set with $n$ elements (\eg $A=\{1,2,3,\dots n\}$), and we want to draw $k$ samples from the set such that ordering matters and repetition is allowed. For example, if $A=\{1,2,3\}$ and $k=2$, there are 9 different possibilities. In general, we can argue that there are$k$ 
+positions in the chosen list: (Position 1, Position 2, $\dots$, Position $k$). There are $n$ options for each position. Thus, when ordering matters and repetition is allowed, the total number of ways to choose $k$ objects from a set with $n$ elements is
+$$n\times n\times \dots \times n = n^k.$$
+
+\subsection{Ordered Sampling without Replacement: Permutations}
+Consider the same setting as above, but now repetition is not allowed. For example, if $A=\{1,2,3\}$ and $k=2$, there are 6 different possibilities. In general, we can argue that there are $k$ positions in the chosen list: (Position 1, Position 2, $\dots$, Position $k$). There are $n$ options for the first position, $(n−1)$ options for the second position (since one element has already been allocated to the first position and cannot be chosen here), $(n−2)$ options for the third position, and $(n−k+1)$ options for the $k$-th position. Thus, when ordering matters and repetition is not allowed, the total number of ways to choose $k$ objects from a set with n elements is 
+$$n\times (n-1)\times \dots \times (n-k+1).$$
+It si called a $k$ permutation of the elements in set $A$. We use the following notation:
+$$P_k^n = n\times (n-1)\times \dots \times (n-k+1).$$
+Note that if $k$ is larger than $n$, then $P_k^n =0$. 
+\paragraph{Example:} Birthday problem or birthday paradox is a problem that If $k$ people are at a party, what is the probability that at least two of them have the same birthday? Suppose that there are $n=365$ days in a year and all days are equally likely to be the birthday of a specific person.
+$$P(A) = 1-\frac{P_k^n}{n^k}.$$
+The reason this is called a paradox is that $P(A)$ is numerically different from what most people expect. For example, if there are $k=23$ people in the party, what do you guess is the probability that at least two of them have the same birthday, $P(A)$? The answer is $.5073$, which is much higher than what most people guess. The probability crosses 99 percent when the number of peoples reaches $57$. But why is the probability higher than what we expect?
+
+It is important to note that in the birthday problem, neither of the two people are chosen beforehand. To better answer this question, let us look at a different problem: I am in a party with $k−1$ people. What is the probability that at least one person in the party has the same birthday as mine? Well, we need to choose the birthdays of $k−1$ people, the total number of ways to do this is $n^{k-1}$. The total number of ways to choose the birthdays so that no one has my birthday is $(n-1)^{k-1}$. Thus, the probability that at least one person has the same birthday as mine is 
+$$P(B) = 1-\left(\frac{n-1}{n}\right)^{k-1}.$$
+Now, if $k=23$, this probability is only $P(B)=0.0586$, which is much smaller than the corresponding $P(A)=0.5073$. The reason is that event $B$ is looking only at the case where one person in the party has the same birthday as me. This is a much smaller event than event $A$ which looks at all possible pairs of people. Thus, $P(A)$ is much larger than $P(B)$. We might guess that the value of $P(A)$ is much lower than it actually is, because we might confuse it with $P(B)$.
+
+\paragraph{Permutations of $n$ elements:} An $n$-permutation of $n$ elements is just called a permutation of those elements. In this case $k=n$ and we have
+\begin{align*}
+	P^n_n &= n\times (n-1)\times \dots \times (n-n+1)\\
+		  &= n\times (n-1)\times \dots \times 1,
+\end{align*}
+which is denoted $n!$. We can rewrite as 
+\begin{align*}
+	P^n_k = \frac{n!}{(n-k)!}
+\end{align*}
+
+
+\paragraph{Bayes' Rule }is often written by rearranging the above equation to obtain 
 \begin{align*}
 	P(A|B) = \frac{P(B|A)P(A)}{P(B)}
 \end{align*}
@@ -64,6 +101,8 @@ F_{X|A}(x)=
 	0\quad \text{Otherwise}\
 	\end{cases}
 \end{align*}
+
+\subsection{Conditional Probability}
 We can obtain the conditional PDF of $X$ given $A$ by differentiating $F_{X|A}$ as follows:
 
 Now the conditional PDF of $X$ given $A$, denoted by $f_{X|A}(x)$ is 
@@ -100,6 +139,23 @@ The conditional expectation and variance are defined by replacing the PDF by con
 	\text{Var}[X|A]	&=\mathbb{E}[X^2|A]-\left(\mathbb{E}[X|A]\right)^2
 \end{align*}
 
+\subsection{Conditioning by Another Random Variable}
+
+If $X$ and $Y$ are two jointly continuous RVs, and we obtain some information regarding $Y$, we should update the PDF and CDF of $X$ based on the new information. In particular, if we get to observe the value of the RV $Y$ , then how do we need to update the PDF and CDF of $X$?
+\begin{align*}
+	P_{X|Y}(x_i|y_j)&= \frac{P_{XY}(x_i,y_j)}{P_Y(y_j)}.
+\end{align*}
+Now, if $X$ and $Y$ are jointly continuous, the conditional PDF of $X$ given $Y$ is given by
+\begin{align*}
+	f_{X|Y}(x|y)&= \frac{f_{XY}(x,y)}{f_Y(y)}.
+\end{align*}
+This means that if we get to observe $Y=y$, then we need to use the above conditional density for the RV $X$. To get an intuition about the formula, for small $\Delta_x$ and $\Delta_y$, we get
+\begin{align*}
+	 f_{X|Y}(x|y) &\approx \frac{P(x \leq X \leq x+\Delta_x | y \leq Y \leq y+\Delta_y)}{\Delta_x} \hspace{20pt} \textrm{(by definition of PDF)}\\
+	 &=\frac{P(x \leq X \leq x+\Delta_x , y \leq Y \leq y+\Delta_y)}{P(y \leq Y \leq y+\Delta_y) \Delta_x}\\
+	 &\approx \frac{f_{XY}(x,y) \Delta_x \Delta_y}{f_Y(y) \Delta_y \Delta_x}\\
+	 &=\frac{f_{XY}(x,y)}{f_Y(y)}.
+\end{align*}
 
 % \begin{definition}{Independence}
 % 	\begin{align*}
