@@ -163,11 +163,30 @@ If $X_1,X_2,\dots,X_n$ are independent $Bernoulli(p)$ random variables, then the
 Example: 
 \begin{itemize}
 	\item Let $X\sim Binomial(n,p)$ and $Y\sim Binomial(m,p)$ be two independent random variables. Define a new random variable as $Z=X+Y$. Find the PMF of $Z$.
+	\item Solution 1: Since $X\sim Binomial(n,p)$, we can think of $X$ as the number of heads in $n$ independent coin tosses: 
+	$$X = X_1+\dots+\X_n,$$
+	where the $X_i$'s are independent Bernoulli RVs. Similarly, $Y\sim Binomial(m,p)$.
+	Thus, the RV $Z=X+Y$ will be the total number of heads in $n+m$ coin tosses:
+	$$Z = X+Y=X_1+\dots+X_n+Y_1+\dots+Y_m.$$
+	Therefore, $Z$ is a binomial RV with parameters $m+n$ and $p$, \ie $Binomial(m+n, p)$.
+	\item Solution 2: First, we note that $R_z = \{0,1,\dots,m+n\}$. For $k\in R_z$, we get
+		$$P_Z(k) = P(Z=k) = P(X+Y=k).$$
+		We will find $P(X+Y=k)$ by using conditioning and the law of total probability. 
+		\begin{align*}
+			P(Z=k) &= P(X+Y=k)\\
+				   &= \sum_{i=0}^{n}P(X+Y=k|X=i)P(X=i)\\
+				   &= \sum_{i=0}^{n}P(Y=k-i|X=i)P(X=i)\\
+				   &= \sum_{i=0}^{n}P(Y=k-i)P(X=i)\quad \text{Since $X$ and $Y$ are independent}\\
+				   &= \sum_{i=0}^{n}\binom{m}{k-i}p^{k-i}(1-p)^{m-k+i}\binom{n}{i}p^i(1-p)^{n-i}\\
+				   &= \sum_{i=0}^{n}\binom{m}{k-i}\binom{n}{i}p^k(1-p)^{m+n-k}\\
+				   &= p^k(1-p)^{m+n-k}\sum_{i=0}^{n}\binom{m}{k-i}\binom{n}{i}\\
+				   &= \binom{m+n}{k}p^k(1-p)^{m+n-k}\quad \text{by Vandermonde's identity}
+		\end{align*}
 \end{itemize}
 
-
-
 \paragraph{Negative Binomial (Pascal) Distribution}
+The \textit{negative binomial} or \textit{Pascal distribution} is a \textbf{generalization of the geometric distribution}. It relates to the random experiment of repeated independent trials until observing $m$ successes.
+
 \paragraph{Hyper-geometric Distribution}
 \paragraph{Poisson Distribution}
 
