@@ -1,0 +1,208 @@
+\paragraph{Bayes' Rule }is often written by rearranging the above equation to obtain 
+\begin{align*}
+	P(A|B) = \frac{P(B|A)P(A)}{P(B)}
+\end{align*}
+
+We define a random variable (RV) as a functional mapping from a set of experimental outcomes (the domain) to a set of real numbers (the range).
+
+The most fundamental property of an RV $X$ is its cumulative distribution function (CDF) $F_X(x)$, defined as 
+$$F_{X}(x) = P(X\leq x).$$
+Some properties of the CDF are given by
+\begin{align*}
+	F_X(x)&= [0,1]\\
+	F_X(-\infty)&= 0\\
+	F_X(\infty)&= 1\\
+	F_X(a)&\leq F_X(b), \quad \text{if }a\leq b \\
+	P(a<x\leq b)&=F_X(b)-F_X(a)
+\end{align*}
+The probability density function (PDF) $f_X(x)$ is defined as the derivative of the CDF:
+\begin{align*}
+	f_X(x) = \frac{dF_X(x)}{dx}.
+\end{align*}
+Some properties of the PDF that can be obtained from this definition are
+\begin{align*}
+	F_X(x) &= \int_{-\infty}^xf_X(z)dz\\
+	f_X(x)&\geq 0\\
+	\int_{-\infty}^{\infty}f_X(x)dx&= 1\\
+	P(a<x\leq b)&=\int_{a}^bf_X(x)dx
+\end{align*}
+The $Q$-function of an RV is defined as one minus the CDF. This is equal to the probability that the RV is greater than the argument of the function: 
+\begin{align*}
+	Q(x)&= 1-F_X(x)\\
+		&= P(X>x).
+\end{align*}
+Suppose that we know that the event $X\in I=[a,b]$ has occurred. Call this event $A$. The conditional distribution of the RV $X$ given $A$ can be defined as
+\begin{align*}
+	F_{X|A}(x)&= P(X\leq x|A)\\
+			&= P(X\leq x|a\leq X \leq b)\\
+			&= \frac{P(X\leq x,a\leq X \leq b)}{P(A)}\\
+\end{align*}
+Now if $x\leq 0$, then $F_{X|A}(x)=0$. One the other hand, if $a\leq x \leq b$, we have
+\begin{align*}
+	F_{X|A}(x)&= P(X\leq x|a\leq X \leq b)\\
+			&= \frac{P(a\leq X \leq b)}{P(A)}\\
+			&= \frac{F_X(x)-F_X(a)}{F_X(b)-F_X(a)}
+\end{align*}
+Finally, if $x>b$, then $F_{X|A}(x)=1$. Thus, we obtain
+\begin{align*}
+F_{X|A}(x)=
+	\begin{cases}
+	1\quad x>b\\	
+	\frac{F_X(x)-F_X(a)}{F_X(b)-F_X(a)}\quad a\leq x <b\\	
+	0\quad \text{Otherwise}\
+	\end{cases}
+\end{align*}
+
+\subsection{Conditional Probability}
+We can obtain the conditional PDF of $X$ given $A$ by differentiating $F_{X|A}$ as follows:
+
+Now the conditional PDF of $X$ given $A$, denoted by $f_{X|A}(x)$ is 
+\begin{align*}
+	f_{X|A}(x) = 
+	\begin{cases}
+	\frac{f_{X}(x)}{P(A)}\quad a\leq x <b\\	
+	0\quad \text{Otherwise}\
+	\end{cases}
+\end{align*}
+
+It is insightful if we derive the above formula for fX|A(x) directly from the definition of the PDF for continuous random variables. Recall that the PDF of X can be defined as
+\begin{align*}
+	f_X(x)=\lim_{\Delta \rightarrow 0^+} \frac{P(x<X \leq x+\Delta)}{\Delta}.
+\end{align*}
+Now, the conditional PDF of $X$ given $A$, denoted by $f_{X|A}(x)$, is
+
+\begin{align*}
+	 f_{X|A}(x)&=\lim_{\Delta \rightarrow 0^+} \frac{P(x<X \leq x+\Delta|A)}{\Delta}\\
+	 &=\lim_{\Delta \rightarrow 0^+} \frac{P(x<X \leq x+\Delta,A)}{\Delta P(A)}\\
+	 &=\lim_{\Delta \rightarrow 0^+} \frac{P(x<X \leq x+\Delta,a \leq X \leq b)}{\Delta P(A)}.
+\end{align*}
+Now consider two cases. If $a\leq x < b$, then
+\begin{align*}
+	 f_{X|A}(x)&=\lim_{\Delta \rightarrow 0^+} \frac{P(x<X \leq x+\Delta,a \leq X \leq b)}{\Delta P(A)}\\
+	 &=\frac{1}{P(A)}\lim_{\Delta \rightarrow 0^+} \frac{P(x<X \leq x+\Delta)}{\Delta}\\
+	 &=\frac{f_X(x)}{P(A)}.
+\end{align*}
+
+The conditional expectation and variance are defined by replacing the PDF by conditional PDF in the definitions of expectation and variance. 
+\begin{align*}
+	\mathbb{E}[X|A] &= \int_{-\infty}^{\infty}xf_{X|A}(x)dx\\
+	\mathbb{E}[g(X)|A]	&= \int_{-\infty}^{\infty}g(x)f_{X|A}(x)dx\\
+	\text{Var}[X|A]	&=\mathbb{E}[X^2|A]-\left(\mathbb{E}[X|A]\right)^2
+\end{align*}
+
+\subsection{Conditioning by Another Random Variable}
+
+If $X$ and $Y$ are two jointly continuous RVs, and we obtain some information regarding $Y$, we should update the PDF and CDF of $X$ based on the new information. In particular, if we get to observe the value of the RV $Y$ , then how do we need to update the PDF and CDF of $X$?
+\begin{align*}
+	P_{X|Y}(x_i|y_j)&= \frac{P_{XY}(x_i,y_j)}{P_Y(y_j)}.
+\end{align*}
+Now, if $X$ and $Y$ are jointly continuous, the conditional PDF of $X$ given $Y$ is given by
+\begin{align*}
+	f_{X|Y}(x|y)&= \frac{f_{XY}(x,y)}{f_Y(y)}.
+\end{align*}
+This means that if we get to observe $Y=y$, then we need to use the above conditional density for the RV $X$. To get an intuition about the formula, for small $\Delta_x$ and $\Delta_y$, we get
+\begin{align*}
+	 f_{X|Y}(x|y) &\approx \frac{P(x \leq X \leq x+\Delta_x | y \leq Y \leq y+\Delta_y)}{\Delta_x} \hspace{20pt} \textrm{(by definition of PDF)}\\
+	 &=\frac{P(x \leq X \leq x+\Delta_x , y \leq Y \leq y+\Delta_y)}{P(y \leq Y \leq y+\Delta_y) \Delta_x}\\
+	 &\approx \frac{f_{XY}(x,y) \Delta_x \Delta_y}{f_Y(y) \Delta_y \Delta_x}\\
+	 &=\frac{f_{XY}(x,y)}{f_Y(y)}.
+\end{align*}
+
+% \begin{definition}{Independence}
+% 	\begin{align*}
+% 		X\perp Y \leftrightarrow p(X,Y)=p(X)p(Y)
+% 	\end{align*}
+% \end{definition}
+% \begin{definition}{Conditional independence}
+% 	\begin{align*}
+% 		X\perp Y|Z \leftrightarrow p(X,Y|Z)=p(X|Z)p(Y|Z)
+% 	\end{align*}
+% \end{definition}
+% All the dependencies between $X$ and $Y$ are mediated via $Z$. If $X$ and $Y$ are conditionally independent, then 
+% \begin{align*}
+% 	p(X|Y,Z)&=\frac{p(X,Y|Z)}{p(Y|Z)}\\
+% 	&=\frac{p(X|Z)p(Y|Z)}{p(Y|Z)}\\
+% 	&=p(X|Z).
+% \end{align*}
+%
+%
+% \subsection{The law of total expectation}
+% $$\mathbb{E}[\mathbb{E}[Y|X]] = \mathbb{E}[Y].$$
+%
+% It is worth trying to parse this formula more carefully and adding some subscripts:
+% $$\mathbb{E}_X[\mathbb{E}_{Y|X}[Y|X]] = \mathbb{E}[Y].$$
+% Intuitively, this expression has a divide and conquer flavour, \ie what it says is that to compute the average of a random variable $Y$, you can first compute its average over a bunch of partitions of the sample space (where some other random variable $X$ is fixed to different values), and then average the resulting averages. 
+%
+% Example: Suppose I had a population of people, 47\% of whom weer men and the remaining 53\% were women. Suppose that the average height of the men was 70 inches, and the women was 71 inches. What is the average height of the entire population?
+%
+% By the law of total expectation:
+%
+% \begin{align*}
+% 	\mathbb{E}[H] &= \mathbb{E}[\mathbb{E}[H|S]]\\
+% 				  &= \mathbb{E}[H|S]\mathbb{P}(S=m) + \mathbb{E}[H|S]\mathbb{P}(S=f)\\
+% 			   &= 70\times 0.47 + 71\times 0.53 = 70.53
+% \end{align*}
+%
+% \section{Transformations of Random Variable}
+% \subsection{Formal Definition}
+% Suppose $X$ is a continuous random variable with pdf $f(x)$. If we define $Y=g(X)$, where $g(\cdot)$ is a monotonically increasing function, then the pdf of $Y$ can be obtained as follows:
+% \begin{align*}
+% 	p(Y\leq y) &= p(g(X)\leq y)\\
+% 	& = p(X\leq g^{-1}(y))
+% \end{align*}
+% This can be re-written as by definition
+% \begin{align*}
+% F_Y(y) = F_X(g^{-1}(y))
+% \end{align*}
+% By differentiating the CDFs on both sides w.r.t. $y$, we can get the pdf of $Y$. If the function $g(\cdot)$ is monotonically increasing, then the pdf of $Y$ is given by
+% $$f_Y(y) = f_X(g^{-1}(y))\frac{d}{dy}g^{-1}(y)$$
+% On the other hand, if it is monotonically decreasing, then the pdf of $Y$ is given by
+% $$f_Y(y) = - f_X(g^{-1}(y))\frac{d}{dy}g^{-1}(y)$$
+% Compactly, the above two equations can be combined into a following equation:
+% $$f_Y(y) = f_X(g^{-1}(y))\Bigg|\frac{d}{dy}g^{-1}(y)\Bigg|$$
+%
+% Let's look at what happens to the pdf of an RV when we pass the RV through some function. Suppose that we have two RVs, $X$ and $Y$, related to one another by the monotonic functions $g(\cdot)$ and $h(\cdot)$:
+% \begin{align*}
+% 	Y &= g(X)\\
+% 	X &= g^{-1}(X) = h(Y)
+% \end{align*}
+% If we know the pdf (probability density function) of $X$ 
+%
+% \subsection{Intuition}
+% Given a random variable $z$ and its known probability density function $z\sim \pi(z)$, we would like to construct a new random variable using a one-to-one mapping function $x=f(z)$. The function $f$ is invertible, so $z = f^{-1}(x)$. Now the question is how to infer the unknown probability density function of the new variable, $p(x)$?
+%
+% $$
+% \begin{aligned}
+% & \int p(x)dx = \int \pi(z)dz = 1 \scriptstyle{\text{   ; Definition of probability distribution.}}\\
+% & p(x) = \pi(z) \left\vert\frac{dz}{dx}\right\vert = \pi(f^{-1}(x)) \left\vert\frac{d f^{-1}(x)}{dx}\right\vert = \pi(f^{-1}(x)) \vert (f^{-1})'(x) \vert
+% \end{aligned}$$
+%
+% In multivariate case, 
+%
+% \begin{align}
+% \mathbf{z} &\sim \pi(\mathbf{z}), \mathbf{x} = f(\mathbf{z}), \mathbf{z} = f^{-1}(\mathbf{x}) \\
+% p(\mathbf{x}) 
+% &= \pi(\mathbf{z}) \left\vert \det \dfrac{d \mathbf{z}}{d \mathbf{x}} \right\vert  
+% = \pi(f^{-1}(\mathbf{x})) \left\vert \det \dfrac{d f^{-1}}{d \mathbf{x}} \right\vert
+% \end{align}
+%
+% \section{Bernoulli distribution}
+% \label{sec:bernoulli}
+%
+% The probability of $x=1$ will be denoted by the parameter $\mu$ so that 
+% $$p(x=1|\mu) = \mu,$$
+% where $0 \leq \mu \leq 1$, from which it follows that $p(x=0|\mu) = 1-\mu$. The probability distribution over $x$ can be written in the form 
+% \begin{align}
+% 	Bern(x|\mu) = \mu^x(1-\mu)^{1-x},
+% 	\label{eq:bernoulli}
+% \end{align}
+% which is known as the \textit{Bernoulli distribution}.  
+%
+% Now suppose we have a dataset $\mathcal{D} = \{x_1, \dots, x_{N}\}$. We can construct the likelihood function, which is a function of $\mu$, on the assumption that the observations are drawn independently from $p(x|\mu)$, so that
+%
+% $$p(\mathcal{D}|\mu) = \prod_{n=1}^Np(x_n|\mu)= \prod_{n=1}^N\mu^{x_n}(1-\mu)^{1-x_n}$$
+%
+% In a frequentist, setting, we can estimate a value for $\mu$ by maximizing the likelihood function, or equivalently maximizing the logarithm of the likelihood. 
+% $$L(w) = p(\rvt|\rvw, \sigma^2) = $$
+%
+% \input{./sections/probability/gaussian}
