@@ -185,9 +185,80 @@ Example:
 \end{itemize}
 
 \paragraph{Negative Binomial (Pascal) Distribution}
-The \textit{negative binomial} or \textit{Pascal distribution} is a \textbf{generalization of the geometric distribution}. It relates to the random experiment of repeated independent trials until observing $m$ successes.
+The \textit{negative binomial} or \textit{Pascal distribution} is a \textbf{generalization of the geometric distribution}. It relates to the random experiment of \textbf{repeated independent trials until observing $m$ successes}. Suppose that I have a coin with $P(H)=p$. I toss the coin until I observe $m$ heads, where $m\in \mathbb{N}$. We define $X$ as the total number of coin tosses in this experiment. Then $X$ is said to have Pascal distribution with parameter $m$ and $p$. We write $X\sim Pascal(m,p)$. Note that $Pascal(1,p=Geometric(p))$, since the geometric distribution repeats trials until observing the first success. Note that by our definition the range of $X$ is given by $R_X=\{m, m+1, m+2, m+3, \dots\}$, since $X$ is the number of coin tosses to observe $m$ target events.
 
-\paragraph{Hyper-geometric Distribution}
+Let's derive the PMF of a $Pascal(m,p)$ RV $X$. To find the probability of the event $A = \{X=k\}$, we argue as follows. By definition, event $A$ can be written as $A=B\cap C,$ where
+\begin{itemize}
+	\item $B$ is the event that we observe $m-1$ heads (\ie successes) in the first $k-1$ trials
+	\item $C$ is the event that we observe a head in the $k$-th trial.
+\end{itemize}
+
+Note that $B$ and $C$ are independent events because they are related to different independent trials (coin tosses). Thus,
+$$P(A)=P(B\cap C) = P(B)P(C).$$
+We get $P(C) = p$, so 
+\begin{align*}
+	P(B) = \binom{k-1}{m-1}p^{m-1}(1-p)^{(k-1)-(m-1)} = \binom{k-1}{m-1}p^{m-1}(1-p)^{k-m}.
+\end{align*}
+Finally, we obtain
+\begin{align*}
+	P(B) = \binom{k-1}{m-1}p^{m}(1-p)^{k-m}.
+\end{align*}
+
+\paragraph{Hyper-Geometric Distribution}
+You have a bag that contains $b$ blue marbles and $r$ red marbles. You choose $k\leq b+r$ marbles at random (without replacement). Let $X$ be the number of blue marbles in your sample. By this definition, we have $X\leq \min(k,b)$. Also, the number of red marbles in your sample must be less than or equal to $r$, so we conclude $X\geq \max(0,k-r)$. Therefore, the range of $X$ is given by R_X=\{\max(0,k-r),\max(0,k-r)+1,\max(0,k-r)+2,\dots,\min(k,b)\}.
+
+To find $P_X(x)$, note that total number of ways to choose $k$ marbles from $b+r$ marbles is $\binom{b+r}{k}$. The total number of ways to choose $x$ blue marbles and $k-x$ red marbles is $\binom{b}{x}\binom{r}{k-x}$. Thus, we get
+\begin{align*}
+	P_X(x)= \frac{{b \choose x} {r \choose k-x}}{{b+r \choose k}}, \quad \text{ for } x \in R_X.
+\end{align*}
 \paragraph{Poisson Distribution}
+
+The Poisson distribution is one of the most widely used probability distributions. It is usually used in scenarios where we are \textbf{counting the occurrences of certain events in an interval of time or space}. In practice, it is often an approximation of a real-life random variable. Here is an example of a scenario where a Poisson random variable might be used. Suppose that we are counting the number of customers who visit a certain store from 1pm to 2pm. Based on data from previous days, we know that on average $\lambda=15$ customers visit the store. Of course, there will be more customers some days and fewer on others. Here, we may model the random variable $X$ showing the number customers as a Poisson random variable with parameter $\lambda=15$. Let us introduce the Poisson PMF first, and then we will talk about more examples and interpretations of this distribution.
+\begin{align*}
+	P_X(k) = e^{-\lambda}\frac{\lambda^{k}}{k!}.
+\end{align*}
+Note that $\lambda$ is the mean number of events within a given interval of time or space. 
+
+Example: The number of emails that I get in a weekday can be modeled by a Poisson distribution with an average of 0.2 emails per minute. 
+\begin{itemize}
+	\item What is the probability that I get no emails in an interval of length 5 minutes?
+		\begin{itemize}
+			\item For 5 minutes, there would be 1 email on average. Thus, $\lambda=1$, 
+				$$P(X=0) = P_X(0) = e^{-\lambda}\frac{\lambda^{0}}{0!} = \frac{1}{e}\approx 0.37$$
+		\end{itemize}
+	\item What is the probability that I get more than 3 emails in an interval of length 10 minutes?
+		\begin{itemize}
+			\item Let $Y$ be the number of emails that I get in the 10-minute interval. Then by the assumption $Y$ is a Poisson RV with parameter $\lambda = 10\times 0.2 = 2$. Thus,
+				\begin{align*}
+					P(Y>3) &= 1-P(Y\leq 3)\\
+						   &= 1-(P_Y(0)+P_Y(1)+P_Y(2)+P_Y(3))\\
+						   &= 1-e^{-\lambda}-\frac{e^{-\lambda} \lambda}{1!}-\frac{e^{-\lambda} \lambda^2}{2!}-\frac{e^{-\lambda} \lambda^3}{3!}\\
+						   &\approx 0.1429
+				\end{align*}
+		\end{itemize}
+\end{itemize}
+
+Imagine you have a busy customer service center that receives phone calls. You want to know how many calls to expect in an hour, but calls can come at any moment and don't follow a strict schedule. 
+\begin{itemize}
+	\item Average Rate ($\lambda$): First, you determine the average number of calls you receive per hour. Let's say it’s 10 calls per hour. This average rate is denoted by the symbol $\lambda$ 
+	\item Probability Calculation: Using the Poisson formula, you can calculate the probability of receiving a certain number of calls in any given hour.
+\end{itemize}
+\[
+P(X = k) = \frac{e^{-λ} λ^k}{k!}
+\]
+\begin{itemize}
+	\item \( P(X = k) \) is the probability of getting \( k \) calls in an hour.
+	\item \( e \) is the base of the natural logarithm (approximately equal to 2.71828).
+	\item \( \lambda \) is the average rate (10 calls per hour).
+	\item \( k \) is the number of calls you want to find the probability for.
+	\item \( k! \) (k factorial) is the product of all positive integers up to \( k \).
+\end{itemize}
+
+
+\paragraph{Poisson as an Approximation for Binomial}
+ 
+The Poisson distribution can be viewed as the limit of binomial distribution. Suppose $X\sim Binomial(n,p)$ where $n$ is very large and $p$ is very small. In particular, assume that $\lambda=np$ is a positive constant. We show that the PMF of $X$ can be approximated by the PMF of a $Poisson(\lambda)$ random variable. The importance of this is that Poisson PMF is much easier to compute than the binomial. Let us state this as a theorem.
+
+\href{https://www.probabilitycourse.com/chapter3/3_1_5_special_discrete_distr.php}{References Poisson}
 
 
