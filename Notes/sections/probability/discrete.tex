@@ -1,0 +1,336 @@
+\section{Introduction}
+\label{sec:intro_prob}
+
+\href{https://www.probabilitycourse.com/chapter5/5_2_3_conditioning_independence.php}{Reference: Introduction to Probability, Statistics, and Random Processes.}
+
+
+The probability of event $A$ as
+\begin{align*}
+	P(A) = \frac{\text{Number of times A occurs}}{\text{Total number of outcomes}}
+\end{align*}
+This commonsense understanding of probability is called the \textit{relative frequency definition}.
+
+
+\section{Combinatorics}
+
+\subsection{Multiplication Principle}
+Suppose that we perform $r$ experiments such that the $k$-th experiment has $n_k$ possible outcomes, for $k=1,2,\dots,r$. Then there are a total of $n_1\times n_2\times n_3\times \dots \times n_r$ possible outcomes for the sequence of r experiments.
+
+\subsection{Ordered Sampling with Replacement}
+Here we have a set with $n$ elements (\eg $A=\{1,2,3,\dots n\}$), and we want to draw $k$ samples from the set such that ordering matters and repetition is allowed. For example, if $A=\{1,2,3\}$ and $k=2$, there are 9 different possibilities. In general, we can argue that there are$k$ 
+positions in the chosen list: (Position 1, Position 2, $\dots$, Position $k$). There are $n$ options for each position. Thus, when ordering matters and repetition is allowed, the total number of ways to choose $k$ objects from a set with $n$ elements is
+$$n\times n\times \dots \times n = n^k.$$
+
+\subsection{Ordered Sampling without Replacement: Permutations}
+Consider the same setting as above, but now repetition is not allowed. For example, if $A=\{1,2,3\}$ and $k=2$, there are 6 different possibilities. In general, we can argue that there are $k$ positions in the chosen list: (Position 1, Position 2, $\dots$, Position $k$). There are $n$ options for the first position, $(n−1)$ options for the second position (since one element has already been allocated to the first position and cannot be chosen here), $(n−2)$ options for the third position, and $(n−k+1)$ options for the $k$-th position. Thus, when ordering matters and repetition is not allowed, the total number of ways to choose $k$ objects from a set with n elements is 
+$$n\times (n-1)\times \dots \times (n-k+1).$$
+It si called a $k$ permutation of the elements in set $A$. We use the following notation:
+$$P_k^n = n\times (n-1)\times \dots \times (n-k+1).$$
+Note that if $k$ is larger than $n$, then $P_k^n =0$. 
+\paragraph{Example:} Birthday problem or birthday paradox is a problem that If $k$ people are at a party, what is the probability that at least two of them have the same birthday? Suppose that there are $n=365$ days in a year and all days are equally likely to be the birthday of a specific person.
+$$P(A) = 1-\frac{P_k^n}{n^k}.$$
+The reason this is called a paradox is that $P(A)$ is numerically different from what most people expect. For example, if there are $k=23$ people in the party, what do you guess is the probability that at least two of them have the same birthday, $P(A)$? The answer is $.5073$, which is much higher than what most people guess. The probability crosses 99 percent when the number of peoples reaches $57$. But why is the probability higher than what we expect?
+
+It is important to note that in the birthday problem, neither of the two people are chosen beforehand. To better answer this question, let us look at a different problem: I am in a party with $k−1$ people. What is the probability that at least one person in the party has the same birthday as mine? Well, we need to choose the birthdays of $k−1$ people, the total number of ways to do this is $n^{k-1}$. The total number of ways to choose the birthdays so that no one has my birthday is $(n-1)^{k-1}$. Thus, the probability that at least one person has the same birthday as mine is 
+$$P(B) = 1-\left(\frac{n-1}{n}\right)^{k-1}.$$
+Now, if $k=23$, this probability is only $P(B)=0.0586$, which is much smaller than the corresponding $P(A)=0.5073$. The reason is that event $B$ is looking only at the case where one person in the party has the same birthday as me. This is a much smaller event than event $A$ which looks at all possible pairs of people. Thus, $P(A)$ is much larger than $P(B)$. We might guess that the value of $P(A)$ is much lower than it actually is, because we might confuse it with $P(B)$.
+
+\paragraph{Permutations of $n$ elements:} An $n$-permutation of $n$ elements is just called a permutation of those elements. In this case $k=n$ and we have
+\begin{align*}
+	P^n_n &= n\times (n-1)\times \dots \times (n-n+1)\\
+		  &= n\times (n-1)\times \dots \times 1,
+\end{align*}
+which is denoted $n!$. We can rewrite as 
+\begin{align*}
+	P^n_k = \frac{n!}{(n-k)!}.
+\end{align*}
+
+\subsection{Unordered Sampling without Replacement: Combinations}
+Here we have a set with $n$ elements, \eg $A=\{1,2,3,\dots, n\}$ and we want to draw $k$ samples from the set such that ordering does not matter and repetition is not allowed. Thus, we basically want to choose a $k$-element subset of $A$, which we also call a $k$-combination of the set $A$. For example if $A=\{1,2,3\}$ and $k=2$, there are 3 different possibilities. We show the number of $k$-element subsets of $A$ by
+$$\binom{n}{k} = \frac{n!}{k!(n-k)!}.$$
+This is also called the \textit{binomial coefficient}. This is because the coefficients in the binomial theorem are given by 
+$$(a+b)^n = \sum_{k=0}^n\binom{n}{k}a^kb^{n-k}.$$
+An intuitive way to understand this is that there are $n\times (n-1)\times \dots \times (n-k+1)$ ways to place items and the $k\times \dots \times 1$ ways to order the times, which can be ignored.  
+
+A simple way to find $\binom{n}{k}$ is to compare it with $P_k^n$. Note that the difference between the two is ordering. 
+$$P^n_k={n \choose k}\times k!.$$
+
+\paragraph{Example 1:} I choose 3 cards from the standard deck of cards. What is the probability that these cards contain at least one ace?
+
+\begin{itemize}
+	\item The sample space contains all possible ways to choose 3 cards from 52 cards. 
+	\item There are $52-4=48$ non-ace cards
+\end{itemize}
+
+\paragraph{Example 2:} How many distinct sequences can we make using 3 letter ``A''s and 5 letter ``B''s? (AAABBBBB, AABABBBB, \etc.)
+
+You can think of this problem in the following way. You have 3+5=8 positions to fill with letters A or B. From these 8 positions, you need to choose 3 of them for ``A''s. Whatever is left will be filled with ``B''s. Thus the total number of ways is 
+$$\binom{8}{3}.$$
+Equivalently, you chould have chosen the locations for Bs. 
+$$\binom{8}{5}.$$
+
+The same argument can be repeated for general $n$ and $k$ to conclude
+$$\binom{n}{k}=\binom{n}{n-k}.$$
+
+\subsection{Bernoulli Trials and Binomial Distribution}
+A \textit{Bernoulli Trial} is a random experiment that has two possible outcomes which we can label as ``success'' and ``failure'', such as
+\begin{itemize}
+	\item You toss a coin. The possible outcomes are H and T. 
+\end{itemize}
+We usually denote the probability of success by $p$ and probability of failure by $q=1-p$. If we have an experiment in which we perform $n$ independent Bernoulli trials and count the total number of successes, we call it a binomial experiment. For example, you may toss a coin $n$ times repeatedly and be interested in the total number of heads.
+
+\paragraph{Example: }Suppose that I have a coin for which $P(H)=p$ and $P(T)=1-p$. I toss the coin 5 times. 
+\begin{itemize}
+	\item $P(THHHH) = p(T)\times p(H)\dots = (1-p)p^4$
+	\item $P(HTHHH) = (1-p)p^4$
+	\item $P(HHTHH) = (1-p)p^4$
+	\item $B=\{THHHH, HTHHH, HHTHH, HHHTH, HHHHT\}$, $P(B) = 5p^4(1-p)$
+	\item Let $C=\{TTHHH, THTHH,\dots\}$.
+		\begin{align*}
+			P(C) &= P(TTHHH)+P(THTHH)+\dots\\
+				 &= |C|p^3(1-p)^2
+		\end{align*}
+	\item The $|C|$ is the total number of distinct sequences that you can create using two tails and three heads.
+		$$\binom{5}{3}.$$
+	\item Therefore, 
+		$$P(C) = \binom{5}{3}p^3(1-p)^2$$
+\end{itemize}
+Now we can define \textit{Binomial Formula}: For $n$ independent Bernoulli trials where each trial has success probability $p$, the probability of $k$ successes is given by 
+$$P(k) = \binom{n}{k}p^k(1-p)^{n-k}.$$
+Similarly, \textit{multinomial coefficients} is given by
+$${n \choose n_1,n_2,...,n_r}=\frac{n!}{n_1! n_2! ... n_r!}.$$
+
+\subsection{Unordered Sampling with Replacement}
+Suppose that we want to sample from the set $A=\{a_1,a_2,\dots,a_n\}$ $k$ times such that repetition is allowed and ordering does not matter. For example, if $A=\{1,2,3\}$ and $k=2$, then there are 6 different ways of doing this.
+
+How can we get the number 6 without actually listing all the possibilities? One way to think about this is to note that any of the pairs in the above list can be represented by the number of 1's, 2's and 3's it contains. That is, if $x_1$ is the number of ones, $x_2$ is the number of twos, and $x_3$ is the number of threes, we can equivalently represent each pair by a vector $(x_1,x_2,x_3)$, \ie
+\begin{itemize}
+	\item$(1,1)\to(x_1,x_2,x_3) = (2,0,0)$ 
+	\item$(1,2)\to(x_1,x_2,x_3) = (1,1,0)$ 
+	\item$(2,3)\to(x_1,x_2,x_3) = (0,1,1)$ 
+\end{itemize}
+Note that here $x_i\geq 0$ are integers and $x_1+x_2+x_3=2$. Thus, we can claim that the number of ways we can sample two elements from the set $A=\{1,2,3\}$ such that ordering does not matter and repetition is allowed is the same as solutions to the following equation
+$$x_1+x_2+x_3=2,$$
+ where $x_i\in\{0,1,2\}$. We can generalize this by saying: The total number of distinct $k$ samples from an $n$-element set such that repetition is allowed and ordering does not matter is the same as the number of distinct solutions to the equation 
+$$x_1+x_2+\dots+x_n=k,$$
+where $x_i \in \{0, 1, 2,\dots\}$. The number of distinct solution to the equation is given by
+$$\binom{n+k-1}{k}=\binom{n+k-1}{n-1}.$$
+\begin{proof}
+	Let us first define following simple mapping in which we replace an integer $x_i$ with vertical lines \ie $|$. For instance, $x_1+x_2+x_3=2$, then we can equivalently write $|++|$ for $1+0+1$. We have an unique representation using vertical lines and plus signs. Each solution can be represented by $k$ vertical lines and $n-1$ plus sings. Thus, we get 
+$$\binom{n-1+k}{k}=\binom{n-1+k}{n-1}.$$
+\end{proof}
+
+\section{Random Variables}
+A random variable $X$ is a function from the sample space to the real numbers.
+$$X:S\to \mathbb{R}$$
+
+\subsection{Probability Mass Function (PMF)}
+If $X$ is a discrete random variable then its range $R_X$ is a countable set, so, we can list the elements in $R_X$. In other words, we can write 
+$$R_X=\{x_1,x_2,\dots\}$$
+Note that here $x_1,x_2,\dots$ are possible values of the random variable $X$. While random variables are usually denoted by capital letters, to represent the numbers in the range we usually use lowercase letters. For a discrete random variable $X$, we are interested in knowing the probabilities of $X=x_k$. 
+
+Let $X$ be a discrete random variable with range $R_X=\{x_1,x_2,\dots\}$ (finite or countably infinite). The function
+$$P_X(x_k)=P(X=x_k), \,\textm{for }k=1,2,3\dots $$
+is called the probability mass function (PMF) of $X$. 
+
+\subsection{Special Distributions}
+
+\paragraph{Bernoulli Distribution}
+\begin{align*}
+	P_X(x) = \begin{cases}
+	p & \text{for } x=1\\
+	1-p & \text{for } x=0\\
+	0 & \text{Otherwise}
+\end{cases}
+\end{align*}
+A Bernoulli random variable is associated with a certain event $A$. If event $A$ occurs (for example, if you pass the test), then $X=1$; otherwise $X=0$. For this reason the Bernoulli random variable, is also called the \textit{indicator} random variable.
+
+
+\paragraph{Geometric Distribution}
+Suppose that I have a coin with $P(H)=p$. I toss the coin until I observe the first heads. We define $X$ as the total number of coin tosses in this experiment. Then $X$ is said to have geometric distribution with parameter $p$. In other words, you can think of this experiment as \textbf{repeating independent Bernoulli trials until observing the first success}. The range of $X$ here is $RX=\{1,2,3,\dots\}$. 
+$$P_X(k) =P(X=k)=(1-p)^{k-1} p, \textrm{ for } k=1,2,3,\dots$$
+
+\paragraph{Binomial Distribution}
+Suppose that I have a coin with $P(H)=p$. I toss the coin $n$ times and define $X$ to be the total number of heads that I observe. Then $X$ is binomial with parameter $n$ and $p$. The range of $X$ in this case is $R_X={0,1,2,\dots,n}$. 
+$$P_X(k) = P(X=k) =\binom{n}{k}p^k(1-p)^{n-k}.$$
+
+Here is a useful way of thinking about a binomial random variable. It can be obtained by $n$ independent coin tosses. If we think of each coin toss as a Bernoulli random variable, the $Binomial(n,p)$ random variable is a sum of $n$ independent $Bernoulli(p)$ random variables. This is stated more precisely in the following lemma.
+
+If $X_1,X_2,\dots,X_n$ are independent $Bernoulli(p)$ random variables, then the random variable $X$ defined by $X=X_1+X_2+\dots+X_n$ has a$Binomial(n,p)$ distribution. 
+
+
+Example: 
+\begin{itemize}
+	\item Let $X\sim Binomial(n,p)$ and $Y\sim Binomial(m,p)$ be two independent random variables. Define a new random variable as $Z=X+Y$. Find the PMF of $Z$.
+	\item Solution 1: Since $X\sim Binomial(n,p)$, we can think of $X$ as the number of heads in $n$ independent coin tosses: 
+	$$X = X_1+\dots+\X_n,$$
+	where the $X_i$'s are independent Bernoulli RVs. Similarly, $Y\sim Binomial(m,p)$.
+	Thus, the RV $Z=X+Y$ will be the total number of heads in $n+m$ coin tosses:
+	$$Z = X+Y=X_1+\dots+X_n+Y_1+\dots+Y_m.$$
+	Therefore, $Z$ is a binomial RV with parameters $m+n$ and $p$, \ie $Binomial(m+n, p)$.
+	\item Solution 2: First, we note that $R_z = \{0,1,\dots,m+n\}$. For $k\in R_z$, we get
+		$$P_Z(k) = P(Z=k) = P(X+Y=k).$$
+		We will find $P(X+Y=k)$ by using conditioning and the law of total probability. 
+		\begin{align*}
+			P(Z=k) &= P(X+Y=k)\\
+				   &= \sum_{i=0}^{n}P(X+Y=k|X=i)P(X=i)\\
+				   &= \sum_{i=0}^{n}P(Y=k-i|X=i)P(X=i)\\
+				   &= \sum_{i=0}^{n}P(Y=k-i)P(X=i)\quad \text{Since $X$ and $Y$ are independent}\\
+				   &= \sum_{i=0}^{n}\binom{m}{k-i}p^{k-i}(1-p)^{m-k+i}\binom{n}{i}p^i(1-p)^{n-i}\\
+				   &= \sum_{i=0}^{n}\binom{m}{k-i}\binom{n}{i}p^k(1-p)^{m+n-k}\\
+				   &= p^k(1-p)^{m+n-k}\sum_{i=0}^{n}\binom{m}{k-i}\binom{n}{i}\\
+				   &= \binom{m+n}{k}p^k(1-p)^{m+n-k}\quad \text{by Vandermonde's identity}
+		\end{align*}
+\end{itemize}
+
+\paragraph{Negative Binomial (Pascal) Distribution}
+The \textit{negative binomial} or \textit{Pascal distribution} is a \textbf{generalization of the geometric distribution}. It relates to the random experiment of \textbf{repeated independent trials until observing $m$ successes}. Suppose that I have a coin with $P(H)=p$. I toss the coin until I observe $m$ heads, where $m\in \mathbb{N}$. We define $X$ as the total number of coin tosses in this experiment. Then $X$ is said to have Pascal distribution with parameter $m$ and $p$. We write $X\sim Pascal(m,p)$. Note that $Pascal(1,p=Geometric(p))$, since the geometric distribution repeats trials until observing the first success. Note that by our definition the range of $X$ is given by $R_X=\{m, m+1, m+2, m+3, \dots\}$, since $X$ is the number of coin tosses to observe $m$ target events.
+
+Let's derive the PMF of a $Pascal(m,p)$ RV $X$. To find the probability of the event $A = \{X=k\}$, we argue as follows. By definition, event $A$ can be written as $A=B\cap C,$ where
+\begin{itemize}
+	\item $B$ is the event that we observe $m-1$ heads (\ie successes) in the first $k-1$ trials
+	\item $C$ is the event that we observe a head in the $k$-th trial.
+\end{itemize}
+
+Note that $B$ and $C$ are independent events because they are related to different independent trials (coin tosses). Thus,
+$$P(A)=P(B\cap C) = P(B)P(C).$$
+We get $P(C) = p$, so 
+\begin{align*}
+	P(B) = \binom{k-1}{m-1}p^{m-1}(1-p)^{(k-1)-(m-1)} = \binom{k-1}{m-1}p^{m-1}(1-p)^{k-m}.
+\end{align*}
+Finally, we obtain
+\begin{align*}
+	P(B) = \binom{k-1}{m-1}p^{m}(1-p)^{k-m}.
+\end{align*}
+
+\paragraph{Hyper-Geometric Distribution}
+You have a bag that contains $b$ blue marbles and $r$ red marbles. You choose $k\leq b+r$ marbles at random (without replacement). Let $X$ be the number of blue marbles in your sample. By this definition, we have $X\leq \min(k,b)$. Also, the number of red marbles in your sample must be less than or equal to $r$, so we conclude $X\geq \max(0,k-r)$. Therefore, the range of $X$ is given by R_X=\{\max(0,k-r),\max(0,k-r)+1,\max(0,k-r)+2,\dots,\min(k,b)\}.
+
+To find $P_X(x)$, note that total number of ways to choose $k$ marbles from $b+r$ marbles is $\binom{b+r}{k}$. The total number of ways to choose $x$ blue marbles and $k-x$ red marbles is $\binom{b}{x}\binom{r}{k-x}$. Thus, we get
+\begin{align*}
+	P_X(x)= \frac{{b \choose x} {r \choose k-x}}{{b+r \choose k}}, \quad \text{ for } x \in R_X.
+\end{align*}
+\paragraph{Poisson Distribution}
+
+The Poisson distribution is one of the most widely used probability distributions. It is usually used in scenarios where we are \textbf{counting the occurrences of certain events in an interval of time or space}. In practice, it is often an approximation of a real-life random variable. Here is an example of a scenario where a Poisson random variable might be used. Suppose that we are counting the number of customers who visit a certain store from 1pm to 2pm. Based on data from previous days, we know that on average $\lambda=15$ customers visit the store. Of course, there will be more customers some days and fewer on others. Here, we may model the random variable $X$ showing the number customers as a Poisson random variable with parameter $\lambda=15$. Let us introduce the Poisson PMF first, and then we will talk about more examples and interpretations of this distribution.
+\begin{align*}
+	P_X(k) = e^{-\lambda}\frac{\lambda^{k}}{k!}.
+\end{align*}
+Note that $\lambda$ is the mean number of events within a given interval of time or space. 
+
+Example: The number of emails that I get in a weekday can be modeled by a Poisson distribution with an average of 0.2 emails per minute. 
+\begin{itemize}
+	\item What is the probability that I get no emails in an interval of length 5 minutes?
+		\begin{itemize}
+			\item For 5 minutes, there would be 1 email on average. Thus, $\lambda=1$, 
+				$$P(X=0) = P_X(0) = e^{-\lambda}\frac{\lambda^{0}}{0!} = \frac{1}{e}\approx 0.37$$
+		\end{itemize}
+	\item What is the probability that I get more than 3 emails in an interval of length 10 minutes?
+		\begin{itemize}
+			\item Let $Y$ be the number of emails that I get in the 10-minute interval. Then by the assumption $Y$ is a Poisson RV with parameter $\lambda = 10\times 0.2 = 2$. Thus,
+				\begin{align*}
+					P(Y>3) &= 1-P(Y\leq 3)\\
+						   &= 1-(P_Y(0)+P_Y(1)+P_Y(2)+P_Y(3))\\
+						   &= 1-e^{-\lambda}-\frac{e^{-\lambda} \lambda}{1!}-\frac{e^{-\lambda} \lambda^2}{2!}-\frac{e^{-\lambda} \lambda^3}{3!}\\
+						   &\approx 0.1429
+				\end{align*}
+		\end{itemize}
+\end{itemize}
+
+Imagine you have a busy customer service center that receives phone calls. You want to know how many calls to expect in an hour, but calls can come at any moment and don't follow a strict schedule. 
+\begin{itemize}
+	\item Average Rate ($\lambda$): First, you determine the average number of calls you receive per hour. Let's say it’s 10 calls per hour. This average rate is denoted by the symbol $\lambda$ 
+	\item Probability Calculation: Using the Poisson formula, you can calculate the probability of receiving a certain number of calls in any given hour.
+\end{itemize}
+\[
+P(X = k) = \frac{e^{-λ} λ^k}{k!}
+\]
+\begin{itemize}
+	\item \( P(X = k) \) is the probability of getting \( k \) calls in an hour.
+	\item \( e \) is the base of the natural logarithm (approximately equal to 2.71828).
+	\item \( \lambda \) is the average rate (10 calls per hour).
+	\item \( k \) is the number of calls you want to find the probability for.
+	\item \( k! \) (k factorial) is the product of all positive integers up to \( k \).
+\end{itemize}
+
+
+\paragraph{Poisson as an Approximation for Binomial}
+ 
+The Poisson distribution can be viewed as the limit of binomial distribution. Suppose $X\sim Binomial(n,p)$ where $n$ is very large and $p$ is very small. In particular, assume that $\lambda=np$ is a positive constant. We show that the PMF of $X$ can be approximated by the PMF of a $Poisson(\lambda)$ random variable. The importance of this is that Poisson PMF is much easier to compute than the binomial. Let us state this as a theorem.
+
+Let $X\sim Binomial(n,p=\frac{\lambda}{n})$, where $\lambda>0$ is fixed. Then for any $k\in\{0,1,2,\dots\}$ we have 
+$$\lim_{n\to \infty}P_X(k) = \frac{e^{-λ} λ^k}{k!}.$$
+
+\href{https://www.probabilitycourse.com/chapter3/3_1_5_special_discrete_distr.php}{References Poisson}
+
+\section{Cumulative Distribution Function}
+\label{sec:cdf}
+The PMF is one way to describe the distribution of a discrete RV. As we will see later on, PMF cannot be defined for continuous random variables. The cumulative distribution function (CDF) of a random variable is another method to describe the distribution of random variables. The advantage of the CDF is that it can be defined for any kind of RV (discrete, continuous, and mixed).
+
+\begin{definition}{Cumulative Distribution Function}
+	The cumulative distribution function (CDF) of random variable $X$ is defined as 
+	$$F_X(x) = P(X\leq x), \forall x\in\mathbb{R}.$$
+\end{definition}
+Note that the subscript $X$ indicates that this is the CDF of the random variable $X$. Also, note that the CDF is defined for all $x\in \mathbb{R}$. 
+
+\section{Expectation}
+If you have a collection of numbers $a_1,a_2,\dots,a_N$, their average is a single number that describes the whole collection. Now, consider a random variable $X$. We would like to define its average, or as it is called in probability, its expected value or mean. The expected value is defined as the weighted average of the values in the range.
+
+\begin{definition}{Expected Value}
+	Let $X$ be a discrete RV with range $R_X = \{x_1,x_2,\dots,\}$. The expected value of $X$, denoted by $EX$ is defined as
+	$$EX = \sum_{x_k\in R_X}x_kP(X=x_k) = \sum_{x\in R_X}x_kP_X(x_k)$$
+\end{definition}
+
+\section{Functions of Random Variables}
+If $X$ is a RV and $Y=g(X)$, then $Y$ itself is a random variable. Thus, we can talk about its PMF, CDF, and expected value. First note that the range of $Y$ can be written as 
+$$R_Y = \{g(x)|x\in R_X\}.$$
+If we already know the PMF of $X$, to find the PMF of $Y=g(X)$, we can write
+\begin{align*}
+	P_Y(y) &= P(Y=y)\\
+		   &= P(g(X)=y)\\
+		   &= \sum_{x:g(x)=y}P_X(x)
+\end{align*}
+
+\paragraph{Example:} Let $X$ be a discrete RV with $P_X(k) = \frac{1}{5}$ for $k=-1,0,1,2,3$. Let $Y=2|X|$. Find the range and PMF of $Y$.
+The range of $Y$ is 
+\begin{align*}
+	R_Y &= \{2|x|\}\\
+		&= \{0,2,4,6\}
+\end{align*}
+To find $P_Y(y)$, we need to find $P(Y=y)$ for $y=0,2,4,6$:
+\begin{align*}
+	P_Y(0) &= P(Y=0)  = P(2|x|=0)\\
+		   &= P(X=0) = \frac{1}{5}\\
+	P_Y(2) &= P(Y=2)  = P(2|x|=2)\\
+		   &= P(X=-1 \text{ or } X=1)\\
+		   &= P_X(-1) + P_X(1) = \frac{2}{5}\\
+		   \vdots
+\end{align*}
+
+\subsection{Expected Value of a Function of a Random Variable (LOTUS)}
+
+Let $X$ be a discrete random variable with PMF $P_X(x)$, and let $Y=g(X)$. Suppose that we are interested in finding $EY$. One way to find $EY$ is to first find the PMF of $Y$ and then use the expectation formula $EY=E[g(X)]=\sum_{y\in R_y}yP_Y(y)$. But there is another way which is usually easier. It is called the \textit{law of the unconscious statistician} (LOTUS).
+$$\mathbb{E}[g(X)]=\sum_{x_k\in R_X}g(x_k)P_{X}(x_k)$$
+One of the main points of the theorem is that you can compute $\mathbb{E}[g(X)]$ without computing $P_Y(y)$. In practice it is usually easier to use LOTUS than direct definition when we need $\mathbb{E}[g(X)]$.
+
+\section{Variance}
+The variance of a random variable $X$, with mean $EX=\mu_X$, is defined as
+$$\text{Var}(X) = \mathbb{E}[(X-\mu_X)^2].$$
+To compute $\text{Var}(X) = \mathbb{E}[(X-\mu_X)^2]$, note that we need to find the expected value of $g(X)=(X-\mu_X)^2$, so we can use \textbf{LOTUS}. In particular, we can write 
+$$\text{Var}(X) = \mathbb{E}[(X-\mu_X)^2]= \sum_{x_k\in R_X}(x_k-\mu_X)^2P_X(x_k).$$
+
+\section{Standard Deviation}
+$$\textrm{SD}(X)= \sigma_X= \sqrt {\textrm{Var}(X)}.$$
+
+A useful formula for computing the variance is 
+$$\text{Var}(X) = \mathbb{E}[X^2]-\mathbb{E}[X]^2.$$
+We can find $\mathbb{E}[X^2]$ using LOTUS: 
+$$\mathbb{E}[X^2] = \sum_{x_k\in R_X}x_k^2P_X(x_k).$$
+
+
+
+
+% \begin{itemize}
+% 	\item Bernoulli:
+% 		$$EX = 0\cdot P_X(0)+1\cdot P_X(1)=p$$
+% \end{itemize}
