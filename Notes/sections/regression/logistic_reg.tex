@@ -13,8 +13,96 @@ $$\sigma(-x) = 1-\sigma(x).$$
 The $z$ is often called the logit. Note that the inverse of the sigmoid is the log of the odds ratio $\frac{p}{1-p}.$
 
 The logit function is $\textrm{log}\frac{p}{1-p}$, which varies between $-\infty$ and $+\infty$ as $p$ varies between $0$ and $1$.
-$$\textrm{log}\frac{p}{1-p} = w_0x_0 +  w_1x_1 + ... + w_nx_n$$
+$$\textrm{log}\frac{p}{1-p} = w_0x_0 +  w_1x_1 + \dots + w_nx_n$$
 Note that \textbf{the logistic regression model assumes that the log-odds (\textit{logit}) of an observation $y$ can be expressed as a linear function}. In this context, the logit function is called the \textbf{\textit{link function}} because it ``links'' the probability to the linear function of the predictor variables.
+
+In sum, the logistic regression models the probability \( P(Y = 1 | X) \) using the logistic function. The model can be written as:
+\[
+P(Y = 1 | X) = \sigma(X \beta) = \frac{1}{1 + \exp(-X \beta)}
+\]
+where \( X \) is the vector of input features (including the intercept term), \( \beta \) is the vector of coefficients, and \( \sigma \) is the logistic (sigmoid) function.
+
+We are going to use the Maximum Likelihood Estimation (MLE) to find the best parameter $\beta$. The MLE is a method used in statistics to estimate the parameters of a probability distribution by maximizing a likelihood function. Essentially, MLE finds the parameter values that make the observed data most probable.
+
+Let's first define the Likelihood Function: Based on the probability distribution of the data, write down the likelihood function. For a set of observations \(X = \{x_1, x_2, \ldots, x_n\}\), and a parameter \(\theta\), the likelihood function \(L(\theta; X)\) represents the probability of observing the given data under the parameter \(\theta\).
+
+Since the likelihood can be a product of probabilities, it might be easier to work with the natural logarithm of the likelihood function, called the log-likelihood. This transforms the product into a sum, simplifying the computation:
+\[
+\ell(\theta; X) = \log L(\theta; X)
+\]
+
+Finally, to find the optimal parameter, find the parameter value \(\hat{\theta}\) that maximizes the log-likelihood function.
+
+For a dataset with \( n \) observations, the likelihood function is the product of the probabilities of observing the given outcomes. For logistic regression, the likelihood function \( L(\beta; X, Y) \) is given by:
+\[
+L(\beta; X, Y) = \prod_{i=1}^{n} P(Y_i | X_i, \beta)
+\]
+Given the binary nature of \( Y \), this can be written as:
+\[
+L(\beta; X, Y) = \prod_{i=1}^{n} [P(Y_i = 1 | X_i, \beta)]^{Y_i} [P(Y_i = 0 | X_i, \beta)]^{1 - Y_i}
+\]
+Substituting the logistic function, we get:
+\[
+L(\beta; X, Y) = \prod_{i=1}^{n} \left[\frac{1}{1 + \exp(-X_i \beta)}\right]^{Y_i} \left[1 - \frac{1}{1 + \exp(-X_i \beta)}\right]^{1 - Y_i}
+\]
+
+% ### Log-Likelihood
+
+% To simplify the calculation, we take the logarithm of the likelihood function, resulting in the log-likelihood function:
+% \[
+% \ell(\beta; X, Y) = \log L(\beta; X, Y) = \sum_{i=1}^{n} \left[Y_i \log \left(\frac{1}{1 + \exp(-X_i \beta)}\right) + (1 - Y_i) \log \left(1 - \frac{1}{1 + \exp(-X_i \beta)}\right)\right]
+% \]
+% This simplifies to:
+% \[
+% \ell(\beta; X, Y) = \sum_{i=1}^{n} \left[Y_i \log \left(\frac{1}{1 + \exp(-X_i \beta)}\right) + (1 - Y_i) \log \left(\frac{\exp(-X_i \beta)}{1 + \exp(-X_i \beta)}\right)\right]
+% \]
+% \[
+% \ell(\beta; X, Y) = \sum_{i=1}^{n} \left[Y_i \log \left(\frac{1}{1 + \exp(-X_i \beta)}\right) + (1 - Y_i) \log \left(\frac{1}{1 + \exp(X_i \beta)}\right)\right]
+% \]
+% \[
+% \ell(\beta; X, Y) = \sum_{i=1}^{n} \left[Y_i \log \sigma(X_i \beta) + (1 - Y_i) \log (1 - \sigma(X_i \beta))\right]
+% \]
+% where \( \sigma(X_i \beta) = \frac{1}{1 + \exp(-X_i \beta)} \).
+
+% ### Maximizing the Log-Likelihood
+
+% To find the maximum likelihood estimates of the coefficients \( \beta \), we need to maximize the log-likelihood function. This is typically done using numerical optimization methods such as gradient ascent, Newton-Raphson, or other iterative techniques, as the log-likelihood function for logistic regression does not have a closed-form solution.
+
+% The gradient of the log-likelihood function with respect to \( \beta \) is:
+% \[
+% \frac{\partial \ell(\beta; X, Y)}{\partial \beta} = \sum_{i=1}^{n} \left[Y_i - \sigma(X_i \beta)\right] X_i
+% \]
+% The iterative update for the coefficients can be done using methods like gradient ascent:
+% \[
+% \beta^{(t+1)} = \beta^{(t)} + \alpha \sum_{i=1}^{n} \left[Y_i - \sigma(X_i \beta^{(t)})\right] X_i
+% \]
+% where \( \alpha \) is the learning rate.
+
+% ### Example in Practice
+
+% Let's consider a simple dataset with a binary outcome. Assume we have the following data:
+
+% | X1 | X2 | Y |
+% |----|----|---|
+% | 2  | 3  | 1 |
+% | 1  | 2  | 0 |
+% | 4  | 5  | 1 |
+% | 3  | 3  | 0 |
+
+% We aim to fit a logistic regression model with features \( X1 \) and \( X2 \).
+
+% 1. **Initialize the coefficients** \( \beta \).
+
+% 2. **Compute the log-likelihood** for the initial coefficients.
+
+% 3. **Iteratively update the coefficients** using the gradient ascent rule until convergence.
+
+% 4. **Obtain the final coefficients** that maximize the log-likelihood.
+
+% In practice, logistic regression is implemented in many statistical software packages and programming libraries like R, Python's `scikit-learn`, and others, which handle the optimization internally.
+
+% By following these steps, you can apply MLE to estimate the parameters of a logistic regression model, providing the best-fit model for your binary classification problem.
+
 
 % Simplest solution to model a dependant variable $y$ is a linear regression. However, $y$ should be in a range of $[0,1]$. So we need to introduce the logit function. 
 
@@ -24,7 +112,7 @@ Note that \textbf{the logistic regression model assumes that the log-odds (\text
 % 	\item Squashing input data into sigmoid function $\sigma(\eta)$ that range from 0 to 1: $\sigma(\eta)\triangleq \frac{1}{1+exp(-\eta)}$.
 % \end{itemize}
 % $$p(y|\mathbf{x},\mathbf{w})=Ber(y|\sigma(\mathbf{w}^T\mathbf{x})),\$$
-
+% Since, we want to compute the minimization 
 The negative log-likelihood for logistic regression is given by
 \begin{align*}
 	\textrm{NLL}(\mathbf{w}) &= -\ln \prod_{i=1}^N p(\rvx)^{\mathds{I}(y_i=1)}(1-p(\rvx))^{\mathds{I}(y_i=0)}\,\footnotemark\\
