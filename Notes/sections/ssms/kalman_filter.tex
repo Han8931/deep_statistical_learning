@@ -3,25 +3,27 @@
 
 % \href{https://www.kalmanfilter.net/default.aspx}{Ref: Kalman Filter Tutorial}
 
-\section{Propagation of States and Covariances}
+\section{Preliminary}
+\subsection{Propagation of States and Covariances}
 % \label{sec:}
 
-Let's assume that $\mathbb{E}[\mathbf{w}_{k-1}]=0$, then we have
+% Let's assume that $\mathbb{E}[\mathbf{w}_{k-1}]=0$, then we have
+Suppose we have a linear discrete-time system:
 \begin{align*}
-	\boldsymbol{\theta}_{k}=F_{k-1}\overline{\boldsymbol{\theta}}_{k-1}+G_{k-1}\mathbf{u}_{k-1}+w_k,
+	\boldsymbol{\theta}_{k}=F_{k-1}\boldsymbol{\theta}_{k-1}+G_{k-1}\mathbf{u}_{k-1}+\rvw_{k-1},
 \end{align*}
-where $w_k$ is a Gaussian zero-mean white noise with covariance $Q_k$. How does the mean of the state $\boldsymbol{\theta}_k$ changes over time? The expectation is given by
+where $\rvw_k$ is a Gaussian zero-mean white noise with covariance $Q_k$ and $\rvu_k$ is a known input. How does the mean of the state $\boldsymbol{\theta}_k$ changes over time? The expectation is given by
 \begin{align*}
 	\mathbb{E}[\boldsymbol{\theta}_{k}]=\mathbb{E}[F_{k-1}\boldsymbol{\theta}_{k-1}]+\mathbb{E}[G_{k-1}\mathbf{u}_{k-1}]+\mathbb{E}[\mathbf{w}_{k-1}]
 \end{align*}
 For simplicity, we can write it as
 \begin{align*}
-	\overline{\boldsymbol{\theta}}_{k}=F_{k-1}\overline{\boldsymbol{\theta}}_{k-1}+G_{k-1}\mathbf{u}_{k-1}+w_k.
+	\overline{\boldsymbol{\theta}}_{k}=F_{k-1}\overline{\boldsymbol{\theta}}_{k-1}+G_{k-1}\mathbf{u}_{k-1}.
 \end{align*}
 How does the state covariance of $\boldsymbol{\theta}_k$ change with time? The state covariance matrix propagation is given by
 \begin{align*}
-	P_{k}&=\mathbb{E}[(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})^{T}]\\
-	&= (\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})^{T}
+	P_{k}&=\mathbb{E}[(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})^{T}]
+	% &= (\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})(\boldsymbol{\theta}_{k}-\overline{\boldsymbol{\theta}}_{k})^{T}
 \end{align*}
 and then compute the expectation of every term in that expression. 
 \begin{align*}
@@ -45,40 +47,71 @@ By using these expressions, we obtain the final equation for the propagation of 
 \begin{align*}
 	P_{k}=F_{k-1}P_{k-1}F_{k-1}^{T}+Q_{k-1}
 \end{align*}
+This is called a discrete time \textit{Lyapunov equation}, or a \textit{Stein equation}. It is interesting to consider the conditions under which the discrete time Lyapunov equation has a \textit{steady-state solution}. 
 
 
-
-
+\section{Kalman Filtering}
 We are considering the following state-space model of a dynamical system:
-
 \begin{align*}
 	\boldsymbol{\theta}_{k}&=F_{k-1}\boldsymbol{\theta}_{k-1}+G_{k-1}\mathbf{u}_{k-1}+\mathbf{w}_{k-1} \\
 	\mathbf{y}_{k}& = \mathbf{X}_{k}\boldsymbol{\theta}_{k}+\boldsymbol{\eta}_{k},
 \end{align*}
 where
 \begin{itemize}
-	\item $\mathbf{w}_{k-1}$: process noise vector
-	\item $\mathbf{u}_{k-1}$: control unit vector
-	\item $\boldsymbol{\eta}_{k}$: measurement noise vector
+	\item $\rvw_{k}\sim (0, Q_k)$: process noise vector
+	\item $E[\rvw_k\rvw_j^T] = Q_k\delta_{k-j}$
+	\item $\boldsymbol{\eta}_{k}\sim (0, R_k)$: measurement noise vector
+	\item $E[\boldsymbol{\eta}_k\boldsymbol{\eta}_j^T] = R_k\delta_{k-j}$
+	\item $E[\boldsymbol{\eta}_k\rvw_j^T] = 0$
+	\item $\rvu_{k-1}$: control unit vector
 	\item $F$ and $G$ are state and input matrices.
 \end{itemize}
+Our primary goal is to estimate the state $\boldsymbol{\theta}_k$ based on our knowledge of the system dynamics and the availability of the noisy measurements ${\rvy_k}$.
 
-
-In Kalman filtering, we have two important state estimates: 
-\begin{itemize}
-	\item Priori state estimates
-	\item Posteriori state estimates. 
-\end{itemize}
-Apart from this post and Kalman filtering, a priori is given by
+If we have all of the measurements up to and including time $k$ available for use in our estimate of $\boldsymbol{\theta}_k$, then we can form an a \textit{posteriori estimate}, which we denote as $\hat{\boldsymbol{\theta}}_{k}^{+}.$ The $+$ superscript denotes that the estimate is a posteriori. One way to form the a posteriori state estimate is to compute the expected value of $\boldsymbol{\theta}_k$ conditioned on a ll of the measurements up to and including time $k$:
+\begin{align*}
+	\hat{\boldsymbol{\theta}}_{k}^{+} = E[\boldsymbol{\theta}_k|\mathbf{y}_{1},\dots, \mathbf{y}_{k-1},\mathbf{y}_{k}].
+\end{align*}
+If we have all of the measurements before (but not including) time k available for use in our estimate of $\boldsymbol{\theta}_k$, then we can form an a praori estimate, which we denote 
 \begin{align*}
 	\hat{\boldsymbol{\theta}}_{k}^{-}.
 \end{align*}
-This estimate is obtained before we process the measurement $\mathbf{y}_{k}$ at the time instant $k$.
-
-The a posteriori estimate of the state $\boldsymbol{\theta}_{k}$ is obtained implicitly on the basis of the measurements $\mathbf{y}_{1},\mathbf{y}_{2},\ldots, \mathbf{y}_{k-1},\mathbf{y}_{k}$. The a posteriori estimate is denoted as follows:
+One way to form the a \textit{priori state estimate} is to compute the expected value of $\boldsymbol{\theta}_k$, conditioned on all of the measurements before (but not including) time $k$:
 \begin{align*}
-	\hat{\boldsymbol{\theta}}_{k}^{+}.
+	\hat{\boldsymbol{\theta}}_{k}^{-} = E[\boldsymbol{\theta}_k|\mathbf{y}_{1},\dots, \mathbf{y}_{k-1}].
 \end{align*}
+By their nature, it is natural to expect that $\hat{\boldsymbol{\theta}}_{k}^{+}$ to be a better estimate than $\hat{\boldsymbol{\theta}}_{k}^{-}$, since we can leverage more information to compute it. 
+
+If we have measurements after time k available for use in our estimate of $\boldsymbol{\theta}_k$, then we can form a \textit{smoothed estimate}. One way to form the smoothed state estimate is to compute the expected value of $\boldsymbol{\theta}_k$ conditioned on all of the measurements that are available: 
+\begin{align*}
+	\hat{\boldsymbol{\theta}}_{k|k+N} = E[\boldsymbol{\theta}_k|\mathbf{y}_{1},\dots, \mathbf{y}_{k}, \dots, \mathbf{y}_{k+N}],
+\end{align*}
+where $N$ is some positive integer. If we want to find the best prediction of $\boldsymbol{\theta}_k$  more than one time step ahead of the available measurements, then we can form a predicted estimate. One way to form the \textit{predicted state estimate} is to compute the expected value of $\boldsymbol{\theta}_k$ conditioned on all of the measurements that are available: 
+\begin{align*}
+	\hat{\boldsymbol{\theta}}_{k|k-M} = E[\boldsymbol{\theta}_k|\mathbf{y}_{1},\dots, \mathbf{y}_{k-M}].
+\end{align*}
+The relationship between the a posteriori, a priori, smoothed, and predicted state estimates is represented in the following figure:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% This estimate is obtained before we process the measurement $\mathbf{y}_{k}$ at the time instant $k$.
+
+% The a posteriori estimate of the state $\boldsymbol{\theta}_{k}$ is obtained implicitly on the basis of the measurements $\mathbf{y}_{1},\mathbf{y}_{2},\ldots, \mathbf{y}_{k-1},\mathbf{y}_{k}$. The a posteriori estimate is denoted as follows:
+% \begin{align*}
+% 	\hat{\boldsymbol{\theta}}_{k}^{+}.
+% \end{align*}
 
 As done in RLS (\cf \Cref{sec:recursive_least_square}), we should define covariance matrices of the a priori and the a posteriori estimation errors. The covariance matrices are defined as follows:
 \begin{align*}
