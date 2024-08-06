@@ -1,18 +1,18 @@
 \section{Recursive Least Squares}
 \label{sec:recursive_least_square}
 
-The ordinary least-squares assumes that all measurements are available at a certain time. However, this often might not be the case in practice. More often, we obtain measurements sequentially and want to update our estimate with each new measurement. In this case, the matrix $H$ needs to be augmented. This update can be very expensive. When then number of measurements is extremely large, the solutions of the least squares problem are difficult to compute. 
+The ordinary least-squares assumes that all measurements are available at a certain time. However, this often might not be the case in practice. \textbf{More often, we obtain measurements sequentially and want to update our estimate with each new measurement.} In this case, the matrix $\mathbf{X}$ needs to be augmented. This update can be very expensive especially if the number of measurements is extremely large, the solutions of the least squares problem become prohibitive to compute. 
 
-These motivate the RLS. Suppose we have an estimate $\boldsymbol{\theta}_{k-1}$ after $k-1$ measurements, and obtain a new measurement $\rvy_k$. To be general, every measurements is now a vector with values yielded by, say, several measuring instruments. 
+This motivates the Recursive Least Squares (RLS). Suppose we have an estimate $\boldsymbol{\theta}_{k-1}$ after $(k-1)$ measurements and obtain a new measurement $\rvy_k$. How can we update our estimate without completely reworking on the pseudo-inverse problem?
 
-A linear recursive estimator can be written in the following form:
+A linear recursive estimator can be expressed in the following form:
 \begin{align*}
 	\rvy_k &= \mathbf{X}_k\boldsymbol{\theta}+\boldsymbol{\eta}_k\\
 	\boldsymbol{\theta}_k &= \boldsymbol{\theta}_{k-1}+K_k (\rvy_k-\mathbf{X}_k\boldsymbol{\theta}_{k-1})
 \end{align*}
-Here $\mathbf{X}_k$ is an $m\times d$ matrix (observations), and $K_k$ is $d\times m$ and referred to as the \textit{estimator gain matrix}. We refer to $\rvy_k-\mathbf{X}_k\boldsymbol{\theta}_{k-1}$ as the \textit{correction term}. Namely, the new estimate is modified from the previous estimate $\boldsymbol{\theta}_{k-1}$ with a correction via the gain vector. 
+Here, $\mathbf{X}_k$ is an $m\times d$ matrix (observations) and $K_k$ is $d\times m$ and referred to as the \textit{estimator gain matrix}. We refer to $(\rvy_k-\mathbf{X}_k\boldsymbol{\theta}_{k-1})$ as the \textit{correction term}. Also, $\boldsymbol{\eta}_k$ is the measurement error. The new estimate is modified from the previous estimate $\boldsymbol{\theta}_{k-1}$ with a correction via the gain matrix. 
 
-The current estimation error can be expressed as follows:
+Intuitively, we can notice that we have to compute the optimal gain matrix to update our estimate. To this end, we have to set an \textit{estimation error}, which is our learning objective. The error can be expressed as follows: 
 \begin{align*}
 	\boldsymbol{\epsilon}_k	&= \boldsymbol{\theta}-\boldsymbol{\theta}_k \\
 							&= \boldsymbol{\theta}-\boldsymbol{\theta}_{k-1} - K_k (\rvy_k-\mathbf{X}_k\boldsymbol{\theta}_{k-1})\\
@@ -31,7 +31,7 @@ The key is to \textbf{determine the optimal value of the gain vector} $K_k$. The
 		&= \mathbb{E}[tr(\boldsymbol{\epsilon}_{k}\boldsymbol{\epsilon}_{k}^T)]\\
 		&= tr(P_k),
 \end{align*}
-where $P_k=\mathbb{E}[\boldsymbol{\epsilon}_{k}\boldsymbol{\epsilon}_{k}^T]$ is the estimation-error covariance (\ie covariance matrix). Note that the third line is done by the trace of a product (\ie cyclic property) and the expectation in the third line can go into the trace operator by its linearity. Next, we can obtain $P_k$ by
+where $P_k=\mathbb{E}[\boldsymbol{\epsilon}_{k}\boldsymbol{\epsilon}_{k}^T]$ is \textit{the estimation-error covariance} (\ie \textbf{covariance matrix}). Note that the third line holds by the trace of a product (\ie \textit{cyclic property}) and the expectation in the third line can go into the trace operator by its linearity. Next, we can obtain $P_k$ by
 \begin{align*}
 	P_k &= \mathbb{E}\bigg[\big((I-K_k \mathbf{X}_k)\boldsymbol{\epsilon}_{k-1}-K_k\boldsymbol{\eta}_k\big)\big((I-K_k \mathbf{X}_k)\boldsymbol{\epsilon}_{k-1}-K_k\boldsymbol{\eta}_k\big)^T\bigg]
 \end{align*}
@@ -40,25 +40,26 @@ By rearranging the above equation with the property that the mean of noise is ze
 	P_k = (I-K_k \mathbf{X}_k)P_{k-1}(I-K_k \mathbf{X}_k)^T+K_kR_kK_k^T,
 	\label{eq:rls_estimation_cov}
 \end{align}
-where $R_k = \mathbb{E}[\boldsymbol{\eta}_k\boldsymbol{\eta}_k^T]$ as covariance of $\boldsymbol{\eta}_k$.
+where $R_k = \mathbb{E}[\boldsymbol{\eta}_k\boldsymbol{\eta}_k^T]$ as covariance of $\boldsymbol{\eta}_k$. This equation is the recurrence for the covariance of the least squares estimation error. It is consistent with the intuition that as the measurement noise $R_k$ increases, the uncertainty in our estimate also increases (\ie $P_k$ increases).  Note that $P_k$ should be positive definite since it is a covariance matrix.
 
-This equation is the recurrence for the covariance of the least squares estimation error. It is consistent with the intuition that as the measurement noise $R_k$ increases, the uncertainty $P_k$ increases. 
-
-Next, we have to compute $K_k$ that minimizes the cost function given by error equation. We are going to utilize the following property:
+Next, let's compute $K_k$ that minimizes the cost function given by the error equation. We are going to utilize the following property:
 \begin{align*}
-	\frac{\partial Tr(CX^T)}{\partial X} &= C\\
-	\frac{\partial Tr(XCX^T)}{\partial X} &= XC + XC^T
+	\frac{\partial tr(CX^T)}{\partial X} &= C\\
+	\frac{\partial tr(XCX^T)}{\partial X} &= XC + XC^T
 \end{align*}
 Next, we are going to take a derivative to the objective function:
 \begin{align*}
-	\frac{\partial J_k}{\partial K_k} &= \frac{\partial}{\partial K_k} tr\big(P_{k-1}- K_k\mathbf{X}_k P_{k-1} - P_{k-1}\mathbf{X}_k^TK_k^T+K_k\big(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T\big)K_k^T\big)+ \frac{\partial}{\partial K_k}tr\big(K_k R_k K_k^T\big)\\
-									  &= -2\frac{\partial}{\partial K_k} tr\big(P_{k-1}\mathbf{X}_k^TK_k^T\big)+2K_k\big(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T\big)+2K_kR_k\\
-									  &= -2P_{k-1}\mathbf{X}_k^T+ 2K_k\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+2K_kR_k\\
-									  &= -2P_{k-1}\mathbf{X}_k^T+ 2K_k(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k).
+	\frac{\partial J_k}{\partial K_k} &= \frac{\partial tr(P_k)}{\partial K_k}\\ 
+									  &= \frac{\partial tr(P_k)}{\partial (I-K_k \mathbf{X}_k)}\frac{\partial (I-K_k \mathbf{X}_k)}{\partial K_k}\quad \text{by Chain Rule}\\
+	&= \left((I-K_k \mathbf{X}_k)P_{k-1}+ (I-K_k \mathbf{X}_k)P_{k-1}^T\right)(-\mathbf{X}_k^T)+ \frac{\partial}{\partial K_k}tr\big(K_k R_k K_k^T\big)\\
+	&= 2(I-K_k \mathbf{X}_k)P_{k-1}(-\mathbf{X}_k^T) + \frac{\partial}{\partial K_k}tr\big(K_k R_k K_k^T\big)\quad \text{, since } P_{k-1} \text{ is symmetric.}\\
+									  &= -2(I-K_k \mathbf{X}_k)P_{k-1}\mathbf{X}_k^T+2K_kR_k
 \end{align*}
-In the second step, we also used the property that $P_{k-1}$ is independent of $K_k$. Thus, the derivative of $P_{k-1}$ with respect to $K_k$ is zero. We also used that $K_k\mathbf{X}_kP_{k-1}$ and $P_{k-1}\mathbf{X}_k^TK_k^T$ are transpose of each other, since $P_{k-1}$ is symmetric. Thus, they have the same trace. By setting the partial derivative to zero, we get
+By setting the partial derivative to zero, we get
 $$K_k = P_{k-1}\mathbf{X}_k^T(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k)^{-1}.$$
-By setting $\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k = S_k$, we get 
+
+\subsection{Alternative From}
+Sometimes it is useful to write the equations for $P_k$ and $K_k$ in alternate forms. Although these alternate forms are mathematically identical, they can be beneficial from a computational point of view. Let's first set $\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k = S_k$, then we get 
 $$K_k = P_{k-1}\mathbf{X}_k^TS_k^{-1}.$$
 By putting this into \Cref{eq:rls_estimation_cov},
 \begin{align*}
@@ -82,7 +83,7 @@ This yields an alternative expression for the covariance matrix:
 \begin{align*}
 	P_k = \big(P_{k-1}^{-1}+\mathbf{X}_k^TR_{k}^{-1}\mathbf{X}_k\big)^{-1}
 \end{align*}
-We can also get
+We can also obtain
 \begin{align*}
 	K_k = P_{k}\mathbf{X}_k^TR_{k}^{-1}
 \end{align*}
@@ -95,18 +96,28 @@ By
 	K_k &= P_{k}\mathbf{X}_k^TR_{k}^{-1}.
 \end{align*}
 
+\subsection{Summary of RLS}
 In sum, RLS can be updated as follows: 
 \begin{itemize}
-	\item Update the gain matrix: $K_k = P_{k-1}\mathbf{X}_k^T(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k)^{-1}$
+	\item Update the gain matrix: 
+		\begin{itemize}
+			\item $K_k = P_{k-1}\mathbf{X}_k^T(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k)^{-1}$ or
+			\item $K_k = P_{k}\mathbf{X}_k^TR_{k}^{-1}$
+		\end{itemize}
 	\item Update estimate: $\boldsymbol{\theta}_k = \boldsymbol{\theta}_{k-1}+K_k (\rvy_k-\mathbf{X}_k\boldsymbol{\theta}_{k-1})$
 	\item Update error covariance matrix by either: 
 		\begin{itemize}
 			\item $P_k = (I-K_k\mathbf{X}_k)P_{k-1}$.
+			\item $P_k = (I-K_k \mathbf{X}_k)P_{k-1}(I-K_k \mathbf{X}_k)^T+K_kR_kK_k^T,$
 		\end{itemize}
 \end{itemize}
 
+\paragraph{Example: }
+At sample time $k$, our measurement is
+\begin{itemize}
+	\item $y_k = $
+\end{itemize}
 
-% \paragraph{Example: }
 
 
 

@@ -1,7 +1,7 @@
 % \chapter{Regressions}
 \section{Introduction}
 \label{sec:regression}
-Suppose a noisy measurement $\rvy = [y_1, \dots, y_m]^T$ with noise $\boldsymbol{\eta} = [\eta_1, \dots, \eta_d]^T$ and we want to estimate parameter $\boldsymbol{\theta} = [\theta_1,\dots,\theta_d]^T$ by using our input $\rvx = [x_1, \dots, x_d]$. 
+Suppose a noisy measurement $\rvy = [y_1, \dots, y_m]^T$ with measurement noise $\boldsymbol{\eta} = [\eta_1, \dots, \eta_d]^T$ and we want to estimate parameter $\boldsymbol{\theta} = [\theta_1,\dots,\theta_d]^T$ by using our input $\rvx = [x_1, \dots, x_d]$. 
 
 The measurement $\rvy$ can be modeled as follows:
 $$\rvy = \mathbf{X}\boldsymbol{\theta}+\boldsymbol{\eta},$$
@@ -147,11 +147,13 @@ The OLEs assume an equal confidence on all the measurements. Now we look at vary
 	  \end{bmatrix}
 \end{align*}
 By denoting the error vector $\rvy-\mathbf{X}\boldsymbol{\theta}$ as $\boldsymbol{\epsilon} = (\epsilon_1, \dots, \epsilon_l)^T$, we will minimize the sum of squared differences weighted over the variations of the measurements:
-$$J(\tilde{\rvx}) = \boldsymbol{\epsilon}^TR^{-1}\boldsymbol{\epsilon}=\frac{\boldsymbol{\epsilon}_1^2}{\sigma_1^2}+\dots+\frac{\boldsymbol{\epsilon}_l^2}{\sigma_l^2}$$
+\begin{align*}
+	J(\tilde{\rvx}) &= \boldsymbol{\epsilon}^TR^{-1}\boldsymbol{\epsilon}=\frac{\boldsymbol{\epsilon}_1^2}{\sigma_1^2}+\dots+\frac{\boldsymbol{\epsilon}_l^2}{\sigma_l^2}\\
+					&= (\rvy-\mathbf{X}\boldsymbol{\theta})^TR^{-1}(\rvy-\mathbf{X}\boldsymbol{\theta})
+\end{align*}
 % This is equivalent to
 % $$\frac{1}{n}\sum_{i=1}^{n}\sum_{i=1}^n \alpha_i (y_i-\rvx_i\boldsymbol{\theta}).$$
-
-The best estimate of the parameter is given by
+By taking the partial derivative of $J$ with respect to $\boldsymbol{\theta}$, we get the best estimate of the parameter, which is given by
 $$\boldsymbol{\theta} = (\mathbf{X}^TR^{-1}\mathbf{X})^{-1}\mathbf{X}^TR^{-1}\rvy.$$
 Note that the measurement noise matrix $R$ must be non-singular for a solution to exist.
 
