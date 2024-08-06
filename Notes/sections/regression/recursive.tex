@@ -44,15 +44,15 @@ where $R_k = \mathbb{E}[\boldsymbol{\eta}_k\boldsymbol{\eta}_k^T]$ as covariance
 
 Next, let's compute $K_k$ that minimizes the cost function given by the error equation. We are going to utilize the following property:
 \begin{align*}
-	\frac{\partial tr(CX^T)}{\partial X} &= C\\
-	\frac{\partial tr(XCX^T)}{\partial X} &= XC + XC^T
+	\frac{\partial tr(CA^T)}{\partial A} &= C\\
+	\frac{\partial tr(ACA^T)}{\partial A} &= AC + AC^T
 \end{align*}
 Next, we are going to take a derivative to the objective function:
 \begin{align*}
-	\frac{\partial J_k}{\partial K_k} &= \frac{\partial tr(P_k)}{\partial K_k}\\ 
-									  &= \frac{\partial tr(P_k)}{\partial (I-K_k \mathbf{X}_k)}\frac{\partial (I-K_k \mathbf{X}_k)}{\partial K_k}\quad \text{by Chain Rule}\\
-	&= \left((I-K_k \mathbf{X}_k)P_{k-1}+ (I-K_k \mathbf{X}_k)P_{k-1}^T\right)(-\mathbf{X}_k^T)+ \frac{\partial}{\partial K_k}tr\big(K_k R_k K_k^T\big)\\
-	&= 2(I-K_k \mathbf{X}_k)P_{k-1}(-\mathbf{X}_k^T) + \frac{\partial}{\partial K_k}tr\big(K_k R_k K_k^T\big)\quad \text{, since } P_{k-1} \text{ is symmetric.}\\
+	\frac{\partial J_k}{\partial K_k} &= \frac{\partial tr(P_k)}{\partial K_k} = \frac{\partial tr}{\partial K_k}\underbrace{(I-K_k \mathbf{X}_k)P_{k-1}(I-K_k \mathbf{X}_k)^T}_{=ACA^T}+\frac{\partial}{\partial K_k}tr\left(K_k R_k K_k^T\right)\\ 
+									  &= \frac{\partial tr(ACA^T)}{\partial (I-K_k \mathbf{X}_k)}\frac{\partial (I-K_k \mathbf{X}_k)}{\partial K_k} +\frac{\partial}{\partial K_k}tr\left(K_k R_k K_k^T\right) \quad \text{by Chain Rule}\\
+	&= \left((I-K_k \mathbf{X}_k)P_{k-1}+ (I-K_k \mathbf{X}_k)P_{k-1}^T\right)(-\mathbf{X}_k^T) + \frac{\partial}{\partial K_k}tr\left(K_k R_k K_k^T\right)\\
+	&= 2(I-K_k \mathbf{X}_k)P_{k-1}(-\mathbf{X}_k^T) + \frac{\partial}{\partial K_k}tr\left(K_k R_k K_k^T\right)\quad \text{, since } P_{k-1} \text{ is symmetric.}\\
 									  &= -2(I-K_k \mathbf{X}_k)P_{k-1}\mathbf{X}_k^T+2K_kR_k
 \end{align*}
 By setting the partial derivative to zero, we get
