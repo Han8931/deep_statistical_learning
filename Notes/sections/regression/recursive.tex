@@ -58,7 +58,7 @@ Next, we are going to take a derivative to the objective function:
 By setting the partial derivative to zero, we get
 $$K_k = P_{k-1}\mathbf{X}_k^T(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k)^{-1}.$$
 
-\subsection{Alternative From}
+\subsection{Alternative Form}
 Sometimes it is useful to write the equations for $P_k$ and $K_k$ in alternate forms. Although these alternate forms are mathematically identical, they can be beneficial from a computational point of view. Let's first set $\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k = S_k$, then we get 
 $$K_k = P_{k-1}\mathbf{X}_k^TS_k^{-1}.$$
 By putting this into \Cref{eq:rls_estimation_cov},
@@ -115,10 +115,148 @@ In sum, RLS can be updated as follows:
 \paragraph{Example: }
 At sample time $k$, our measurement is
 \begin{itemize}
-	\item $y_k = $
+	\item $y_k = X_k\theta+\eta_k$
+	\item $X_k = 1$
+	\item $R_k = \mathbb{E}[\eta_k^2]$
 \end{itemize}
+For this scalar problem, the measurement matrix $X_k$ is a scalar too, and the measurement noise covariance $R_k$ is also a scalar. We will suppose that each measurement has the same covariance so the measurement covariance $R_k$ is not a function of $k$, and can be written as $R$. Initially, before we have any measurements, we have some idea about the value of the $\theta$, and this forms our initial estimate. We also have some uncertainty about our initial estimate, and this forms our initial covariance:
+\begin{align*}
+	\hat{\theta}_0 &= \mathbb{E}[\theta]\\
+	P_0 &= \mathbb{E}[(\theta-\hat{\theta}_0)(\theta-\hat{\theta}_0)^T]\\
+		&= \mathbb{E}[(\theta-\hat{\theta}_0)^2]
+\end{align*}
+If we have absolutely no idea about $\theta$, then $P(0)=\infty I$. If we are 100\% certain about the $\theta$ before taking any measurements, then $P(0)=0$. Let's compute the gain matrix at $k=1$ by using the following equation:
+$$K_k = P_{k-1}\mathbf{X}_k^T(\mathbf{X}_kP_{k-1}\mathbf{X}_k^T+R_k)^{-1}.$$
+Then, we get
+$$K_1 = P_{0}(P_{0}+R)^{-1}.$$
+Similarly, by
+$$\boldsymbol{\theta}_k = \boldsymbol{\theta}_{k-1}+K_k (\rvy_k-\mathbf{X}_k\boldsymbol{\theta}_{k-1}),$$
+we obtain
+$$\hat{\theta}_1 = \hat{\theta}_{0}+\frac{P_{0}}{P_{0}+R} (y_1-\hat{\theta}_{0}).$$
+Finally, let's update our covariance matrix $P_k$ by 
+$$P_k = (I-K_k \mathbf{X}_k)P_{k-1}(I-K_k \mathbf{X}_k)^T+K_kR_kK_k^T.$$
+Then, 
+\begin{align*}
+	P_1 &= \left(I-\frac{P_{0}}{P_{0}+R}\right)P_{0}I-\frac{P_{0}}{P_{0}+R}+\frac{P_{0}}{P_{0}+R}R\frac{P_{0}}{P_{0}+R}\\
+		&= \left(\frac{P_0R^2}{(P_{0}+R)^2}\right)+\frac{P_{0}^2R}{(P_{0}+R)^2}\\
+		&= \frac{P_{0}R(P_0+R)}{(P_{0}+R)^2}\\
+		&= \frac{P_{0}R}{P_{0}+R}
+\end{align*}
+By repeating these calculations, we can update the above parameters and find general expressions: 
+\begin{align*}
+	P_{k-1}&= \frac{P_0R}{(k-1)P_0+R}\\
+	K_{k}&= \frac{P_0}{kP_0+R}\\
+	\hat{\theta}_{k}&= \frac{(k-1)P_0+R}{kP_0+R}\hat{\theta}_{k-1}+\frac{P_0}{kP_0+R}y_k
+\end{align*}
+Note that if $\theta$ is known perfectly \textit{a priori} (\ie $\theta$ is known perfectly before any measurements are obtained) then $P_0 =0$ and the above equation show that $K_k=0$ and $\hat{\theta} = \hat{\theta}_0$. That is, the optimal estimate of $\theta$ is independent of any measurements that are obtained. In sum, this indicates that no update from measurements is needed, as the estimate is already perfect.
+
+On the other hand, if $x$ is completely unknown a priori, then $P_0\to \infty$, and the above equations simplify to
+\begin{align*}
+\hat{\theta}_k &= \frac{(k-1)P_0}{kP_0} \hat{\theta}_{k-1} + \frac{P_0}{kP_0} y_k \\
+         &= \frac{k-1}{k} \hat{\theta}_{k-1} + \frac{1}{k} y_k \\
+         &= \frac{1}{k} [(k-1)\hat{\theta}_{k-1} + y_k]
+\end{align*}
+In other words, the optimal estimate of \(\theta\) is equal to the running average of the measurements \(y_k\), which can be written as
+\begin{align*}
+\bar{y}_k &= \frac{1}{k} \sum_{j=1}^k y_j \\
+          &= \frac{1}{k} \left(\sum_{j=1}^{k-1} y_j + y_k\right) \\
+          &= \frac{1}{k} \left[(k-1) \frac{1}{k-1} \sum_{j=1}^{k-1} y_j + y_k\right] \\
+          &= \frac{1}{k} [(k-1) \bar{y}_{k-1} + y_k]
+\end{align*}
 
 
+\subsection{Curve Fitting} 
+In the recursive curve fitting problem, we measure data one sample at a time $(y_1, y_2 \dots, )$ and want to find the best fit of a curve to the data. The curve that we want to fit to the data could be constrained to be linear or quadratic and so on. 
 
+\paragraph{Example:} Suppose that we want to fit a straight line to a set of data points. The linear data fitting problem can be written as 
+\begin{align*}
+	y_k &= \theta_1+\theta_2t_k+\eta_k\\
+	\mathbb{E}[\eta_k] &= R_k
+\end{align*}
+$t_k$ is the independent variable, $y_k$ is the noisy data, and we want to find the linear relationship between $y_k$ and $t_k$. In sum, we want to estimate the constants $\theta_1$ and $\theta_2$. The measurement matrix can be written as 
+\begin{align*}
+	\mathbf{X}_k = \begin{bmatrix}
+		1 & t_k
+	\end{bmatrix}.
+\end{align*}
+Then, 
+$$\rvy_k = \mathbf{X}_k\boldsymbol{\theta}+\boldsymbol{\eta}_k.$$
 
+\section{Alternate Derivation of RLS}
+Suppose the training samples arrive one by one in the following sequence $\rvx_1, \dots, x_m, x_{m+1}$, where $\rvx_{m+1}$ denotes the newly arrived sample vector. These samples can be projected onto the feature space by linear projection and expressed into a matrix $\mathbf{P}^T \in \mathbb{R}^{(d+1)\times (m+1)}$ as follows:
+\begin{align*}
+	\mathbf{P}^T = [\rvp(\rvx_1), \dots, \rvp(\rvx_{m+1})],
+\end{align*}
+where $\rvp(\cdot)\in \mathbb{R}^{d+1}$. Subsequently, let 
+\begin{align*}
+	\mathbf{R}_{m+1} &= \mathbf{P}^T \mathbf{P} + b\mathbf{I}\\
+	\mathbf{Q}_{m+1} &= \mathbf{P}^T \mathbf{y}.
+\end{align*}
+By separating the covariance of the newly arrived sample \( p(\rvx_{m+1}) \) from the remaining stack, we can write:
+\begin{align*}
+	\mathbf{P}^T \mathbf{P} &= \sum_{i=1}^{m+1} \rvp(\rvx_i) \rvp(\rvx_i)^T\\
+							&= \sum_{i=1}^m \rvp(\rvx_i) \rvp(\rvx_i)^T + \rvp(\rvx_{m+1}) \rvp(\rvx_{m+1})^T\\
+							&= \mathbf{P}_m^T \mathbf{P}_m + \rvp(\rvx_{m+1}) \rvp(\rvx_{m+1})^T.
+\end{align*}
+Hence, 
+\begin{align*}
+	\mathbf{R}_{m+1} &= \mathbf{P}^T \mathbf{P} + b\mathbf{I}\\
+					 &= \left(\mathbf{P}_m^T \mathbf{P}_m + \rvp(\rvx_{m+1}) \rvp(\rvx_{m+1})^T\right)+ b\mathbf{I}\\
+					 &= \underbrace{\mathbf{P}_m^T \mathbf{P}_m + b\mathbf{I}}_{=\mathbf{R}_m} + \rvp(\rvx_{m+1})\rvp(\rvx_{m+1})^T\\
+					 &= \mathbf{R}_m + \rvp(\rvx_{m+1}) \rvp(\rvx_{m+1})^T
+\end{align*}
+Similarly, 
+\begin{align*}
+	\mathbf{Q}_{m+1} &= \mathbf{Q}_m + \rvp(\rvx_{m+1}) y_{m+1}
+\end{align*}
+If the system is designed to forget the old training samples, 
+\begin{align*}
+	\mathbf{R}_{m+1} &= (1 - \lambda) \mathbf{R}_m + \lambda \rvp(\rvx_{m+1}) \rvp(\rvx_{m+1})^T,\\
+	\mathbf{Q}_{m+1} &= (1 - \lambda) \mathbf{Q}_m + \lambda \rvp(\rvx_{m+1}) y_{m+1},
+\end{align*}
+where \( \lambda \in (0, 1) \) is often called a forgetting factor.
+
+Let \( \mathbf{A} = \mathbf{R}_m, \mathbf{B} = p(\rvx_{m+1}), \mathbf{C} = 1 \) (scalar), \( \mathbf{D} = p(\rvx_{m+1})^T = \mathbf{p}^T \), then based on the matrix inversion lemma (Woodbury, 1950; Sherman and Morrison, 1950),
+\begin{align*}
+	(\mathbf{A} + \mathbf{BCD})^{-1} = \mathbf{A}^{-1} - \mathbf{A}^{-1} \mathbf{B} (\mathbf{C}^{-1} + \mathbf{DA}^{-1} \mathbf{B})^{-1} \mathbf{DA}^{-1},
+\end{align*}
+we have
+\begin{align*}
+	\mathbf{R}_{m+1}^{-1} &= \left[ (1 - \lambda) \mathbf{R}_m + \lambda \mathbf{p}\mathbf{I}\rvp^T \right]^{-1}\\
+						  &= \frac{1}{1 - \lambda} \mathbf{R}_m^{-1} - \frac{1}{1 - \lambda} \mathbf{R}_m^{-1}\lambda \mathbf{p} \left( \mathbf{I} + \mathbf{p}^T \frac{\lambda}{1-\lambda} \mathbf{R}_m^{-1} \mathbf{p} \right)^{-1} \mathbf{p}^T \frac{1}{1-\lambda} \mathbf{R}_m^{-1}\\
+						  &= \frac{1}{1 - \lambda} \mathbf{R}_m^{-1} - \frac{1}{(1 - \lambda)^2} \mathbf{R}_m^{-1} \mathbf{pp}^T \mathbf{R}_m^{-1} \left( \frac{1}{\lambda} + \frac{1}{1-\lambda} \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p} \right)^{-1}.
+\end{align*}
+We can obtain
+\begin{align*}
+	\rvw_{m+1} = \left( \mathbf{P}^T \mathbf{P} + b\mathbf{I} \right)^{-1} \mathbf{P}^T \mathbf{y} = \mathbf{R}_{m+1}^{-1} \mathbf{Q}_{m+1},
+\end{align*}
+Substitute \(\mathbf{R}_{m+1}^{-1}\) and \(\mathbf{Q}_{m+1} = (1 - \lambda) \mathbf{Q}_m +  \lambda\mathbf{p}(\rvx_{m+1}) y_{m+1}\):
+\begin{align*}
+	\mathbf{w}_{m+1} &= \left[ \frac{1}{1 - \lambda} \mathbf{R}_m^{-1} - \frac{1}{(1 - \lambda)^2} \mathbf{R}_m^{-1} \mathbf{p}\mathbf{p}^T \mathbf{R}_m^{-1} \left( \frac{1}{\lambda} + \frac{1}{1 - \lambda} \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p} \right)^{-1} \right] \left[ (1 - \lambda) \mathbf{Q}_m + \lambda y_{m+1} \mathbf{p} \right]\\
+					 &= \underbrace{\mathbf{R}_m^{-1} \mathbf{Q}_m}_{=w_m} + \frac{1}{1 - \lambda}\mathbf{R}_m^{-1} \mathbf{p}\mathbf{p}^T \mathbf{R}_m^{-1} \left( \frac{1}{\lambda} + \frac{1}{1 - \lambda} \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p} \right)^{-1} \mathbf{Q}_m + \frac{\lambda}{1 - \lambda} \mathbf{R}_m^{-1} \mathbf{p} y_{m+1} \\
+					 &\quad - \frac{\lambda}{(1 - \lambda)^2}\mathbf{R}_m^{-1} \mathbf{p}\mathbf{p}^T \mathbf{R}_m^{-1} \left( \frac{1}{\lambda} + \frac{1}{1 - \lambda} \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p} \right)^{-1}\mathbf{p} y_{m+1}\\
+\end{align*}
+Let 
+\begin{align*}
+	A &= \left( \frac{1}{\lambda} + \frac{1}{1 - \lambda} \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p} \right)^{-1} \\
+	  &= \frac{\lambda(1-\lambda)}{\lambda \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p}+(1-\lambda)}
+\end{align*}
+then 
+\begin{align*}
+	w_{m+1} &= w_m - \frac{\mathbf{R}_m^{-1} \mathbf{p}}{(1-\lambda)^2} \cdot A \cdot \left((1-\lambda)\mathbf{p}^T w_m + \lambda \mathbf{p}^T \mathbf{R}_m^{-1}\mathbf{p} y_{m+1}\right)+ \frac{\lambda}{1 - \lambda} \mathbf{R}_m^{-1} \mathbf{p} y_{m+1}\\
+			&= w_m - \frac{\lambda \mathbf{R}_m^{-1} \mathbf{p}}{(1-\lambda)} \cdot \frac{1}{\lambda \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p}+(1-\lambda)}\left((1-\lambda)\mathbf{p}^T w_m + \lambda \mathbf{p}^T \mathbf{R}_m^{-1}\mathbf{p} y_{m+1}\right) + \frac{\lambda}{1 - \lambda} \mathbf{R}_m^{-1} \mathbf{p} y_{m+1}\\
+			&= w_m - \frac{\lambda \mathbf{R}_m^{-1} \mathbf{p}}{(1-\lambda)} \cdot \frac{1}{\lambda \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p}+(1-\lambda)}\left((1-\lambda)\mathbf{p}^T w_m + \lambda \mathbf{p}^T \mathbf{R}_m^{-1}\mathbf{p} y_{m+1}\right) \\ 
+			&\quad +\frac{\lambda}{(1 - \lambda)}\cdot \frac{\lambda \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p}+(1-\lambda)}{\lambda \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p}+(1-\lambda)} \mathbf{R}_m^{-1} \mathbf{p} y_{m+1} \,\, \text{, since $\mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p}$ is a scalar, we can put $\mathbf{R}_m^{-1} \mathbf{p}$ to the right}\\
+			&= w_m + \frac{\lambda}{\lambda \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p}+(1-\lambda)}\cdot\frac{1}{(1-\lambda)}\big(-(1-\lambda)\mathbf{R}_m^{-1}\mathbf{p}\mathbf{p}^T w_m - \lambda \mathbf{R}_m^{-1}\mathbf{p}\mathbf{p}^T\mathbf{R}_m^{-1}\mathbf{p}y_{m+1}\\
+			&\quad + \lambda \mathbf{R}_m^{-1}\mathbf{p}\mathbf{p}^T\mathbf{R}_m^{-1}\mathbf{p}y_{m+1} + (1-\lambda)\mathbf{R}_m^{-1}\mathbf{p}y_{m+1}\big)\\
+			&= w_m + \frac{\lambda}{\lambda \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p}+(1-\lambda)}\cdot\frac{1}{(1-\lambda)}\big(-(1-\lambda)\mathbf{R}_m^{-1}\mathbf{p}\mathbf{p}^T w_m + (1-\lambda)\mathbf{R}_m^{-1}\mathbf{p}y_{m+1}\big)
+\end{align*}
+Thus, the final recursive solution for the weight vector \(\mathbf{w}_{m+1}\) is given by
+\[
+\mathbf{w}_{m+1} = \mathbf{w}_m + \frac{\lambda \mathbf{R}_m^{-1} \mathbf{p} (y_{m+1} - \mathbf{p}^T \mathbf{w}_m)}{\lambda \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p} + (1 - \lambda)}
+\]
+Here, we note that $\lambda$ controls the strength of update with respect to the accumulated solution with $\lambda \to 1$ having the strongest weight for newly arrived sample. When $\lambda = 0.5$ in , we have the following regularized recursive least squares solution:
+\begin{align*}
+	w_{m+1} = w_m + \frac{\mathbf{R}_m^{-1} \rvp (y_{m+1} - \rvp^T w_m)}{\rvp^T \mathbf{R}_m^{-1} \rvp + 1}. 
+\end{align*}
 
