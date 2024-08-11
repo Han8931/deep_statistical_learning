@@ -1,13 +1,16 @@
 % \chapter{Regressions}
 \section{Introduction}
 \label{sec:regression}
-Suppose a noisy measurement $\rvy = [y_1, \dots, y_m]^T$ with measurement noise $\boldsymbol{\eta} = [\eta_1, \dots, \eta_d]^T$ and we want to estimate parameter $\boldsymbol{\theta} = [\theta_1,\dots,\theta_d]^T$ by using our input $\rvx = [x_1, \dots, x_d]$. 
 
-The measurement $\rvy$ can be modeled as follows:
-$$\rvy = \mathbf{X}\boldsymbol{\theta}+\boldsymbol{\eta},$$
-where $\mathbf{X}$ is a $m\times d$ input matrix (or our observations). Given a parameter $\boldsymbol{\theta}$, we consider the difference between the noisy measurements and estimated value as follows:
+Regression is a process for finding the relationship between the inputs and the outputs. In a regression problem, we consider a set of noisy measurement (or noisy output data)  $\rvy = [y_1, \dots, y_d]^T$ with measurement noise $\boldsymbol{\eta} = [\eta_1, \dots, \eta_d]^T$. We also consider a set of input data $\rvx = [x_1, \dots, x_d]$. We call the set of these input-output pairs $\mathcal{D} = \{(\rvx_1, \rvy_1), \dots, (\rvx_m, \rvy_m)\}$ the training data. The true relationship between the input and the output data is unknown. We denote this unknown relationship as a mapping $f(\cdot)$ that takes $\rvx_n$ and maps it to $y_n$, 
+\begin{align*}
+	\rvy = f(\rvx).
+\end{align*}
+Finding the true $f(\cdot)$ from a finite number of data points $\mathbcal{D}$ is infeasible. There are infinitely many ways to design $f(\cdot)$ for every $\rvx_i$. The idea of regression is to add a structure to the problem. Instead of looking for the true $f(\cdot)$, we find a proxy $g_\theta(\cdot)$ that takes a certain parameters $\boldsymbol{\theta} = [\theta_1,\dots,\theta_d]^T$. For instance, we can postulate that $(\rvx_n,\rvy_n)$ has a linear relationship:
+$$g_{\boldsymbol{\theta}}(\rvy) = \mathbf{X}\boldsymbol{\theta}+\boldsymbol{\eta},$$
+where $\mathbf{X}$ is a $m\times d$ input matrix (or our observations). Since we do not know the true relationship, any choice of model is our conjecture. However, we can model the error of our choice. Given a parameter $\boldsymbol{\theta}$, we consider the difference between the noisy measurements and estimated value as follows:
 $$\boldsymbol{\epsilon} = \rvy - \mathbf{X}\boldsymbol{\theta}$$
-Then, we can establish an objective function as follows:
+The purpose of regression is to find the best $\boldsymbol{\theta}$ such that the error is minimized. Therefore, we can consider a following objective function:
 $$J(\boldsymbol{\theta}) = \boldsymbol{\epsilon}^T\boldsymbol{\epsilon}$$
 Note that this is equivalent to minimizing the mean squared error:
 $$MSE = \frac{1}{n}\sum_{i=1}^n (y_i-\rvx_i\boldsymbol{\theta})^2.$$
@@ -65,7 +68,7 @@ Recall that the linear regression problem is an optimization problem of finding 
 $$\boldsymbol{\theta}_{opt} = \argmin_{\boldsymbol{\theta}\in \mathbb{R}^d}||y-\mathbf{X}\boldsymbol{\theta}||^2.$$
 We say the optimization problem is \textit{overdetermined} if $\mathbf{X}\in \mathbb{R}^{m\times d}$ is tall and skinny, \ie $m>d$. This problem has a unique solution $\boldsymbol{\theta}	= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\rvy$ if and only if $\mathbf{X}^T\mathbf{X}$ is invertible. Equivalently, $\mathbf{X}$ should be linearly independent (\ie full rank). 
 
-If $\mathbf{X}$ is fat and short (\ie $N<d$), a problem is called \textit{underdetermined}. \textbf{This problem will have infinitely many solutions}. Among all the feasible solutions, we will pick the one that minimizes the squared norm. The solution is called the \textit{minimum-norm} least squares. Consider an underdetermined linear regression problem:  
+If $\mathbf{X}$ is fat and short (\ie $m<d$), a problem is called \textit{underdetermined}. \textbf{This problem will have infinitely many solutions}. Among all the feasible solutions, we will pick the one that minimizes the squared norm. The solution is called the \textit{minimum-norm} least squares. Consider an underdetermined linear regression problem:  
 \begin{align*}
 	\boldsymbol{\theta} = \argmin_{\boldsymbol{\theta}\in \mathbb{R}^d} \|\boldsymbol{\theta}\|^2, \,\textrm{subject to}\ \rvy = \mathbf{X}\boldsymbol{\theta},
 \end{align*}
@@ -82,7 +85,7 @@ where $\boldsymbol{\lambda}$ is a Lagrange multiplier. The solution of the const
 	\nabla_{\boldsymbol{\theta}} &= 2 \boldsymbol{\theta} + \mathbf{X}^T\boldsymbol{\lambda} = 0\\ 
 	\nabla_{\boldsymbol{\lambda}} &= \mathbf{X}\boldsymbol{\theta} - \rvy = 0
 \end{align*}
-The first equation gives us $\boldsymbol{\theta} = -\mathbf{X}^T\boldsymbol{\lambda}/2$. Substituting it into the second equation, and assuming that rank$(\mathbf{X})=N$ so that $\mathbf{X}^T\mathbf{X}$ is invertible, we have $\boldsymbol{\lambda} = -2 (\mathbf{X}\mathbf{X}^T)^{-1}\rvy.$ Thus, we have
+The first equation gives us $\boldsymbol{\theta} = -\mathbf{X}^T\boldsymbol{\lambda}/2$. Substituting it into the second equation, and assuming that rank$(\mathbf{X})=m$ so that $\mathbf{X}^T\mathbf{X}$ is invertible, we have $\boldsymbol{\lambda} = -2 (\mathbf{X}\mathbf{X}^T)^{-1}\rvy.$ Thus, we have
 \begin{align*}
 	\boldsymbol{\theta} = \mathbf{X}^T(\mathbf{X}\mathbf{X}^T)^{-1}\rvy.
 \end{align*}
@@ -143,7 +146,7 @@ The OLEs assume an equal confidence on all the measurements. Now we look at vary
 	  &= \begin{bmatrix}
 		  \sigma_1^2 & \dots & 0\\
 		  \vdots & \ddots & \vdots\\
-		  0 & \ddots & \sigma_l^2\\
+		  0 & \dots & \sigma_l^2
 	  \end{bmatrix}
 \end{align*}
 By denoting the error vector $\rvy-\mathbf{X}\boldsymbol{\theta}$ as $\boldsymbol{\epsilon} = (\epsilon_1, \dots, \epsilon_l)^T$, we will minimize the sum of squared differences weighted over the variations of the measurements:
@@ -151,9 +154,8 @@ By denoting the error vector $\rvy-\mathbf{X}\boldsymbol{\theta}$ as $\boldsymbo
 	J(\tilde{\rvx}) &= \boldsymbol{\epsilon}^TR^{-1}\boldsymbol{\epsilon}=\frac{\boldsymbol{\epsilon}_1^2}{\sigma_1^2}+\dots+\frac{\boldsymbol{\epsilon}_l^2}{\sigma_l^2}\\
 					&= (\rvy-\mathbf{X}\boldsymbol{\theta})^TR^{-1}(\rvy-\mathbf{X}\boldsymbol{\theta})
 \end{align*}
-% This is equivalent to
-% $$\frac{1}{n}\sum_{i=1}^{n}\sum_{i=1}^n \alpha_i (y_i-\rvx_i\boldsymbol{\theta}).$$
-By taking the partial derivative of $J$ with respect to $\boldsymbol{\theta}$, we get the best estimate of the parameter, which is given by
+Note that by dividing each residual by its variance, we effectively equalize the influence of each data point on the overall fitting process. Subsequently, by taking the partial derivative of $J$ with respect to $\boldsymbol{\theta}$, we get the best estimate of the parameter, which is given by
+
 $$\boldsymbol{\theta} = (\mathbf{X}^TR^{-1}\mathbf{X})^{-1}\mathbf{X}^TR^{-1}\rvy.$$
 Note that the measurement noise matrix $R$ must be non-singular for a solution to exist.
 

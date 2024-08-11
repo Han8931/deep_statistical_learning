@@ -25,7 +25,8 @@ Here:
 	\item \( \gamma \) is a regularization parameter.
 \end{itemize}
 
-Let's transform it into a dual form. The dual problem involves solving a system of linear equations derived from the primal problem's Lagrangian. The Lagrangian function for the primal problem is:
+\subsection{Dual Form}
+Let's transform it into a \textit{dual} form. The dual problem involves solving a system of linear equations derived from the primal problem's Lagrangian. The Lagrangian function for the primal problem is:
 \begin{align*}
 	\mathcal{L}( \omega, \nu, b_1, b_2, e, h, \alpha, \beta) &= \frac{1}{2} \omega^T \nu + \frac{\gamma}{2} \sum_{i=1}^m e_i^2 + \frac{\gamma}{2} \sum_{i=1}^m h_i^2\\ 
 		   &+ \sum_{i=1}^m \alpha_i (1 - e_i - y_i (\omega^T \phi_s(x_i) + b_1)) + \sum_{i=1}^m \beta_i (1 - h_i - y_i (\nu^T \phi_t(x_i) + b_2))
@@ -57,6 +58,13 @@ where:
 \begin{itemize}
 	\item \( Y \) is a vector of class labels.
 	\item \( H \) is the kernel matrix with elements \( H_{ij} = y_i K(x_i, x_j) y_j \), where \( K(x_i, x_j) = \langle \phi_s(x_i), \phi_t(x_j) \rangle \) is the asymmetric kernel function.
+		\begin{itemize}
+			\item For an asymmetric kernel \( K \), the kernel function \( K(x_i, x_j) \neq K(x_j, x_i) \). This asymmetry is directly incorporated into the matrix \( H \), where:
+				\begin{align*}
+					H_{ij} &= y_i K(x_i, x_j) y_j \\
+					H_{ji} &= y_j K(x_j, x_i) y_i
+				\end{align*}
+		\end{itemize}
 \end{itemize}
 
 % ### 5. Feature Interpretation and Asymmetric Information
@@ -70,4 +78,6 @@ f_s(x) = \sum_{i=1}^m \beta_i y_i K(x, x_i) + b_1
 f_t(x) = \sum_{i=1}^m \alpha_i y_i K(x_i, x) + b_2
 \]
 These functions utilize the learned asymmetric relationships in the data.
+
+
 

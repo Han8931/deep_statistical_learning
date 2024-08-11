@@ -182,8 +182,9 @@ $t_k$ is the independent variable, $y_k$ is the noisy data, and we want to find 
 Then, 
 $$\rvy_k = \mathbf{X}_k\boldsymbol{\theta}+\boldsymbol{\eta}_k.$$
 
+
 \section{Alternate Derivation of RLS}
-Suppose the training samples arrive one by one in the following sequence $\rvx_1, \dots, x_m, x_{m+1}$, where $\rvx_{m+1}$ denotes the newly arrived sample vector. These samples can be projected onto the feature space by linear projection and expressed into a matrix $\mathbf{P}^T \in \mathbb{R}^{(d+1)\times (m+1)}$ as follows:
+Suppose the training samples arrive one by one in the following sequence $\rvx_1, \dots, \rvx_m, \rvx_{m+1}$, where $\rvx_{m+1}$ denotes the newly arrived sample vector. These samples can be projected onto the feature space by linear projection and expressed into a matrix $\mathbf{P}^T \in \mathbb{R}^{(d+1)\times (m+1)}$ as follows:
 \begin{align*}
 	\mathbf{P}^T = [\rvp(\rvx_1), \dots, \rvp(\rvx_{m+1})],
 \end{align*}
@@ -209,12 +210,12 @@ Similarly,
 \begin{align*}
 	\mathbf{Q}_{m+1} &= \mathbf{Q}_m + \rvp(\rvx_{m+1}) y_{m+1}
 \end{align*}
-If the system is designed to forget the old training samples, 
+If the system is designed to forget the old training samples (\ie weighted averaging), 
 \begin{align*}
 	\mathbf{R}_{m+1} &= (1 - \lambda) \mathbf{R}_m + \lambda \rvp(\rvx_{m+1}) \rvp(\rvx_{m+1})^T,\\
 	\mathbf{Q}_{m+1} &= (1 - \lambda) \mathbf{Q}_m + \lambda \rvp(\rvx_{m+1}) y_{m+1},
 \end{align*}
-where \( \lambda \in (0, 1) \) is often called a forgetting factor.
+where \( \lambda \in (0, 1) \) is often called a \textit{forgetting factor}.
 
 Let \( \mathbf{A} = \mathbf{R}_m, \mathbf{B} = p(\rvx_{m+1}), \mathbf{C} = 1 \) (scalar), \( \mathbf{D} = p(\rvx_{m+1})^T = \mathbf{p}^T \), then based on the matrix inversion lemma (Woodbury, 1950; Sherman and Morrison, 1950),
 \begin{align*}
@@ -222,7 +223,7 @@ Let \( \mathbf{A} = \mathbf{R}_m, \mathbf{B} = p(\rvx_{m+1}), \mathbf{C} = 1 \) 
 \end{align*}
 we have
 \begin{align*}
-	\mathbf{R}_{m+1}^{-1} &= \left[ (1 - \lambda) \mathbf{R}_m + \lambda \mathbf{p}\mathbf{I}\rvp^T \right]^{-1}\\
+	\mathbf{R}_{m+1}^{-1} &= \left[ (1 - \lambda) \mathbf{R}_m + \lambda \mathbf{p}\rvp^T \right]^{-1}\\
 						  &= \frac{1}{1 - \lambda} \mathbf{R}_m^{-1} - \frac{1}{1 - \lambda} \mathbf{R}_m^{-1}\lambda \mathbf{p} \left( \mathbf{I} + \mathbf{p}^T \frac{\lambda}{1-\lambda} \mathbf{R}_m^{-1} \mathbf{p} \right)^{-1} \mathbf{p}^T \frac{1}{1-\lambda} \mathbf{R}_m^{-1}\\
 						  &= \frac{1}{1 - \lambda} \mathbf{R}_m^{-1} - \frac{1}{(1 - \lambda)^2} \mathbf{R}_m^{-1} \mathbf{pp}^T \mathbf{R}_m^{-1} \left( \frac{1}{\lambda} + \frac{1}{1-\lambda} \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p} \right)^{-1}.
 \end{align*}
@@ -239,9 +240,9 @@ Substitute \(\mathbf{R}_{m+1}^{-1}\) and \(\mathbf{Q}_{m+1} = (1 - \lambda) \mat
 Let 
 \begin{align*}
 	A &= \left( \frac{1}{\lambda} + \frac{1}{1 - \lambda} \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p} \right)^{-1} \\
-	  &= \frac{\lambda(1-\lambda)}{\lambda \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p}+(1-\lambda)}
+	  &= \frac{\lambda(1-\lambda)}{\lambda \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p}+(1-\lambda)},
 \end{align*}
-then 
+which is a constant. Then 
 \begin{align*}
 	w_{m+1} &= w_m - \frac{\mathbf{R}_m^{-1} \mathbf{p}}{(1-\lambda)^2} \cdot A \cdot \left((1-\lambda)\mathbf{p}^T w_m + \lambda \mathbf{p}^T \mathbf{R}_m^{-1}\mathbf{p} y_{m+1}\right)+ \frac{\lambda}{1 - \lambda} \mathbf{R}_m^{-1} \mathbf{p} y_{m+1}\\
 			&= w_m - \frac{\lambda \mathbf{R}_m^{-1} \mathbf{p}}{(1-\lambda)} \cdot \frac{1}{\lambda \mathbf{p}^T \mathbf{R}_m^{-1} \mathbf{p}+(1-\lambda)}\left((1-\lambda)\mathbf{p}^T w_m + \lambda \mathbf{p}^T \mathbf{R}_m^{-1}\mathbf{p} y_{m+1}\right) + \frac{\lambda}{1 - \lambda} \mathbf{R}_m^{-1} \mathbf{p} y_{m+1}\\
