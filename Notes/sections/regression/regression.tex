@@ -72,7 +72,7 @@ If $\mathbf{X}$ is fat and short (\ie $m<d$), a problem is called \textit{underd
 \begin{align*}
 	\boldsymbol{\theta} = \argmin_{\boldsymbol{\theta}\in \mathbb{R}^d} \|\boldsymbol{\theta}\|^2, \,\textrm{subject to}\ \rvy = \mathbf{X}\boldsymbol{\theta},
 \end{align*}
-where $\mathbf{X}\in \mathbb{R}^{m\times d}, \boldsymbol{\theta}\in \mathbb{R}^d,$ and $\rvy\in \mathbb{R}^m$. If rank$(\mathbf{X})=N$, then the linear regression problem will have a unique global minimum 
+where $\mathbf{X}\in \mathbb{R}^{m\times d}, \boldsymbol{\theta}\in \mathbb{R}^d,$ and $\rvy\in \mathbb{R}^m$. If the matrix has rank$(\mathbf{X})=m$, then the linear regression problem will have a unique global minimum 
 \begin{align*}
 	\boldsymbol{\theta} = \mathbf{X}^T(\mathbf{X}\mathbf{X}^T)^{-1}\rvy.
 \end{align*}
