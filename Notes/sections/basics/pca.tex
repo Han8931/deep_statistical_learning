@@ -1,0 +1,45 @@
+\section{Principal Component Analysis}
+\subsection{Covariance and the weight vector}
+
+When deriving PCA, we seek a vector \( \mathbf{w} \) (the weight vector or loading vector) such that the projection of the data onto this vector maximizes the variance. For a given data matrix \( \mathbf{X} \) with mean zero (mean-centered data), the projection of the data onto \( \mathbf{w} \) is given by \( \mathbf{X}\mathbf{w} \).
+
+The variance of the projected data can be expressed as:
+
+\[
+\text{Var}(\mathbf{X}\mathbf{w}) = \frac{1}{n} (\mathbf{X}\mathbf{w})^T (\mathbf{X}\mathbf{w}) = \frac{1}{n} \mathbf{w}^T \mathbf{X}^T \mathbf{X} \mathbf{w}
+\]
+
+Where \( n \) is the number of data points. The matrix \( \mathbf{X}^T \mathbf{X} \) is the covariance matrix of the data (up to a scaling factor).
+
+The goal is to maximize the variance \( \mathbf{w}^T \mathbf{X}^T \mathbf{X} \mathbf{w} \) with respect to the weight vector \( \mathbf{w} \), subject to the constraint that \( \mathbf{w}^T \mathbf{w} = 1 \) (to prevent the trivial solution where the variance could be made arbitrarily large just by scaling \( \mathbf{w} \)).
+\begin{align*}
+	\mathcal{L} = \frac{1}{n} \mathbf{w}^\mathsf{T} \mathbf{X}^\mathsf{T} \mathbf{X} \mathbf{w} - \lambda \left( \mathbf{w}^\mathsf{T} \mathbf{w}  - 1 \right)
+\end{align*}
+
+\begin{align*}
+	\frac{\partial \mathcal{L}}{\partial \mathbf{w}} = \frac{2}{n} \mathbf{X}^\mathsf{T} \mathbf{X} \mathbf{w} - 2 \lambda \mathbf{w} = \mathbf{0}
+\end{align*}
+
+\begin{align*}
+	\underbrace{ \frac{1}{n} \mathbf{X}^\mathsf{T} \mathbf{X} }_{:= \mathbf{S} } \mathbf{w} = \lambda \mathbf{w}  \quad \Rightarrow \quad \mathbf{S} \mathbf{w} = \lambda \mathbf{w}
+\end{align*}
+This is exactly the eigenvalue equation. The eigenvectors $\rvw$ are the directions that maximize the variance, and the eigenvalues $\lambda$ represent the magnitude of the variance along those directions.
+
+\begin{itemize}
+	\item Eigenvectors: Each eigenvector of the covariance matrix represents a direction in the feature space. These directions are the principal components.
+	\item Eigenvalues: The corresponding eigenvalue tells us how much variance is captured along that direction. The larger the eigenvalue, the more variance is captured by the corresponding eigenvector.
+\end{itemize}
+
+\[
+\text{Var}(\mathbf{X}\mathbf{w}) = \frac{1}{n} (\mathbf{X}\mathbf{w})^T (\mathbf{X}\mathbf{w}) = \frac{1}{n} \mathbf{w}^T \mathbf{X}^T \mathbf{X} \mathbf{w} = \frac{1}{n} \mathbf{w}^T \mathbf{S} \mathbf{w} = \frac{1}{n} \mathbf{w}^T \lambda \mathbf{w} = \frac{1}{n} \lambda
+\]
+
+Capturing the Most Information:
+
+\begin{itemize}
+	\item Variance is a measure of how spread out the data is along a particular direction. By maximizing the variance, we ensure that the principal components capture the most significant patterns in the data.
+	\item If we reduce the dimensionality by selecting components with the highest variance, we retain the most information about the data, effectively compressing the data without losing critical details.
+	\item High variance indicates that the data points are spread out and less likely to be redundant. Conversely, low variance implies that data points are clustered close together, often making the information less significant.
+\end{itemize}
+
+

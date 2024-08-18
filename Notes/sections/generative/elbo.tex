@@ -1,6 +1,6 @@
 \section{Latent Variable Modeling}
 
-For each object $x_i$, we establish additional latent variable $z_i$ which denotes the index of gaussian from which $i$-th object was generated. Then our model is
+For each object $x_i$, we establish additional latent variable $z_i$ which denotes the index of Gaussian from which $i$-th object was generated. Then our model is
 $$p(X,Z|\theta) = \prod_{i=1}^{n}p(x_i,z_i|\theta) = \prod_{i=1}^{n}p(x_i|z_i,\theta)p(z_i|\theta) = \prod_{i=1}^{n}\mathcal{N}(x_i|\mu_{z_i},\sigma_{z_i}^2)\pi_{z_i},$$
 where $\pi_{j} = p(z_i=j)$ are prior probability of $j$-th gaussian and $\theta = \{\mu_j, \sigma_j, \pi_j\}_{j=1}^K$. If we know both $X$ and $Z$ then we can obtain explicit ML-solution:
 $$\theta_{ML} = \argmax_{\theta}p(X,Z|\theta) = \argmax_{\theta}\log p(X,Z|\theta).$$
@@ -8,11 +8,11 @@ However, in practice, we don't know $Z$, but only know $X$. Thus, we need to max
 \begin{align}
 	\log p(X|\theta) & = \ln \int  p(X, Z|\theta)dZ\\
 					 & = \ln\int q(Z|X) \frac{p(X, Z|\theta)}{q(Z|X)}dZ\\
-					 & \geq \underbrace{\int q(Z|X) \ln\frac{p(X, Z|\theta)}{q(Z|X)}dZ}_{\textrm{ELBO, } \mathcal{L}(q,\theta)} \quad\textrm{by Jensen's Inequality.}\\
+					 & \geq \underbrace{\int q(Z|X) \ln\frac{p(X, Z|\theta)}{q(Z|X)}dZ}_{\text{ELBO, } \mathcal{L}(q,\theta)} \quad\textrm{by Jensen's Inequality.}\\
 					 &= \int q(Z|X) \ln p(X, Z|\theta) - q(Z|X)\ln q(Z|X)dZ\\
 					 &= \int q(Z|X)[\ln p(X|Z,\theta) + \ln p(Z|\theta)]  - q(Z|X)\ln q(Z|X)dZ\\
 					 &= \int q(Z|X)\ln p(X|Z,\theta)  - q(Z|X)\ln\frac{q(Z|X)}{p(Z|\theta)}dZ\\
-					 &= \mathbb{E}_{q(Z|X)} \ln p(X|Z,\theta)  - KL(q(Z|X)||p(Z|\theta)) 
+					 &= \mathbb{E}_{q(Z|X)} \ln p(X|Z,\theta)  - KL\left(q(Z|X)\|p(Z|\theta)\right) 
 	% & = \int q(Z)\log \frac{p(X,Z|\theta)}{p(Z|X,\theta)}dZ\\
 	% & = \int q(Z)\log \frac{q(Z)p(X,Z|\theta)}{q(Z)p(Z|X,\theta)}dZ\\
 	% & = \int q(Z)\log \frac{p(X,Z|\theta)}{q(Z)}dZ+ \int q(Z)\log \frac{q(Z)}{p(Z|X,\theta)}dZ\\

@@ -11,12 +11,14 @@
 
 \subsection{Joint Probability}
 We can factorize the joint distribution of HMM in \Cref{fig:HMM} by using a Bayesian approach as follows:. 
-
 \begin{align}
-	p(X,Z) = p(x_1,\dots,x_t, z_1,\dots,z_t) = p(z_1)p(x_1|z_1),p(z_2|z_1),\dots,p(x_{t}|z_{t}),p(z_{t}|z_{t-1})
-	\label{eq:hmm_joint}
+	p(X,Z) &= p(x_1,\dots,x_t, z_1,\dots,z_t)\\ 
+		   &= p(z_1)p(x_1|z_1)p(z_2|z_1),\dots,p(x_{t}|z_{t})p(z_{t}|z_{t-1})
 \end{align}
-
+The key assumption involved in factorizing the Markov chain within a Hidden Markov Model (HMM) is \textit{conditional independence} among certain components of the state variables. Here's a detailed breakdown of what this assumption means:
+\begin{itemize}
+	\item Independence of State Components: The transition of each component $z_t^k$ only depends on its corresponding previous component $z_{t-1}^k$ and is independent of other components.
+\end{itemize}
 As the number of latent factor increases, it is getting harder to decode the latent factors. 
 
 \subsection{Marginal Probability}
@@ -29,8 +31,7 @@ The computation can be done as follows:
 	& = \sum_{z_1}\dots\sum_{z_t}p(x_1,\dots,x_t,z_1,\dots,z_t)\\
 	& = \sum_{z_1}\dots\sum_{z_t}\pi_{z_{1}}\prod_{t=2}^{T}a_{z_{t-1},z_t}\prod_{t=1}^{T}b_{z_{t},x_t}
 \end{align*}
-The last step is done by using \Cref{eq:hmm_joint}). The computation of this equation requires lots of computations, so we will change it into a \textbf{recursive form} by using the factorization rule $p(a,b,c) = p(a)p(b|a)p(c|a,b)$. 
-
+The last step is done by using the factorization above. The computation of this equation requires lots of computations, so we will change it into a \textbf{recursive form} by using the factorization rule $p(a,b,c) = p(a)p(b|a)p(c|a,b)$. 
 \begin{align}
 	p(&x_1,\dots,x_t,z_t^k=1) = \sum_{z_{t-1}}p(x_1,\dots,x_{t-1}, x_t,z_{t-1},z_t^k=1)\\
 	&= \sum_{z_{t-1}} p(\underbrace{x_1,\dots,x_{t-1}, z_{t-1}}_{a}, \underbrace{x_t}_{c}, \underbrace{z_t^k=1}_{b})\\
@@ -41,7 +42,6 @@ The last step is done by using \Cref{eq:hmm_joint}). The computation of this equ
 	& = b_{z^k_t,x_t} \sum_{z_{t-1}} p(x_1,\dots,x_{t-1},z_{t-1}) a_{z_{t-1},z_t^k}
 	\label{eq:hmm_eval_fact}
 \end{align}
-
 \begin{itemize}
 	\item In the second line, the $x_{t-1}$ and $z_{t-1}$ are grouped together. 
 	\item Then, we can find the HMM structure by factorizing the equation. 

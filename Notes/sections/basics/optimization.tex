@@ -3,9 +3,12 @@
 
 \section{Intuition of Gradient}
 
-Gradient is a vector function that represents a direction of steepest increase of a function to be differentiated at a certain point. For example, a convex function $z = ax^2+by^2$ has a gradient $[2ax, 2by]$. Its steepest descent direction is $[-2ax, -2by]$. At the point $x_0,y_0$, the gradient direction for the function is $2ax_0(y-y_0) = 2by_0(x-x_0)$. But then the lowest point $(x,y) = (0,0)$ does not lie on the line. Thus, we cannot find that minimum point in one step of ``gradient descent''. The steepeset direction does not lead to the bottom of the bowl. 
+Gradient descent is an optimization algorithm used to minimize a function by iteratively moving towards the function's minimum value. It is a fundamental concept in machine learning, particularly in training models such as neural networks. The gradient is a vector that represents the direction of the steepest increase of the function at a given point. For example, for a convex function $z = ax^2 + by^2$, the gradient is $[2ax, 2by]$, which points in the direction of the steepest ascent.
+
+In gradient descent, the goal is to minimize the function, so the algorithm moves in the opposite direction of the gradient, which is $[-2ax, -2by]$. This opposite direction is chosen because it is the direction of the steepest decrease in the function value. But how do we know that moving in this direction will strictly decrease the function value?
 
 \subsection{Direction of Gradient Descent}
+Let's investigate the direction of gradient descent. 
 
 % Most deep learning algorithms involve \textbf{optimization}.
 
@@ -14,17 +17,19 @@ Gradient is a vector function that represents a direction of steepest increase o
 	\item It tells us how to change $\mathbf{x}$ in order to make a small improvement in our goal.
 \end{itemize}
 
-	A function $f(\mathbf{x})$ can be approximated by its first-order Taylor expansion at $\bar{\mathbf{x}}$:
-	$$f(\mathbf{x})\approx f(\bar{\mathbf{x}})+\nabla f(\bar{\mathbf{x}})^T(x-\bar{\mathbf{x}})$$
-	Now let $\mathbf{d}\neq0, \|\mathbf{d}\|=1$ be a direction, and in consideration of a new point $\mathbf{x}:=\bar{\mathbf{x}}+\mathbf{d}$, we define:
-	$$f(\bar{\mathbf{x}}+\mathbf{d})\approx f(\bar{\mathbf{x}})+\nabla f(\bar{\mathbf{x}})^T\mathbf{d}$$
+A function $f(\mathbf{x})$ can be approximated by its first-order Taylor expansion at $\bar{\mathbf{x}}$:
+$$f(\mathbf{x})\approx f(\bar{\mathbf{x}})+\nabla f(\bar{\mathbf{x}})^T(x-\bar{\mathbf{x}})$$
+Now let $\mathbf{d}\neq0, \|\mathbf{d}\|=1$ be a direction, and in consideration of a new point $\mathbf{x}:=\bar{\mathbf{x}}+\mathbf{d}$, we define:
+$$f(\bar{\mathbf{x}}+\mathbf{d})\approx f(\bar{\mathbf{x}})+\nabla f(\bar{\mathbf{x}})^T\mathbf{d}$$
 
 We would like to choose $\mathbf{d}$ that minimizes the function $f$. From the Cauchy-Schwarz inequality \footnote{Cauchy-Schwarz Inequaility: $|\mathbf{a}\cdot \mathbf{b}|\leq \|\mathbf{a}\|\textrm{ } \|\mathbf{b}\|$. Equality holds if and only if either $\mathbf{a}$ or $\mathbf{b}$ is a multiple of the other.}, we know that
 $$|\nabla f(\bar{\mathbf{x}})^T\mathbf{d}|\leq \|\nabla f(\bar{\mathbf{x}})\|\textrm{ }\|\mathbf{d}\|.$$
-The equality holds if and only if $\mathbf{d}=\lambda \nabla f(\bar{\mathbf{x}})$, where $\lambda\in \mathbb{R}$. Since we want to minimize the function $f$, we negate the steepest direction $\mathbf{d}^{*}$ so the iterations of steepest descent becomes
-	$$\mathbf{x}^{(k+1)} = \mathbf{x}^{(k)} - \eta \nabla f(\mathbf{x}^{(k)})$$
-	, where $k$ is the index of iteration step and $\eta$ is the learning rate parameter.
-
+The equality holds if and only if $\mathbf{d}=\lambda \nabla f(\bar{\mathbf{x}})$, where $\lambda\in \mathbb{R}$. Since we want to minimize the function $f$, we negate the steepest direction $\mathbf{d}^{*}$, then 
+$$f(\bar{\mathbf{x}}+\mathbf{d})\approx f(\bar{\mathbf{x}})-\lambda\nabla f(\bar{\mathbf{x}})^T\nabla f(\bar{\mathbf{x}}).$$
+Since $\nabla f(\bar{\mathbf{x}})^T\nabla f(\bar{\mathbf{x}})$ is \textbf{always positive}, the term $-\lambda\nabla f(\bar{\mathbf{x}})^T\nabla f(\bar{\mathbf{x}})$ is always negative. Therefore by updating $\rvx$
+$$\mathbf{x}^{(k+1)} = \mathbf{x}^{(k)} - \eta \nabla f(\mathbf{x}^{(k)}),$$
+we get
+$$f(\rvx^{(k+1)}) < f(\rvx^{(k)}).$$
 
 
 %	$\nabla f(\bar{\mathbf{x}})^T\mathbf{d}/\|\mathbf{d}\|\geq \|\nabla f(\bar{\mathbf{x}})\|=\nabla f(\bar{\mathbf{x}})^T\Bigg(\frac{\nabla f(\bar{\mathbf{x}})}{\|\nabla f(\bar{\mathbf{x}})\|}\Bigg)$
