@@ -63,6 +63,25 @@ plt.plot(t, y_pred, 'r', linewidth=4)
 plt.show()
 \end{lstlisting}
 
+\subsection{Time Complexity}
+The time complexity of the training process involves the following steps:
+\begin{itemize}
+	\item Computing \( X^T X \): The product \( X^T X \) involves multiplying a \( d \times m \) matrix with an \( m \times d \) matrix. The time complexity of this matrix multiplication is \( O(md^2) \).
+	\item Computing \( X^T \mathbf{y} \): \( X^T \mathbf{y} \) involves multiplying a \( d \times m \) matrix with an \( m \times 1 \) vector.
+	 - The time complexity is \( O(md) \).
+	\item Computing \( \left( X^T X \right)^{-1} \):
+ - The inversion of a \( d \times d \) matrix \( X^T X \) has a time complexity of \( O(d^3) \).
+	\item Multiplying \( \left( X^T X \right)^{-1} \) with \( X^T \mathbf{y} \): This is a matrix-vector multiplication involving a \( d \times d \) matrix and a \( d \times 1 \) vector. Thus, the time complexity is \( O(d^2) \).
+	\item Total Training Time Complexity: The dominant terms in the training process are \( O(md^2) \) (for computing \( X^\top X \)) and \( O(d^3) \) (for inverting \( X^T X \)).
+- Therefore, the total time complexity for training a linear regression model is \( O(md^2 + d^3) \).
+\end{itemize}
+
+Inference time complexity:
+\begin{itemize}
+	\item The inference step requires a matrix-vector multiplication between an \( m' \times d \) inference data matrix and a \( d \times 1 \) vector.
+- The time complexity of this operation is \( O(m'd) \).
+\end{itemize}
+
 \section{Overdetermined and Underdetermined Systems}
 Recall that the linear regression problem is an optimization problem of finding the optimal parameter as follows:
 $$\boldsymbol{\theta}_{opt} = \argmin_{\boldsymbol{\theta}\in \mathbb{R}^d}||y-\mathbf{X}\boldsymbol{\theta}||^2.$$
@@ -127,7 +146,7 @@ Note that we can change the ridge regression into a dual form:
 	(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})\boldsymbol{\theta}	&= (\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})^{-1}\mathbf{X}^T\rvy\\
 	(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})\boldsymbol{\theta} &= \mathbf{X}^T\rvy\\ 
 	\boldsymbol{\theta} &= \lambda^{-1}\mathbf{I}(\mathbf{X}^T\rvy-\mathbf{X}^T\mathbf{X}\boldsymbol{\theta})\\
-	&= \mathbf{X}^T\lambda^{-1}(\rvy-\mathbf{X}\boldsymbol{\theta})\\
+						&= \mathbf{X}^T\underbrace{\lambda^{-1}(\rvy-\mathbf{X}\boldsymbol{\theta})}_{=\alpha}\\
 	&= \mathbf{X}^T\alpha\\
 	\lambda\alpha &= (\rvy-\mathbf{X}\boldsymbol{\theta})\\
 	&= (\rvy-\mathbf{X}\mathbf{X}^T\alpha)\\
@@ -136,7 +155,17 @@ Note that we can change the ridge regression into a dual form:
 	\alpha &= (\mathbf{G}+\lambda)^{-1}\rvy.
 	\label{eq:dual_regression}
 \end{align}
-This gives us the solution of the underdetermined problems.  
+This gives us the solution of the underdetermined problems. For a new data point $\rvx_{new}$, we can make an inference by computing dot products between the new data point and each training data point:
+\begin{align*}
+	y &= \boldsymbol{\theta}^T\rvx_{new}\\
+	  &= \alpha^T\mathbf{X}\rvx_{new}
+\end{align*}
+
+\subsection{Time Complexity}
+\begin{itemize}
+	\item Training time: $O(md^2+m^3)$
+	\item Inference time: $O(md)$
+\end{itemize}
 
 
 \section{Weighted LSE}

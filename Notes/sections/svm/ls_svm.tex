@@ -2,89 +2,158 @@
 \label{ch:ls_svm}
 
 \section{Introduction}
-\label{sec:ls_svm}
-Least Squares Support Vector Machine (LS-SVM) is a modified version of the traditional Support Vector Machine (SVM) that simplifies the optimization process by using a least squares cost function. LS-SVM transforms the quadratic programming problem in classical SVM into a set of linear equations, which are easier and faster to solve. Here’s a breakdown of the key concepts and steps involved in LS-SVM:
+Least Squares Support Vector Machine (LS-SVM) is a modified version of the traditional Support Vector Machine (SVM) that simplifies the quadratic optimization problem by using a \textit{least squares cost function}. LS-SVM transforms the quadratic programming problem in classical SVM into a set of linear equations, which are easier and faster to solve. 
 
-The LS-SVM optimization problem is formulated as:
+\subsection{Optimization Problem (Primal Problem)}
 
-\subsection{Primal Problem}
+\begin{align*}
+   &\min_{w, b, e} \frac{1}{2} \lVert w\rVert^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2\\
+   &\text{subject to } y_i (w^T \phi(x_i) + b) = 1 - e_i, \ \forall i
+\end{align*}
+where:
+\begin{itemize}
+   \item $w$ is the weight vector.
+   \item $b$ is the bias term.
+   \item $e_i$ are the error variables. In LS-SVM, the error terms $e_i$ serve a similar purpose to the slack variables ($\xi$) in traditional SVMs. However, instead of using hinge loss as in traditional SVM, LS-SVM uses a squared error loss function. 
+\begin{align*}
+	\sum_{i=1}^N e_i^2 &= \sum_{i=1}^N \left(1-y_i (w^T \phi(x_i) + b)\right)^2\\
+					   &= \sum_{i=1}^N \left(y_i^2-y_i (w^T \phi(x_i) + b)\right)^2\\
+					   &= \sum_{i=1}^N y_i^2\left(y_i-(w^T \phi(x_i) + b)\right)^2\\
+					   &= \sum_{i=1}^N \left(y_i-(w^T \phi(x_i) + b)\right)^2
+\end{align*}
+% $$\sum_{i=1}^N e_i^2 = \sum_{i=1}^N \left(1-y_i (w^T \phi(x_i) + b)\right)^2$$
+% $$\sum_{i=1}^N e_i^2 = \sum_{i=1}^N (y_ie_i)^2 = \sum_{i=1}^N (y_i-(w^T \phi(x_i) + b) )^2.$$
 
-   \[
-   \min_{w, b, e} \frac{1}{2} \|w\|^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2
-   \]
-   subject to:
-   \[
-   y_i (w^T \phi(x_i) + b) = 1 - e_i, \quad \forall i \]
-   where:
-   \begin{itemize}
-	   \item \( w \) is the weight vector.
-   	   \item \( b \) is the bias term.
-   	   \item \( e_i \) are the error variables. In LS-SVM, the error terms $e_i$ serve a similar purpose to the slack variables ($\xi$) in traditional SVMs. However, instead of using hinge loss as in traditional SVM, LS-SVM uses a squared error loss function. 
-   	   \item \( \gamma \) is a regularization parameter.
-   	   \item \( \phi(x_i) \) is the feature mapping function.
-	   \item Note that $y_i^{-1} = y_i$ since $y_i = \pm 1$. 
-   \end{itemize}
+   \item $\gamma$ is a regularization parameter.
+   \item $\phi(x_i)$ is the feature mapping function.
+   \item Note that $y_i^{-1} = y_i$, since $y_i = \pm 1$. 
+\end{itemize}
 
 \subsection{Lagrangian Function}
-The least-squares SVM (LS-SVM) classifier formulation above implicitly corresponds to a regression interpretation with binary targets $y_i=\pm 1$. Using $y_i^2=1$,
-
-$$\sum_{i=1}^N e_i^2 = \sum_{i=1}^N (y_ie_i)^2 = \sum_{i=1}^N (y_i-(w^T \phi(x_i) + b) )^2.$$
-
-
-   The Lagrangian for the above primal problem is:
-   \[
-   L(w, b, e, \alpha) = \min_{w, b, e} \frac{1}{2} \|w\|^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2 - \sum_{i=1}^n \alpha_i \left[ y_i (w^T \phi(x_i) + b) - 1 + e_i \right]
-   \]
-   where \( \alpha_i \) are the Lagrange multipliers. Then, by setting the partial derivatives of the Lagrangian with respect to \( w \), \( b \), \( e \), and \( \alpha \) to zero, we get the KKT conditions.
-
-To find the stationary points of the Lagrangian, we take the partial derivatives with respect to \( w \), \( b \), \( e_i \), and \( \alpha_i \), and set them to zero. First, take partial derivative with respect to 
+To solve the constraint optimization problem, we define the Lagrangian function: 
+\begin{align*}
+	L(w, b, e, \alpha) = \min_{w, b, e} \frac{1}{2} \lVert w\rVert^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2 - \sum_{i=1}^n \alpha_i \left[ y_i (w^T \phi(x_i) + b) - 1 + e_i \right],
+\end{align*}
+where \( \alpha_i \) are Lagrange multipliers. Then, by setting the partial derivatives of the Lagrangian with respect to $w$, $b$, $e$, and $\alpha$ to zero, we get the KKT conditions.
 
 \begin{itemize}
-	\item \( w \): \[
-   \frac{\partial L}{\partial w} = w - \sum_{i=1}^n \alpha_i y_i \phi(x_i) = 0 \implies w = \sum_{i=1}^n \alpha_i y_i \phi(x_i)
-   \]
-	\item \( b \):
-   \[
-   \frac{\partial L}{\partial b} = -\sum_{i=1}^n \alpha_i y_i = 0
-   \]
-\item \( e_i \):
-   \[
-   \frac{\partial L}{\partial e_i} = \gamma e_i - \alpha_i = 0 \implies \alpha_i = \gamma e_i
-   \]
-\item \( \alpha_i \):
-   \[
-   \frac{\partial L}{\partial \alpha_i} = - \left[ y_i (w^T \phi(x_i) + b) - 1 + e_i \right] = 0 \implies y_i (w^T \phi(x_i) + b) = 1 - e_i, i=1,\dots, N.
-   \]
+	\item $w$: 
+		\begin{align*}
+		   \frac{\partial L}{\partial w} = w - \sum_{i=1}^n \alpha_i y_i \phi(x_i) = 0 \implies w = \sum_{i=1}^n \alpha_i y_i \phi(x_i)
+		\end{align*}
+	\item $b$:
+		\begin{align*}
+		   \frac{\partial L}{\partial b} = -\sum_{i=1}^n \alpha_i y_i = 0
+		\end{align*}
+\item $e_i$:
+	\begin{align*}
+	   \frac{\partial L}{\partial e_i} = \gamma e_i - \alpha_i = 0 \implies \alpha_i = \gamma e_i
+	\end{align*}
+	Thus, $e_i = \alpha_i/\gamma$
+\item $\alpha_i$:
+	\begin{align*}
+	   \frac{\partial L}{\partial \alpha_i} = - \left[ y_i (w^T \phi(x_i) + b) - 1 + e_i \right] = 0 \implies y_i (w^T \phi(x_i) + b) = 1 - e_i, i=1,\dots, N.
+	\end{align*}
 \end{itemize}
 
+% Let's substitute $w$ and $e$:
+% \begin{align*}
+% 	\frac{1}{2} \lVert w \rVert^2 &= \frac{1}{2}\left(\sum_i \alpha_i y_i \phi(x_i)\right)\cdot \left(\sum_j \alpha_j y_j \phi(x_j)\right)\\
+% 								  &= \frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \underbrace{K(x_i,x_j)}_{=\phi(x_i)^T\phi(x_j)}\\
+% 	\frac{\gamma}{2} \sum_{i=1}^N e_i^2 &= \frac{\gamma}{2} \sum_{i=1}^N \left(\frac{\alpha_i}{\gamma}\right)^2 = \frac{1}{2\gamma} \sum_{i=1}^N \alpha_i^2
+% \end{align*}
+Similarly, 
+\begin{align*}
+	&y_i (w^T \phi(x_i) + b) - 1 + e_i\\
+	&=  \left(\sum_j \alpha_j y_iy_j \phi(x_j)^T \phi(x_i) + by_i\right) - 1 + \frac{\alpha_i}{\gamma}
+\end{align*}
 
-We can express this in matrix form. Define:
+We can express them in a matrix form:
 \begin{itemize}
-	\item \( \alpha = [\alpha_1, \alpha_2, \ldots, \alpha_n]^T \)
-	\item \( y = [y_1, y_2, \ldots, y_n]^T \)
-	\item \( 1_n \) as a column vector of ones of length \( n \)
-	% \item \( K \) as the kernel matrix, where \( K_{ij} = K(x_i, x_j) \)
-	\item \( Z = [\phi(x_1)^Ty_1, \dots, \phi{x_n}^Ty_n] \)  
+	\item $\alpha = [\alpha_1, \alpha_2, \ldots, \alpha_n]^T$.
+	\item $y = [y_1, y_2, \ldots, y_n]^T$.
+	\item $1_n$ as a column vector of ones of length $n$.
+	\item $Z = [\phi(x_1)^Ty_1, \dots, \phi(x_n)^Ty_n]$.
 \end{itemize}
+% Then, the linear system becomes:
+% \begin{align*}
+% 	\begin{bmatrix}
+% 		I & 0 & 0 & -Z^T\\
+% 		0 & 0 & 0 & -y^T\\
+% 		0 & 0 & \gamma I & -I^T\\
+% 		Z & y & I & 0
+% 	% y & \Omega + \frac{1}{\gamma} I
+% 	\end{bmatrix}
+% 	\begin{bmatrix}
+% 	w \\
+% 	b \\
+% 	e \\
+% 	\alpha
+% 	\end{bmatrix}
+% 	=
+% 	\begin{bmatrix}
+% 	0 \\
+% 	0 \\
+% 	0 \\
+% 	1_n
+% 	\end{bmatrix}
+% \end{align*}
 
 
-Then the linear system becomes:
+% Let's define the following:
+% \begin{itemize}
+% 	\item $\alpha = [\alpha_1, \alpha_2, \ldots, \alpha_N]^T$.
+% 	\item $y = [y_1, y_2, \ldots, y_N]^T$.
+% 	\item $1_n$ as a column vector of ones of length $N$.
+% 	\item $K$ is the $N\times N$ kernel matrix, where $K_{ij} = K(x_i, x_j)$. 
+% 	% \item $Z = [\phi(x_1)^Ty_1, \dots, \phi(x_n)^Ty_n]$.
+% 	\item $\Omega = \text{diag}(y)\cdot K \cdot \text{diag}(y)$, where $\text{diag}(y)$ is a diagonal matrix with the elements of $y$ on the diagonal.
+% \end{itemize}
 
-\[
-\begin{bmatrix}
-0 & y^T \\
-y & \Omega + \frac{1}{\gamma} I
-\end{bmatrix}
-\begin{bmatrix}
-b \\
-\alpha
-\end{bmatrix}
-=
-\begin{bmatrix}
-0 \\
-1_n
-\end{bmatrix}
-\], 
+% \begin{align*}
+% 	\Omega_{kl}&= y_ky_l\phi(x_k)^T\phi(x_l)\\ 
+% 			   &= y_ky_lK(x_k, x_l)
+% \end{align*}
+
+% Then, 
+% \begin{align*}
+% 	L(\alpha) &= \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j K(x_i, x_j) + \frac{1}{2\gamma} \sum_{i=1}^N \alpha_i^2 - \sum_{i=1}^N \alpha_i \left[ y_i (w^T \phi(x_i) + b) - 1 + \frac{\alpha_i}{\gamma} \right]\\
+% 			  &= \dots - \sum_{i=1}^N \alpha_i \left[ y_i \left(\sum_j \alpha_j y_j \phi(x_j) \phi(x_i) + b\right) - 1 + \frac{\alpha_i}{\gamma} \right]\\
+% 			  &= \dots - \sum_{i=1}^N \alpha_i\left[  y_i\underbrace{\sum_j^N  \alpha_j y_j K(x_j,x_i)}_{=0} + by_i - 1 + \frac{\alpha_i}{\gamma} \right]\\
+% 			  &= \dots - \sum_{i=1}^N \alpha_i\left[ by_i - 1 + \frac{\alpha_i}{\gamma} \right]\\
+% 			  &= \dots - \underbrace{\sum_{i=1}^N \alpha_i y_i}_{=0} b - \alpha_i + \frac{\alpha_i^2}{\gamma} \right]\\
+% 			  &= \dots - \sum_{i=1}^N - \alpha_i + \frac{\alpha_i^2}{\gamma} \right]\\
+% 			  &= \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j K(x_i, x_j) + \frac{1}{2\gamma} \sum_{i=1}^N \alpha_i^2 + \sum_{i=1}^N \alpha_i - \frac{\alpha_i^2}{\gamma} \right]\\
+% 			  &= \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j K(x_i, x_j) - \frac{1}{2\gamma} \sum_{i=1}^N \alpha_i^2 + \sum_{i=1}^N \alpha_i 
+% \end{align*}
+% This one is subject to 
+% \begin{align*}
+% 	\sum_{i=1}^n \alpha_i y_i = 0.
+% \end{align*}
+
+% In sum, we get
+% \begin{align*}
+% 	L(\alpha)  &= \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j K(x_i, x_j) + \sum_{i=1}^N \alpha_i - \frac{1}{2\gamma} \sum_{i=1}^N \alpha_i^2 \\
+% 			   &= - \frac{1}{2} \alpha^T \Omega \alpha + \mathbf{1}^T\alpha - \frac{1}{2\gamma} \alpha^T\alpha
+% \end{align*}
+
+
+By using the expression of $\alpha$ and $b$, we get
+\begin{align*}
+	\begin{bmatrix}
+	0 & y^T \\
+	y & \Omega + \frac{1}{\gamma} I
+	\end{bmatrix}
+	\begin{bmatrix}
+	b \\
+	\alpha
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	0 \\
+	1_n
+	\end{bmatrix}
+\end{align*}
 where 
 \begin{align*}
 	\Omega &= ZZ^T,\\  

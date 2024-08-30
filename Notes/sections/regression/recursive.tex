@@ -183,6 +183,82 @@ Then,
 $$\rvy_k = \mathbf{X}_k\boldsymbol{\theta}+\boldsymbol{\eta}_k.$$
 
 
+\subsection{Python Implementation}
+
+\begin{lstlisting}[language=Python]
+class RecursiveLeastSquares(object):
+    
+    # theta0 - initial estimate used to initialize the estimator
+    # P0 - initial estimation error covariance matrix
+    # R  - covariance matrix of the measurement noise
+    def __init__(self,theta0,P0,R)
+        
+        # initialize the values
+        self.theta0=theta0
+        self.P0=P0
+        self.R=R
+        
+        # this variable is used to track the current time step k of the estimator 
+        # after every time step arrives, this variables increases for one 
+        # in this way, we can track the number of variblaes
+        self.curr_step=0
+                  
+        # this list is used to store the estimates xk starting from the initial estimate 
+        self.estimates=[]
+        self.estimates.append(theta0)
+         
+        # this list is used to store the estimation error covariance matrices Pk
+        self.est_error_cov=[]
+        self.est_error_cov.append(P0)
+        
+        # this list is used to store the gain matrices Kk
+        self.gainMatrices=[]
+         
+        # this list is used to store estimation error vectors
+        self.errors=[]
+    
+     
+    # this function takes the current measurement and the current measurement matrix X
+    # and computes the estimation error covariance matrix, updates the estimate, 
+    # computes the gain matrix, and the estimation error
+    # it fills the lists self.estimates, self.est_error_cov, self.gainMatrices, and self.errors
+    # it also increments the variable curr_step for 1
+    
+    # measurementValue (theta) - measurement obtained at the time instant k
+    # X - measurement matrix at the time instant k
+    
+    def predict(self,measurementValue,X):
+        import numpy as np
+        
+        # Compute the L matrix and its inverse 
+        # K_k = P_{k-1}X_k^T(R_k+X_kP_{k-1}X_k^T)^{-1}
+        Lmatrix=self.R+np.matmul(X,np.matmul(self.est_error_cov[self.curr_step],X.T))
+        LmatrixInv=np.linalg.inv(Lmatrix)
+        # Compute the gain matrix
+        gainMatrix=np.matmul(self.est_error_cov[self.curr_step],np.matmul(X.T,LmatrixInv))
+
+        # Compute the estimation error                    
+        # \theta_k = \theta_{k-1}+K_k (y_k-X_k\theta_{k-1})
+        error=measurementValue-np.matmul(X,self.estimates[self.curr_step])
+        # Compute the estimate
+        estimate=self.estimates[self.curr_step]+np.matmul(gainMatrix,error)
+        
+        # Propagate the estimation error covariance matrix
+        # P_k = (I-K_k X_k)P_{k-1}(I-K_k X_k)^T+K_kR_kK_k^T
+        ImKc=np.eye(np.size(self.theta0),np.size(self.theta0))-np.matmul(gainMatrix,X)
+        error_cov=np.matmul(ImKc,self.est_error_cov[self.curr_step])
+        
+        # add computed elements to the list
+        self.estimates.append(estimate)
+        self.est_error_cov.append(error_cov)
+        self.gainMatrices.append(gainMatrix)
+        self.errors.append(error)
+        
+        # increment the current time step
+        self.curr_step=self.curr_step+1
+\end{lstlisting}
+
+
 \section{Alternate Derivation of RLS}
 Suppose the training samples arrive one by one in the following sequence $\rvx_1, \dots, \rvx_m, \rvx_{m+1}$, where $\rvx_{m+1}$ denotes the newly arrived sample vector. These samples can be projected onto the feature space by linear projection and expressed into a matrix $\mathbf{P}^T \in \mathbb{R}^{(d+1)\times (m+1)}$ as follows:
 \begin{align*}
@@ -260,4 +336,6 @@ Here, we note that $\lambda$ controls the strength of update with respect to the
 \begin{align*}
 	w_{m+1} = w_m + \frac{\mathbf{R}_m^{-1} \rvp (y_{m+1} - \rvp^T w_m)}{\rvp^T \mathbf{R}_m^{-1} \rvp + 1}. 
 \end{align*}
+
+
 

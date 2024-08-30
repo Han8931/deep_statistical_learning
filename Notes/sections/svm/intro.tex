@@ -1,36 +1,43 @@
 \chapter{Support Vector Machine}
-\section{Preliminary}
+Support Vector Machines (SVMs) are among the most effective and versatile tools in machine learning, widely used for various tasks. SVMs work by finding the optimal boundary, or hyperplane, that separates different classes of data with the maximum margin, making them highly reliable for classification, especially with complex datasets.
 
-\subsection{Orthogonal Projection}
-Given two vectors $x$ and $y$, we would like to find the orthogonal projection of $x$ onto $y$.
+What truly sets SVMs apart is their ability to handle both linear and non-linear data through the \textit{kernel trick}, allowing them to adapt to a wide range of problems with impressive accuracy. In this blog post, we'll delve into how SVMs work and gently explore the mathematical foundations behind their powerful performance.
 
-By definition:
-$$\|z\| = \|x\|cos(\theta).$$
-Note that the dot product of $x$ and $y$ is 
-$$cos(\theta)= \frac{x\cdot y}{\|x\|\cdot\|y\|}.$$
-So we can replace the cosine 
-$$\|z\| = \|x\|\frac{x\cdot y}{\|x\|\cdot\|y\|}.$$
-This results in 
-$$||z|| = u\cdot x,$$
-where $u$ is an unit vector of $y$, which has the same direction as $z$. Therefore we can express $z$ as follows: 
-$$z = \|z\|\cdot u,$$
+
+\section{Orthogonal Projection}
+When working with vectors $x$ and $y$, finding the orthogonal projection of $x$ onto $y$ is a common task in linear algebra. The projection is a way to express how much of $x$ lies in the direction of $y$.
+
+By definition, the magnitude of the projection $z$ of $x$ onto $y$ is given by::
+$$\lVert z\rVert  = \lVert x\rVert cos(\theta).$$
+Here, $\theta$ is the angle between $x$ and $y$. To connect this with the dot product, recall that:
+$$x\cdot y = \lVert x\rVert \ \lVert y\rVert  cos(\theta).$$
+This formula allows us to replace the cosine term:
+$$\lVert z\rVert  = \lVert x\rVert \frac{x\cdot y}{\lVert x\rVert \cdot\lVert y\rVert }.$$
+Simplifying further, we express the magnitude of $z$ as:
+$$\lVert z\rVert = u\cdot x,$$
+where $u$ is an unit vector of $y$. Since $z$ is in the direction of $y$, we can write:
+$$z = \lVert z\rVert \cdot u,$$
 Then, 
 \begin{align*}
 	z &= (u\cdot x)\cdot u.
 \end{align*}
-Equivalently, 
+This gives us the final expression for the orthogonal projection of $x$ onto $y$:
 \begin{align*}
-	\textrm{Proj}_yx &= \Bigg(\frac{y\cdot x}{\|y\|^2}\Bigg)y\\
-					 &= \Bigg(\frac{y\cdot x}{\|y\|}\Bigg)\frac{y}{\|y\|}\\
-					 &= (u\cdot x)\cdot u
+	\textrm{Proj}_yx &= (u\cdot x)\cdot u\\ 
+					 &= \Bigg(\frac{y\cdot x}{\lVert y\rVert ^2}\Bigg)y\\
+					 &= \Bigg(\frac{y\cdot x}{\lVert y\rVert }\Bigg)\frac{y}{\lVert y\rVert }
 \end{align*}
+In this formula, the projection $\textrm{Proj}_yx$ represents the component of $x$ that lies along the direction of $y$.
 
 \section{Decision Boundary with Margin}
-A hyperplane(or decision surface) is used to separate data points belonging to different classes. \textbf{Support vectors are the data points that lie closest to the hyperplane}. The hyperplane can be written as the set of points $\mathbf{x}$, satisfying 
-$$\mathbf{w}\cdot \mathbf{x}+b=0$$
-Note that the hyperplain is normal to the vector $\mathbf{w}$. 
+A hyperplane(or decision surface) is used to separate data points belonging to different classes. The goal of SVM is to find the optimal separating hyperplane. However, what is the optimal separating hyperplanes? \textbf{The optimal hyperplane is the one which maximizes the distance from the hyperplane to the nearest data point of any class. Support vectors are the data points that lie closest to the hyperplane}. The distance is referred to as the \textit{margin}. SVMs maximize the margin around the separating hyperplane.
+
+The equation of a hyperplane in $\mathbb{R}^p$ can be expressed as:
+$$\mathbf{w}\cdot \mathbf{x}+b=0.$$
+Here, $\mathbf{w}$ is the normal vector to the hyperplane. It is clear by expressing it 
 $$\mathbf{w}(\mathbf{x}-\mathbf{x}_0)=0,$$
-where $b = \mathbf{w}\cdot\mathbf{x}_0$. The support vectors are directly related to the optimal hyperplane. The goal of SVM is to find the optimal separating hyperplane. However, what is the optimal separating hyperplanes? \textbf{The optimal hyperplane is the one which maximizes the distance from the hyperplane to the nearest data point of any class}. The distance is referred to as the \textit{margin}. SVMs maximize the margin around the separating hyperplane. The decision function is fully specified by a subset of training samples, the support vectors. 
+where $b = \mathbf{w}\cdot\mathbf{x}_0$. 
+% The support vectors are directly related to the optimal hyperplane.  The decision function is fully specified by a subset of training samples, the support vectors. 
 
 Let's consider a simple scenario, where training data is linearly separable: 
 $$\mathcal{D} = \left\{ (\mathbf{x}_i, y_i)\mid\mathbf{x}_i \in \mathbb{R}^p,\, y_i \in \{-1,1\}\right\}_{i=1}^N.$$
@@ -40,71 +47,72 @@ Then, we can build two hyperplanes separating the data with no points between th
 	\item $H_2:\mathbf{w}\cdot \mathbf{x}+b=-1$
 \end{itemize}
 
-The, all samples have to satisfy one of two constraints:
+All samples have to satisfy one of two constraints:
 \begin{enumerate}
 	\item $\mathbf{w}\cdot \mathbf{x}+b\geq1$
 	\item $\mathbf{w}\cdot \mathbf{x}+b\leq-1$
 \end{enumerate}
-Equivalently, 
+These constraints can be combined into a single expression:
 $$y(\mathbf{w}\cdot \mathbf{x}+b)\geq 1.$$
 
-To maximize the margin, we can consider a unit vector $\mathbf{u} = \frac{\mathbf{w}}{||\mathbf{w}||}$, which is perpendicular to the hyperplanes and a point $x_0$ on the hyperplane $H_2$. If we scale $u$ from $x_0$, we get $z = x_0+ru$. If we assume $z$ is on $H_1$, then $\mathbf{w}\cdot z +b=1$. This is equivalent to 
+To maximize the margin, we can consider a unit vector $\mathbf{u} = \frac{\mathbf{w}}{\lVert\mathbf{w}\rVert}$, which is perpendicular to the hyperplanes and a point $x_0$ on the hyperplane $H_2$. If we scale $u$ from $x_0$, we get $z = x_0+ru$. If we assume $z$ is on $H_1$, then $\mathbf{w}\cdot z +b=1$. This is equivalent to 
 \begin{align*}
 	\mathbf{w}\cdot (x_0+ru)+b=1\\
-	\mathbf{w}x_0+\mathbf{w}r\frac{\mathbf{w}}{\|\mathbf{w}\|}+b=1\\
-	\mathbf{w}x_0+r\|\mathbf{w}\|+b=1\\
-	\mathbf{w}x_0+b=1-r\|\mathbf{w}\|
+	\mathbf{w}x_0+\mathbf{w}r\frac{\mathbf{w}}{\lVert\mathbf{w}\rVert}+b=1\\
+	\mathbf{w}x_0+r\lVert \mathbf{w}\rVert +b=1\\
+	\mathbf{w}x_0+b=1-r\lVert \mathbf{w}\rVert 
 \end{align*}
-The second step is done by $u=w/\|w\|$. The third step is valid since $w\cdot w = \|w\|^2$. As $x_0$ is on $H_2$, so $\mathbf{w}x_0+b=-1$. By substituting the LHS with it, we have
+As $x_0$ is on $H_2$, we get $\mathbf{w}x_0+b=-1$. Finally, we obtain
 \begin{align*}
-	-1=1-r||\mathbf{w}||\\
-	r=\frac{2}{||\mathbf{w}||}.
+	-1=1-r\lVert \mathbf{w}\rVert \\
+	r=\frac{2}{\lVert \mathbf{w}\rVert }.
 \end{align*}
-Note that the scaled unit vector $ru$'s magnitude is $r$. Thus, the maximization of margin is equivalent to maximize $r$. To maximize $r$, we have to minimize the norm of $\mathbf{w}$. This is equivalent to an optimization problem. 
+Note that the scaled unit vector $ru$'s magnitude is $r$. Thus, the maximization of margin is equivalent to maximize $r$. To maximize $r$, we have to minimize $\lVert \mathbf{w} \rVert$. Thus, finding the optimal hyperplane reduces to solving the following optimization problem:
 \begin{align*}
-	&\min \|w\|,\quad \textrm{subject to } \\
+	&\min \lVert \mathbf{w}\rVert ,\quad \textrm{subject to } \\
 	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1 \quad\forall i.
 \end{align*}
-This minimization problem gives the same result as the following:  
+Equivalently, 
 \begin{align*}
-	&\min \frac{1}{2}\|w\|^2,\quad \textrm{subject to } \\
+	&\min \frac{1}{2}\lVert w\rVert ^2,\quad \textrm{subject to } \\
 	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1 \quad\forall i.
 \end{align*}
-Now, we now have \textbf{convex quadratic optimization problem}. The optimization is explained in \Cref{sec:svm_optimization}. However, this hard margin cannot tolerate erroneous cases, which could be too strict for better generalization. To relax it, two solutions can be leveraged:
-\begin{itemize}
-	\item Admits prediction errors. 
-	\item Use non-linearity (complex decision boundary).
-\end{itemize}
+Now, we have \textit{convex quadratic optimization problem}. The solution of this problem gives us the optimal hyperplane that maximizes the margin (\cf \Cref{sec:svm_optimization}). However, in practice, the data may not be perfectly separable. To account for this, we introduce a \textit{soft margin} that allows for some misclassification. This is done by admitting small errors in classification and potentially using a more complex, \textit{nonlinear decision boundary}, improving the generalization of the model.
 
 \section{Error Handling in SVM}
-Let's first try to solve the issue by allowing some prediction errors. 
+In practice, it's unrealistic to expect a perfect separation of data, especially when the data is noisy or not linearly separable. To address this, we can allow for some prediction errors while still striving to find an optimal decision boundary.
+
+One approach is to minimize the norm of the weight vector, while penalizing the number of errors $N_e$. The optimization problem can be formulated as follows:
 \begin{align*}
-	&\min ||w||+C\cdot N_{e},\quad \textrm{subject to } \\
+	&\min \frac{1}{2}\lVert \mathbf{w}\rVert^2 +C\cdot N_{e},\quad \text{subject to } \\
 	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1 \quad \forall i.
 \end{align*}
-where $N_e$ is the number of errors. It means we consider all errors equally. This penalty approach is \textbf{0-1 loss}. This approach is not popular, since it is hard to solve. Another approach is to use a \textbf{slack variable} with \textbf{hinge loss}, instead of counting the number of errors. 
+Here, $C$ is a regularization parameter that controls the trade-off between minimizing the weight vector and the number of errors. The penalty approach described here is known as \textit{0-1 loss}, where all errors are treated equally. However, this approach is not commonly used. Instead, a more practical approach introduces a \textit{slack variable} with \textit{hinge loss}. The slack variable ($\xi_j$) measures the degree of misclassification or how much a point is violating the margin. This leads to the following problem:
 \begin{align*}
-	&\min ||w||+C\sum_j\xi_j ,\quad \textrm{subject to } \\
-	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1-\xi_j \quad \forall i,\, \xi_j\geq 0,\, \forall j.
+	&\min \frac{1}{2}\lVert \mathbf{w}\rVert^2 +C\sum_j\xi_j ,\quad \textrm{subject to }\\
+		 &\begin{cases}
+		&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1-\xi_j \ \forall i,\quad \\
+		&\xi_j\geq 0,\ \forall j.
+	\end{cases}
 \end{align*}
-Note that $\xi_j>1$ when mis-classified by its definition: 
+Note that $\xi_j>1$, when SVMs make errors:
 \begin{align*}
-	\xi_j = (1-(\mathbf{w}x_j+b)y_j)_+
+	\xi_j = (1-(\mathbf{w}\mathbf{x}_j+b)y_j)_+
 \end{align*}
-Let's look at the new constraint. If some data points are mis-classified, then $\xi_j>1$ and $y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\leq 0$. This approach is called \textbf{soft-margin SVM}. Lastly, how do we set $C$?
+Let's look at the new constraint. If some data points are misclassified, then $\xi_j>1$ and $y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\leq 0$. This approach is called \textbf{soft-margin SVM}. Lastly, how do we set $C$? A large value of $C$ places a higher penalty on errors, leading to a narrower margin but fewer misclassifications (\ie  the SVM will try to classify all data points correctly), whereas a smaller value of $C$ allows for a wider margin but potentially more misclassifications. The optimal value of $C$ is typically chosen through cross-validation.
 
-\section{Kernel Trick}
-\label{sec:kernel_trick}
-Applying the kernel trick simply means replacing the dot product of two examples in a dual form by a kernel function. 
+% \section{Kernel Trick}
+% \label{sec:kernel_trick}
+% Applying the kernel trick simply means replacing the dot product of two examples in a dual form by a kernel function. 
 
-\begin{align}
-	 \max_\alpha \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \psi(\mathbf{x}_i)\cdot \psi(\mathbf{x}_j)
-	 \label{eq:kernel_dual_form}
-\end{align}
-Equivalently, 
-\begin{align}
-	 \max_\alpha \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j K(\mathbf{x}_i,\mathbf{x}_j).
-\end{align}
+% \begin{align}
+% 	 \max_\alpha \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \psi(\mathbf{x}_i)\cdot \psi(\mathbf{x}_j)
+% 	 \label{eq:kernel_dual_form}
+% \end{align}
+% Equivalently, 
+% \begin{align}
+% 	 \max_\alpha \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j K(\mathbf{x}_i,\mathbf{x}_j).
+% \end{align}
 
 
 

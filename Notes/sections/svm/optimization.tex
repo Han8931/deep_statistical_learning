@@ -1,81 +1,124 @@
 \section{SVM Optimization: Lagrange Multipliers}
 \label{sec:svm_optimization}
 
+
+\subsection{Lagrange Multipliers}
+
+Consider the optimization problem:
 \begin{align*}
 &\min_{\rvx} f(\rvx) \\
-&\textrm{subject to}\quad g(\rvx)=0.\\
+&\text{subject to}\quad g(\rvx)=0.
 \end{align*}
-The minimum of $f$ is found when its gradient point in the same direction as the gradient of $g$. In other words, when:  
-$$\nabla f(\rvx) = \alpha\nabla g(\rvx).$$
-Consider a simple 2D example where you want to minimize the function $f(x,y)=x^2+y^2$, which represents a circle centered at the origin. This function increases as you move away from the origin, and you're looking for the lowest point (the origin).
+To find the minimum of $f$ under the constraint $g(\rvx)$, we use the method of \textit{Lagrange multipliers}. The key idea is that at the optimal point, the gradient of $f(\rvx)$ must be parallel to the gradient of $g(\rvx)$. Mathematically, this condition is expressed as: 
+$$\nabla f(\rvx) = \lambda\nabla g(\rvx).$$
 
-Now, let's add a constraint: $g(x,y)=x+y-1=0$. This constraint is a line that runs through the plane, and you can only move along this line.
+\paragraph{Example:}
+Consider a simple 2D example where you want to minimize the function $f(x,y)=x^2+y^2$, which represents a circle centered at the origin. This function increases as you move away from the origin, so the minimum is at the origin. 
 
-A Lagrange multiplier is like a balancing force that keeps you on the constraint line while you search for the optimal point. When you move along the constraint line, the Lagrange multiplier adjusts the direction and magnitude of your movement to ensure you stay on the line and also consider the shape of the function you're trying to optimize.
+Now, consider the constraint: $g(x,y)=x+y-1=0$. This constraint is a line that runs through the $xy$-plane. Our goal is to find the point on this line that minimizes $f(x,y)$.
 
-So if we want to find the minimum of $f$ under the constraint $g$, we just need to solve the following function: 
-$$\mathcal{L}(\rvx, \alpha) = f(\rvx) - \alpha g(\rvx)$$
-Note that the $\alpha$ is called a \textit{Lagrange multiplier}. Recall that we want to solve the following convex quadratic optimization problem:
+A Lagrange multiplier is like a balancing factor that adjusts the direction and magnitude of your search along the constraint. As you move along the constraint line $g(x,y)$, $\lambda$ ensures that the solution also respects the shape of the function $f(x,y)$ that you are trying to minimize. 
+To solve the constraint optimization problem, we define the Lagrangian function: 
+$$\mathcal{L}(\rvx, \lambda) = f(\rvx) - \lambda g(\rvx).$$
+
+To find the minimum, we take the partial derivatives of $\mathcal{L}(\rvx, \lambda)$ with respect to both $\rvx$ and $\lambda$, and set them equal to zero. 
+
+\subsection{SVM Optimization}
+Recall that we want to solve the following convex quadratic optimization problem:
 \begin{align*}
-	&\min \frac{1}{2}\|w\|^2,\quad \textrm{subject to } \\
+	&\min \frac{1}{2}\lVert \mathbf{w}\rVert ^2,\quad \textrm{subject to } \\
 	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1 \quad\forall i.
 \end{align*}
-We can reformulate the above problem as follows:
-\begin{align}
-	\mathcal{L}(\rvw, b, \alpha) = \frac{1}{2}\|w\|^2 - \sum_{i=1}^N \alpha_i \Big[y_i(\mathbf{w}\cdot \mathbf{x}_i+b)-1\Big]
-	\label{eq:objective_function}
-\end{align}
-We could try to solve the optimization problem, but this problem can only be solved analytically when the number of examples is small. Thus, we will reformulate the problem in the duality principle. 
+The objective is to find the optimal hyperplane that maximizes the margin between two classes of data points. 
 
-To get the solution of the primal problem, we need to solve the following \textbf{Lagrangian problem}: 
+We can reformulate this optimization problem using the method of Lagrange multipliers, which introduces a set of multipliers $\alpha_i$ (one for each constraint). The Lagrangian function for this problem is given by:
+\begin{align*}
+	\mathcal{L}(\mathbf{w}, b, \alpha) = \frac{1}{2}\lVert \mathbf{w}\rVert ^2 - \sum_{i=1}^N \alpha_i \left[y_i(\mathbf{w}\cdot \mathbf{x}_i+b)-1\right]
+\end{align*}
+
+\subsection{Duality and the Lagrangian Problem}
+
+While we could attempt to solve the primal optimization problem directly, it is often more practical, especially for large datasets, to reformulate the problem using the duality principle. The dual form is advantageous because it depends only on the inner products of the data points, which allows the use of kernel methods for non-linear classification.
+
+TO find the solution to the primal problem, we solve the following problem:
 \begin{align*}
 	&\max_{\mathbf{w}, b}\min_\alpha \mathcal{L}(\rvw, b, \alpha)\\
 	&\textrm{subject to}\quad \alpha_i\geq 0, \forall i.
 \end{align*}
-You may have noticed that the method of Lagrange multipliers is used for solving problems with equality constraints, and here we are using them with inequality constraints. This is because the method still works for inequality constraints, if some additional conditions (the \textbf{KKT conditions}) are met (\cf \Cref{sec:kkt_condition}.). 
+Here, we maximize the Lagrangian with respect to the multipliers $\alpha_i$, while minimizing with respect to the primal variables $\mathbf{w}$ and $b$.
+
+\subsection{Handling Inequality Constraints with KKT Conditions}
+
+You may observe that the method of Lagrange multipliers is used for equality constraints. However, it can be extended to handle inequality constraints through the use of additional conditions known as the \textbf{Karush-Kuhn-Tucker (KKT) conditions}. These conditions ensure that the solution satisfies the necessary optimality criteria for problems with inequality constraints. For more details on the KKT conditions, refer to \Cref{sec:kkt_condition}. 
 
 \section{The Wolfe Dual Problem}
-The Lagrangian problem has $N$ inequality constraints (where $N$ is the number of training examples) and is typically solved using its \textit{dual form}. The duality principle tells us that \textbf{an optimization problem can be viewed from two perspectives}: \Ni The first one is the \textit{primal problem}, a minimization problem in our case. \Nii The other one is the \textit{dual problem}, which will be a maximization problem. What is interesting is that the maximum of the dual problem will always be less than or equal to the minimum of the primal problem (we say it \textbf{provides a lower bound to the solution of the primal problem}). 
+The Lagrangian problem for SVM optimization involves $N$ inequality constraints, where $N$ is the number of training examples. This problem is typically tacked using its \textit{dual form}. The duality principle provides a powerful framework, stating that \textbf{an optimization problem can be approached from two perspectives}: 
 
-In our case, we are trying to solve a convex optimization problem, and \textbf{Slater's condition} holds for affine constraints (Gretton, 2016), so Slater’s theorem tells us that strong duality holds. Note that the strong duality denotes that the solutions from the dual and the primal are identical (the maximum of the dual problem is equal to the minimum of the primal problem). 
+\begin{enumerate}
+	\item The \textit{primal problem}, which in our context is a minimization problem.
+	\item The \textit{dual problem}, which is a maximization problem.
+\end{enumerate}
+An important aspect of duality is that \textbf{the maximum value of the dual problem is always less than or equal to the minimum value of the primal problem.} This relationship means that the dual problem \textbf{provides a lower bound to the solution of the primal problem}.
 
-Solving the minimization problem involves taking the partial derivatives of $\mathcal{L}$ with respect to $\rvw$ and $b$.  
+In the context of SVM optimization, we are dealing with a convex optimization problem. According to \textbf{Slater's condition}, which applies to problems with affine constraints, strong duality holds. Strong duality implies that the optimal values of the primal and dual problems are equal, meaning the maximum value of the dual problem equals the minimum value of the primal problem. This equality allows us to solve the dual problem instead of the primal problem, often leading to computational advantages.
+
+Recall that we aim to solve the following optimization problem:
+\begin{align*}
+	\mathcal{L}(\mathbf{w}, b, \alpha) = \frac{1}{2}\lVert \mathbf{w}\rVert ^2 - \sum_{i=1}^N \alpha_i \left[y_i(\mathbf{w}\cdot \mathbf{x}_i+b)-1\right]
+\end{align*}
+The minimization problem involves solving the partial derivatives of $\mathcal{L}$ with respect to $\rvw$ and $b$ and set them equal to zero:
 \begin{align*}
 	&\nabla_\rvw\mathcal{L}(\rvw, b, \alpha) = \rvw - \sum_i \alpha_i y_i \mathbf{x}_i\\
 	& \nabla_b\mathcal{L}(\rvw, b, \alpha) = -\sum_i \alpha_i y_i
 \end{align*}
-The first term gives
+Form the first equation, we obtain:
 \begin{align*}
 	&\rvw = \sum_{i=1}^m \alpha_i y_i \mathbf{x}_i\\
 \end{align*}
-Let's substitute the objective function \Cref{eq:objective_function} with $\rvw$:
+Next, we substitute the objective function with $\rvw$:
 \begin{align*}
-	\mathbf{W}(\alpha, b) &= \frac{1}{2}\Big(\sum_i \alpha_i y_i \mathbf{x}_i\Big)\cdot \Big(\sum_j \alpha_j y_j \mathbf{x}_j\Big) - \sum_i \alpha_i \Bigg[y_i\Bigg(\Big(\sum_j \alpha_j y_j \mathbf{x}_j\Big)\cdot \mathbf{x}_i+b\Bigg)-1\Bigg]\\
+	\mathbf{W}(\alpha, b) &= \frac{1}{2}\left(\sum_i \alpha_i y_i \mathbf{x}_i\right)\cdot \left(\sum_j \alpha_j y_j \mathbf{x}_j\right) - \sum_i \alpha_i \left[y_i\left(\left(\sum_j \alpha_j y_j \mathbf{x}_j\right)\cdot \mathbf{x}_i+b\right)-1\right]\\
 						  &= \frac{1}{2}\Big(\sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i\cdot \mathbf{x}_j\Big) - \sum_i \alpha_i \Bigg[y_i\Bigg(\Big(\sum_j \alpha_j y_j \mathbf{x}_j\Big)\cdot \mathbf{x}_i+b\Bigg)\Bigg]+\sum_i \alpha_i \\
 						  &= \frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i\cdot \mathbf{x}_j - \sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i \cdot \mathbf{x}_j-\sum_i \alpha_i y_i b+\sum_i \alpha_i \\
 						  &= \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i\cdot \mathbf{x}_j-\sum_i \alpha_i y_i b
 \end{align*}
-There is still $b$, but $b=0$, so we can just remove it. Finally, we get
+Note that we use two indices, $i$ and $j$ when substituting $\mathbf{W}$. This is obvious if we consider a simple example. Imagine you have two data points:
+\begin{align*}
+	\rvx_1,y1&=(1,2),1\\
+	\rvx_2,y2&=(2,1),−1
+\end{align*}
+Then,
+\begin{align*}
+	\lVert \mathbf{w}\rVert^2=\mathbf{w}\cdot \mathbf{w}=\underbrace{(\alpha_1y_1\rvx_1+\alpha_2y_2\rvx_2)}_{\sum_i}\cdot\underbrace{(\alpha_1y_1\rvx_1+\alpha_2y_2\rvx_2)}_{\sum_j}.
+\end{align*}
+This simplification shows that the optimization problem can be reformulated purely in terms of the Lagrange multipliers $\alpha_i$. Note that the term involving $b$ can be removed by setting $b=0$, simplifying our equation further:
 \begin{align}
 	 \mathbf{W}(\alpha, b) = \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j (\mathbf{x}_i\cdot \mathbf{x}_j)
 	 \label{eq:dual_form}
 \end{align}
-This is the \textbf{Wolfe dual Lagrangian function}. Note that we transform the problem as a problem with regard to $\alpha$. Also, this is again a quadratic programming problem. The optimization problem is also called the \textbf{Wolfe dual problem}: 
+This expression is known as the \textbf{Wolfe dual Lagrangian function}. We have transformed the problem into one involving only the multipliers $\alpha_i$, resulting in a quadratic programming problem, commonly referred to as the \textbf{Wolfe dual problem}:
 \begin{align*}
 	 &\max_\alpha \mathbf{W}(\alpha, b) = \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j (\mathbf{x}_i\cdot \mathbf{x}_j)\\
 	 &\textrm{subject to } \alpha_i\geq 0 \textrm{ for any } i=1,\dots,m\\
 	 & \sum_{i=1}^m \alpha_iy_i=0
 \end{align*}
-Once we get the value of $\alpha$, we can get the optimal $\rvw$ and $b$ can be obtained by using $\alpha_i(y_i(\mathbf{w}\cdot \mathbf{x}_i+b)-1=0$. The dual problem involves only the dot product of the input vectors. This allows the use of the \textbf{kernel trick} to handle non-linearly separable data by mapping it to a higher-dimensional space. Details will be covered in the following section.
+Once we get the value of $\alpha$, the optimal $\rvw$ and $b$ can be computed using 
+\begin{align*} 
+	\alpha_i \left[ y_i(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 \right] = 0. 
+\end{align*}
+One important aspect of the dual problem is that it only involves the dot product of the input vectors $\rvx$. This property allows us to use of the \textbf{kernel trick} to handle non-linearly separable data by mapping it to a higher-dimensional space. 
+
+% Details will be covered in the following section.
 
 
 \section{Karush-Kuhn-Tucker conditions }
-\label{sec:kkt_condition}
-Due to the inequality constraints, we need to set an additional requirement. The solution must also satisfy the \textbf{Karush-Kuhn-Tucker (KKT) conditions}. 
 
-The KKT conditions are first-order necessary conditions for a solution of an optimization problem to be optimal. Moreover, the problem should satisfy some regularity conditions. Luckily for us, one of the regularity conditions is Slater’s condition, and we just saw that it holds for SVMs. Because the primal problem we are trying to solve is a convex problem, the KKT conditions are also sufficient for the point to be primal and dual optimal, and there is zero duality gap. 
+When dealing with optimization problems that involve inequality constraints, such as those encountered in Support Vector Machines (SVMs), an additional requirement must be met: the solution must satisfy the \textbf{Karush-Kuhn-Tucker (KKT) conditions}.
 
-To sum up, if a solution satisfies the KKT conditions, we are guaranteed that \textbf{it is the optimal solution}. Note that solving the SVM problem is equivalent to finding a solution to the KKT conditions. 
+The KKT conditions are a set of first-order necessary conditions that must be satisfied for a solution to be optimal. These conditions extend the method of Lagrange multipliers to handle inequality constraints and are particularly useful in non-linear programming. For the KKT conditions to apply, the problem must also satisfy certain regularity conditions. Fortunately, one of these regularity conditions is Slater’s condition, which we have already established holds true for SVMs.
 
+\subsection{KKT Conditions and SVM Optimization}
+
+In the context of SVMs, the optimization problem is convex, meaning that the KKT conditions are not only necessary but also sufficient for optimality. This implies that if a solution satisfies the KKT conditions, it is guaranteed to be the optimal solution for both the primal and dual problems. Moreover, in this case, there is no duality gap, meaning the optimal values of the primal and dual problems are equal.
 
 
