@@ -7,23 +7,20 @@ Least Squares Support Vector Machine (LS-SVM) is a modified version of the tradi
 \subsection{Optimization Problem (Primal Problem)}
 
 \begin{align*}
-   &\min_{w, b, e} \frac{1}{2} \lVert w\rVert^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2\\
+   &\min_{w, b, e} \frac{1}{2} \lVert w\rVert^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2,\\
    &\text{subject to } y_i (w^T \phi(x_i) + b) = 1 - e_i, \ \forall i
 \end{align*}
 where:
 \begin{itemize}
    \item $w$ is the weight vector.
    \item $b$ is the bias term.
-   \item $e_i$ are the error variables. In LS-SVM, the error terms $e_i$ serve a similar purpose to the slack variables ($\xi$) in traditional SVMs. However, instead of using hinge loss as in traditional SVM, LS-SVM uses a squared error loss function. 
+   \item $e_i$ are the error variables. 
 \begin{align*}
 	\sum_{i=1}^N e_i^2 &= \sum_{i=1}^N \left(1-y_i (w^T \phi(x_i) + b)\right)^2\\
 					   &= \sum_{i=1}^N \left(y_i^2-y_i (w^T \phi(x_i) + b)\right)^2\\
 					   &= \sum_{i=1}^N y_i^2\left(y_i-(w^T \phi(x_i) + b)\right)^2\\
 					   &= \sum_{i=1}^N \left(y_i-(w^T \phi(x_i) + b)\right)^2
 \end{align*}
-% $$\sum_{i=1}^N e_i^2 = \sum_{i=1}^N \left(1-y_i (w^T \phi(x_i) + b)\right)^2$$
-% $$\sum_{i=1}^N e_i^2 = \sum_{i=1}^N (y_ie_i)^2 = \sum_{i=1}^N (y_i-(w^T \phi(x_i) + b) )^2.$$
-
    \item $\gamma$ is a regularization parameter.
    \item $\phi(x_i)$ is the feature mapping function.
    \item Note that $y_i^{-1} = y_i$, since $y_i = \pm 1$. 
@@ -34,7 +31,7 @@ To solve the constraint optimization problem, we define the Lagrangian function:
 \begin{align*}
 	L(w, b, e, \alpha) = \min_{w, b, e} \frac{1}{2} \lVert w\rVert^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2 - \sum_{i=1}^n \alpha_i \left[ y_i (w^T \phi(x_i) + b) - 1 + e_i \right],
 \end{align*}
-where \( \alpha_i \) are Lagrange multipliers. Then, by setting the partial derivatives of the Lagrangian with respect to $w$, $b$, $e$, and $\alpha$ to zero, we get the KKT conditions.
+where $\alpha_i$ are Lagrange multipliers. Then, by setting the partial derivatives of the Lagrangian with respect to $w$, $b$, $e$, and $\alpha$ to zero, we get the KKT conditions.
 
 \begin{itemize}
 	\item $w$: 
@@ -49,94 +46,28 @@ where \( \alpha_i \) are Lagrange multipliers. Then, by setting the partial deri
 	\begin{align*}
 	   \frac{\partial L}{\partial e_i} = \gamma e_i - \alpha_i = 0 \implies \alpha_i = \gamma e_i
 	\end{align*}
-	Thus, $e_i = \alpha_i/\gamma$
+	Thus, $e_i = \frac{\alpha_i}{\gamma}$
 \item $\alpha_i$:
 	\begin{align*}
 	   \frac{\partial L}{\partial \alpha_i} = - \left[ y_i (w^T \phi(x_i) + b) - 1 + e_i \right] = 0 \implies y_i (w^T \phi(x_i) + b) = 1 - e_i, i=1,\dots, N.
 	\end{align*}
 \end{itemize}
 
-% Let's substitute $w$ and $e$:
-% \begin{align*}
-% 	\frac{1}{2} \lVert w \rVert^2 &= \frac{1}{2}\left(\sum_i \alpha_i y_i \phi(x_i)\right)\cdot \left(\sum_j \alpha_j y_j \phi(x_j)\right)\\
-% 								  &= \frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \underbrace{K(x_i,x_j)}_{=\phi(x_i)^T\phi(x_j)}\\
-% 	\frac{\gamma}{2} \sum_{i=1}^N e_i^2 &= \frac{\gamma}{2} \sum_{i=1}^N \left(\frac{\alpha_i}{\gamma}\right)^2 = \frac{1}{2\gamma} \sum_{i=1}^N \alpha_i^2
-% \end{align*}
-Similarly, 
-\begin{align*}
-	&y_i (w^T \phi(x_i) + b) - 1 + e_i\\
-	&=  \left(\sum_j \alpha_j y_iy_j \phi(x_j)^T \phi(x_i) + by_i\right) - 1 + \frac{\alpha_i}{\gamma}
-\end{align*}
-
-We can express them in a matrix form:
+Let's substitute $w$ and $e$:
 \begin{itemize}
-	\item $\alpha = [\alpha_1, \alpha_2, \ldots, \alpha_n]^T$.
+	% \item $\mathbf{Y}$
+	\item $K$: kernel matrix
+	\item $\alpha = [\alpha_1, \alpha_2, \ldots, \alpha_n]^T$: $N\times 1$
 	\item $y = [y_1, y_2, \ldots, y_n]^T$.
-	\item $1_n$ as a column vector of ones of length $n$.
-	\item $Z = [\phi(x_1)^Ty_1, \dots, \phi(x_n)^Ty_n]$.
+	\item $\Omega = YKY^T$, where $\Omega_{kl}= y_ky_l\phi(x_k)^T\phi(x_l)$
+	\item $b$: $1\times 1$
 \end{itemize}
-% Then, the linear system becomes:
-% \begin{align*}
-% 	\begin{bmatrix}
-% 		I & 0 & 0 & -Z^T\\
-% 		0 & 0 & 0 & -y^T\\
-% 		0 & 0 & \gamma I & -I^T\\
-% 		Z & y & I & 0
-% 	% y & \Omega + \frac{1}{\gamma} I
-% 	\end{bmatrix}
-% 	\begin{bmatrix}
-% 	w \\
-% 	b \\
-% 	e \\
-% 	\alpha
-% 	\end{bmatrix}
-% 	=
-% 	\begin{bmatrix}
-% 	0 \\
-% 	0 \\
-% 	0 \\
-% 	1_n
-% 	\end{bmatrix}
-% \end{align*}
 
-
-% Let's define the following:
-% \begin{itemize}
-% 	\item $\alpha = [\alpha_1, \alpha_2, \ldots, \alpha_N]^T$.
-% 	\item $y = [y_1, y_2, \ldots, y_N]^T$.
-% 	\item $1_n$ as a column vector of ones of length $N$.
-% 	\item $K$ is the $N\times N$ kernel matrix, where $K_{ij} = K(x_i, x_j)$. 
-% 	% \item $Z = [\phi(x_1)^Ty_1, \dots, \phi(x_n)^Ty_n]$.
-% 	\item $\Omega = \text{diag}(y)\cdot K \cdot \text{diag}(y)$, where $\text{diag}(y)$ is a diagonal matrix with the elements of $y$ on the diagonal.
-% \end{itemize}
-
-% \begin{align*}
-% 	\Omega_{kl}&= y_ky_l\phi(x_k)^T\phi(x_l)\\ 
-% 			   &= y_ky_lK(x_k, x_l)
-% \end{align*}
-
-% Then, 
-% \begin{align*}
-% 	L(\alpha) &= \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j K(x_i, x_j) + \frac{1}{2\gamma} \sum_{i=1}^N \alpha_i^2 - \sum_{i=1}^N \alpha_i \left[ y_i (w^T \phi(x_i) + b) - 1 + \frac{\alpha_i}{\gamma} \right]\\
-% 			  &= \dots - \sum_{i=1}^N \alpha_i \left[ y_i \left(\sum_j \alpha_j y_j \phi(x_j) \phi(x_i) + b\right) - 1 + \frac{\alpha_i}{\gamma} \right]\\
-% 			  &= \dots - \sum_{i=1}^N \alpha_i\left[  y_i\underbrace{\sum_j^N  \alpha_j y_j K(x_j,x_i)}_{=0} + by_i - 1 + \frac{\alpha_i}{\gamma} \right]\\
-% 			  &= \dots - \sum_{i=1}^N \alpha_i\left[ by_i - 1 + \frac{\alpha_i}{\gamma} \right]\\
-% 			  &= \dots - \underbrace{\sum_{i=1}^N \alpha_i y_i}_{=0} b - \alpha_i + \frac{\alpha_i^2}{\gamma} \right]\\
-% 			  &= \dots - \sum_{i=1}^N - \alpha_i + \frac{\alpha_i^2}{\gamma} \right]\\
-% 			  &= \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j K(x_i, x_j) + \frac{1}{2\gamma} \sum_{i=1}^N \alpha_i^2 + \sum_{i=1}^N \alpha_i - \frac{\alpha_i^2}{\gamma} \right]\\
-% 			  &= \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j K(x_i, x_j) - \frac{1}{2\gamma} \sum_{i=1}^N \alpha_i^2 + \sum_{i=1}^N \alpha_i 
-% \end{align*}
-% This one is subject to 
-% \begin{align*}
-% 	\sum_{i=1}^n \alpha_i y_i = 0.
-% \end{align*}
-
-% In sum, we get
-% \begin{align*}
-% 	L(\alpha)  &= \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j K(x_i, x_j) + \sum_{i=1}^N \alpha_i - \frac{1}{2\gamma} \sum_{i=1}^N \alpha_i^2 \\
-% 			   &= - \frac{1}{2} \alpha^T \Omega \alpha + \mathbf{1}^T\alpha - \frac{1}{2\gamma} \alpha^T\alpha
-% \end{align*}
-
+Then, we can express it compactly
+\begin{align*}
+	&Y(KY^T\alpha+b\mathbf{1})-\mathbf{1}+\frac{\alpha}{2\gamma} = 0\\
+	&\mathbf{1}^TY\alpha = 0
+\end{align*}
 
 By using the expression of $\alpha$ and $b$, we get
 \begin{align*}
@@ -154,97 +85,95 @@ By using the expression of $\alpha$ and $b$, we get
 	1_n
 	\end{bmatrix}
 \end{align*}
-where 
+Note that the dimension of the matrix on the left-hand side is $(N+1)\times (N+1)$. Once we have $b$ and $\alpha$ by solving the linear system, the decision function for \textbf{a new input} $x$ can be obtained by:
 \begin{align*}
-	\Omega &= ZZ^T,\\  
-	\Omega_{kl}&= y_ky_l\phi(x_k)^T\phi(x_l)\\ 
-			   &= y_ky_lK(x_k, x_l)
+	f(x) = \sum_{i=1}^n \alpha_i y_i K(x_i, x) + b.
 \end{align*}
-Note that the dimension of the matrix on the left-hand side is $(N+1)\times (N+1)$. Once we have \( b \) and \( \alpha \) by solving the linear system, the decision function for \textbf{a new input} \( x \) can be obtained by:
-\[
-f(x) = \sum_{i=1}^n \alpha_i y_i K(x_i, x) + b.
-\]
-\paragraph{Example: }Suppose we have a small dataset with \( n = 3 \) training samples. Then the dimensions of the matrix and vectors would be as follows:
-\begin{itemize}
-	\item \( y \) is a \( 3 \times 1 \) vector (e.g., \( y = \begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix} \)).
-	\item \( y^T \) is a \( 1 \times 3 \) row vector (e.g., \( y^T = \begin{bmatrix} y_1 & y_2 & y_3 \end{bmatrix} \)).
-	\item \( K \) is a \( 3 \times 3 \) kernel matrix.
-	\item \( I \) is a \( 3 \times 3 \) identity matrix.
-	\item \( \frac{1}{\gamma} I \) is a \( 3 \times 3 \) scaled identity matrix.
-	\item \( K + \frac{1}{\gamma} I \) is a \( 3 \times 3 \) matrix.
-	\item \( \alpha \) is a \( 3 \times 1 \) vector.
-	\item \( 1_3 \) is a \( 3 \times 1 \) vector of ones.
-\end{itemize}
+\paragraph{Example: }Suppose we have three training examples with feature vectors $x_1, x_2$, and $x_3$, and corresponding labels $y_1, y_2$, and $y_3$. The kernel matrix $\Omega$ is defined as:
 
-
-The full matrix becomes:
-
-\[
-\begin{bmatrix}
-0 & y_1 & y_2 & y_3 \\
-y_1 & K_{11} + \frac{1}{\gamma} & K_{12} & K_{13} \\
-y_2 & K_{21} & K_{22} + \frac{1}{\gamma} & K_{23} \\
-y_3 & K_{31} & K_{32} & K_{33} + \frac{1}{\gamma}
-\end{bmatrix}
-\]
-
-This matrix has dimensions \( 4 \times 4 \).
-
-So, the dimension of the matrix on the left-hand side in the system of linear equations for LS-SVM is \( (n + 1) \times (n + 1) \), where \( n \) is the number of training samples.
-
-\section{LS-SVMs for function estimation}
-LS-SVM model as feature space representation:
-$$y(x) = w^T\phi(x)+b.$$
-Given a training set $\{x_k, y_k\}^N$, the optimization problem is 
-\[
-\min_{w, b, e} \frac{1}{2} \|w\|^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2
-\]
-subject to:
-\[
-y_k = w^T \phi(x_k) + b + e_k, \quad k = 1,\dots, N. \]
-Then, 
-\[
-L(w, b, e, \alpha) = \min_{w, b, e} \frac{1}{2} \|w\|^2 + \frac{\gamma}{2} \sum_{i=1}^N e_i^2 - \sum_{i=1}^n \alpha_i \left[ w^T \phi(x_i) + b + e_k - y_k \right],
-\]
-with $\alpha_k$ Lagrange multipliers. Then, we can get conditions for optimality as follows:
-
-\begin{itemize}
-	\item \( w \): \[
-   \frac{\partial L}{\partial w} = 0 \implies w = \sum_{k=1}^n \alpha_k \phi(x_k)
-   \]
-	\item \( b \):
-   \[
-   \frac{\partial L}{\partial b} = \sum_{i=k}^n \alpha_k = 0
-   \]
-\item \( e_k \):
-   \[
-   \frac{\partial L}{\partial e_k} = \implies \alpha_k = \gamma e_k
-   \]
-\item \( \alpha_k \):
-   \[
-   \frac{\partial L}{\partial \alpha_k} = 0  \implies  w^T \phi(x_k) + b + e_k- y_k =0, \quad k=1,\dots, N.
-   \]
-\end{itemize}
-
-Then, the linear system becomes:
-
-\[
-\begin{bmatrix}
-\mathbf{0} & \mathbf{1}^T \\
-\mathbf{1} & \Omega + \frac{1}{\gamma} I
-\end{bmatrix}
-\begin{bmatrix}
-b \\
-\alpha
-\end{bmatrix}
-=
-\begin{bmatrix}
-\mathbf{0} \\
-y
-\end{bmatrix}
-\], 
-where 
 \begin{align*}
-	\Omega_{kl}&= \phi(x_k)^T\phi(x_l), \quad k,l=1,\dots,N\\ 
-			   &= K(x_k, x_l)
+	\Omega_{ij} = y_i y_j K(x_i, x_j)
+\end{align*}
+The dual form is:
+\begin{align*}
+	\begin{bmatrix}
+	0 & y^T \\
+	y & \Omega + \frac{1}{\gamma} I
+	\end{bmatrix}
+	\begin{bmatrix}
+	b \\
+	\alpha
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	0 \\
+	e
+	\end{bmatrix}
+\end{align*}
+
+\begin{itemize}
+	\item $y = \begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix}$ 
+	\item $\alpha = \begin{bmatrix} \alpha_1\\ \alpha_2 \\ \alpha_3 \end{bmatrix} $
+	\item $e = \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}$
+	\item $I$ is a $3 \times 3$ identity matrix
+\end{itemize}
+
+Then, the $\Omega$ is given by
+\begin{align*}
+	\Omega = \begin{bmatrix}
+	y_1 y_1 K(x_1, x_1) & y_1 y_2 K(x_1, x_2) & y_1 y_3 K(x_1, x_3) \\
+	y_2 y_1 K(x_2, x_1) & y_2 y_2 K(x_2, x_2) & y_2 y_3 K(x_2, x_3) \\
+	y_3 y_1 K(x_3, x_1) & y_3 y_2 K(x_3, x_2) & y_3 y_3 K(x_3, x_3)
+	\end{bmatrix}
+\end{align*}
+
+Now, the complete matrix equation is:
+
+\begin{align*}
+	\begin{bmatrix}
+	0 & y_1 & y_2 & y_3 \\
+	y_1 & \Omega_{11} + \frac{1}{\gamma} & \Omega_{12} & \Omega_{13} \\
+	y_2 & \Omega_{21} & \Omega_{22} + \frac{1}{\gamma} & \Omega_{23} \\
+	y_3 & \Omega_{31} & \Omega_{32} & \Omega_{33} + \frac{1}{\gamma}
+	\end{bmatrix}
+	\begin{bmatrix}
+	b \\
+	\alpha_1 \\
+	\alpha_2 \\
+	\alpha_3
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	0 \\
+	1 \\
+	1 \\
+	1
+	\end{bmatrix}
+\end{align*}
+
+This can be written explicitly as:
+\begin{align*}
+	\begin{bmatrix}
+	0 & y_1 & y_2 & y_3 \\
+	y_1 & y_1^2 K(x_1, x_1) + \frac{1}{\gamma} & y_1 y_2 K(x_1, x_2) & y_1 y_3 K(x_1, x_3) \\
+	y_2 & y_2 y_1 K(x_2, x_1) & y_2^2 K(x_2, x_2) + \frac{1}{\gamma} & y_2 y_3 K(x_2, x_3) \\
+	y_3 & y_3 y_1 K(x_3, x_1) & y_3 y_2 K(x_3, x_2) & y_3^2 K(x_3, x_3) + \frac{1}{\gamma}
+	\end{bmatrix}
+	\begin{bmatrix}
+	b \\
+	\alpha_1 \\
+	\alpha_2 \\
+	\alpha_3
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	0 \\
+	1 \\
+	1 \\
+	1
+	\end{bmatrix}
+\end{align*}
+The solution to this matrix equation provides the values of $b$ and $ \alpha_1, \alpha_2, \alpha_3$, which are then used to construct the decision function:
+\begin{align*}
+	f(x) = \sum_{i=1}^3 \alpha_i y_i K(x, x_i) + b
 \end{align*}
