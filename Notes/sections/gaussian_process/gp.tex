@@ -4,7 +4,7 @@
 
 \section{Introduction}
 \label{sec:gaussian_process}
-A Gaussian process (GP) is a probability distribution over possible functions that fit a set of points. More formally, GPs are distributions over functions $f(x)$ of which the distribution is defined by a mean function $m(x)$ and positive definite covariance function $k(x,x')$ (\ie \textit{kernel}). Thus, it is a distribution over functions whose shape is defined by the kernel:
+A Gaussian process (GP) is a probability distribution over possible functions that fit a set of points fully specified by a mean and covariance function. More formally, GPs are distributions over functions $f(x)$ of which the distribution is defined by a mean function $m(x)$ and positive definite covariance function $k(x,x')$ (\ie \textit{kernel}). Thus, it is a distribution over functions whose shape is defined by the kernel:
 $$f(x) \sim \mathcal{GP}(m(x),k(x,x')).$$
 
 Since we have the probability distribution over all possible functions, we can calculate the mean and the variance of the function to determine how confident in our predictions.

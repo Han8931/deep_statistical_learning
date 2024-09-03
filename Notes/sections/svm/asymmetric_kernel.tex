@@ -19,7 +19,7 @@ Recall that the dual form of LS-SVM is given by
 \end{align*}
 An interesting point here is that using an asymmetric kernel in LS-SVM will not reduce to its symmetrization and asymmetric information can be learned. Then we can develop asymmetric kernels in the LS-SVM framework in a straightforward way.
 
-Asymmetric kernels capture directional relationships in data that symmetric kernels cannot. For example, in directed graphs or conditional probability scenarios, the relationship from $x$ to $y$ is different from $y$ to $x$.
+Asymmetric kernels are particularly useful in capturing directional relationships in data that symmetric kernels cannot. For instance, in scenarios involving directed graphs or conditional probabilities, the relationship from $x$ to $y$ is inherently different from the relationship from $y$ to $x$.
 
 \subsection{AsK-LS Primal Problem Formulation}
 We first define a generalized kernel trick for an inner product of two mappings $\phi_s$ and $\phi_t$.
@@ -93,12 +93,10 @@ where:
 AsK-LS uses two different feature mappings \( \phi_s \) and \( \phi_t \) for the source and target features. This approach allows capturing more information compared to symmetric kernels. The dual solution provides weight vectors \( \omega \) and \( \nu \), which span the target and source feature spaces, respectively.
 
 The decision functions for classification from the source and target perspectives are given by
-\[
-f_s(x) = \sum_{i=1}^m \beta_i y_i K(x, x_i) + b_1
-\]
-\[
-f_t(x) = \sum_{i=1}^m \alpha_i y_i K(x_i, x) + b_2
-\]
+\begin{align*}
+	f_s(x) &= \sum\_{i=1}^m \beta_i y_i K(x, x_i) + b_1\\
+	f_t(x) &= \sum\_{i=1}^m \alpha_i y_i K(x_i, x) + b_2
+\end{align*}
 These functions utilize the learned asymmetric relationships in the data.
 
 
