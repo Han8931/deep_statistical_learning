@@ -1,7 +1,6 @@
 \chapter{Gaussian Process}
 \href{https://github.com/jwangjie/Gaussian-Process-Regression-Tutorial}{Reference}
 
-
 \section{Introduction}
 \label{sec:gaussian_process}
 A Gaussian process (GP) is a probability distribution over possible functions that fit a set of points fully specified by a mean and covariance function. More formally, GPs are distributions over functions $f(x)$ of which the distribution is defined by a mean function $m(x)$ and positive definite covariance function $k(x,x')$ (\ie \textit{kernel}). Thus, it is a distribution over functions whose shape is defined by the kernel:
@@ -9,10 +8,9 @@ $$f(x) \sim \mathcal{GP}(m(x),k(x,x')).$$
 
 Since we have the probability distribution over all possible functions, we can calculate the mean and the variance of the function to determine how confident in our predictions.
 
-Let's say we have observations, and we have estimated functions $\rvf$ with these observations. Now say we have some new points $\mathbf{X}_*$ where we want to predict $f(\mathbf{X}_*)$.
+Let's say we have observations $\mX=\{x_1, \dots, x_n\}$, and we have estimated functions $\rvf = [f(x_1), \dots, f(x_n)]$ with these observations. Now say we have some new points $\mathbf{X}_*$ where we want to predict $f(\mathbf{X}_*)$.
 
 The joint distribution of $\rvf$ and $\rvf_*$ can be modeled as:
-
 \begin{align*}
 	\begin{pmatrix}
 		\rvf\\
@@ -33,7 +31,7 @@ The joint distribution of $\rvf$ and $\rvf_*$ can be modeled as:
 % However, what we want is $\rvf_*$, predictions for new observations, which is a conditional distribution over $\rvf_*$. 
 % Let $f(x) = \phi(x)^Tw$, with $w\sim \mathcal{N}(0, \alpha^{-1}\mathbf{I})$. Then, $m(x) = \mathbb{E}[f(x)] = \mathbb{E}[w]^T\phi(x) = 0$
 % $k(x, x') = \mathbb{E}[(f(x)-m(x))(f(x')-m(x'))] =\mathbb{E}[f(x)(f(x')] $
-where 
+where $m(X) = [m(x_1),\dots, m(x_n)]$ and
 \begin{align*}
 	\mathbf{K }&= \kappa(\mathbf{X,X})\\
 	\mathbf{K}_* &= \kappa(\mathbf{X},\mathbf{X}_*)\\
@@ -44,56 +42,49 @@ The mean is assumed to be $(m(\mathbf{X}), m(\mathbf{X}_*))=0$.
 While this equation describes the joint probability distribution $P(\rvf, \rvf_*|\mathbf{X}, \mathbf{X}_*)$ over $\rvf$ and $\rvf_*$ in regressions, we need the conditional distribution $P(\rvf_*|\rvf, \mathbf{X}, \mathbf{X}_*)$ from the joint distribution. The conditional distribution can be achieved by the Marginal and conditional distributions of MVN theorem:
 
 \begin{theorem} Marginals and conditionals of an MVN:
-A random vector \(\mathbf{X}\) follows a multivariate normal distribution:
-\[
-\mathbf{X} \sim \mathcal{N}(\mathbf{\mu}, \mathbf{\Sigma})
-\]
-where \(\mathbf{X}\) is partitioned as:
-\[
-\mathbf{X} = \begin{bmatrix}
-\mathbf{X}_1 \\
-\mathbf{X}_2
-\end{bmatrix}
-\]
-with corresponding partitions of the mean vector \(\mathbf{\mu}\) and the covariance matrix \(\mathbf{\Sigma}\):
-\[
-\mathbf{\mu} = \begin{bmatrix}
-\mathbf{\mu}_1 \\
-\mathbf{\mu}_2
+A random vector $\mathbf{X}$ follows a multivariate normal distribution:
+\begin{align*}
+	\mathbf{X} \sim \mathcal{N}(\boldsymbol{\mu}, \mathbf{\Sigma})
+\end{align*}
+where $\mathbf{X}$ can be partitioned as:
+\begin{align*}
+	\mathbf{X} = \begin{bmatrix}
+	\mathbf{X}_1 \\
+	\mathbf{X}_2
+	\end{bmatrix}
+\end{align*}
+with corresponding partitions of the mean vector $\boldsymbol{\mu}$ and the covariance matrix \(\mathbf{\Sigma}\):
+\begin{align*}
+\boldsymbol{\mu} = \begin{bmatrix}
+\boldsymbol{\mu}_1 \\
+\boldsymbol{\mu}_2
 \end{bmatrix}, \quad
 \mathbf{\Sigma} = \begin{bmatrix}
 \mathbf{\Sigma}_{11} & \mathbf{\Sigma}_{12} \\
 \mathbf{\Sigma}_{21} & \mathbf{\Sigma}_{22}
-\end{bmatrix}
-\]
-
-Marginal Distributions:
-The marginal distribution of \(\mathbf{X}_1\) is:
-\[
-\mathbf{X}_1 \sim \mathcal{N}(\mathbf{\mu}_1, \mathbf{\Sigma}_{11})
-\]
-The marginal distribution of \(\mathbf{X}_2\) is:
-\[
-\mathbf{X}_2 \sim \mathcal{N}(\mathbf{\mu}_2, \mathbf{\Sigma}_{22})
-\]
-
-Conditional Distributions:
-The conditional distribution of \(\mathbf{X}_1\) given \(\mathbf{X}_2 = \mathbf{x}_2\) is:
-\[
-\mathbf{X}_1 | \mathbf{X}_2 = \mathbf{x}_2 \sim \mathcal{N}(\mathbf{\mu}_{1|2}, \mathbf{\Sigma}_{1|2})
-\]
-where the conditional mean \(\mathbf{\mu}_{1|2}\) and the conditional covariance \(\mathbf{\Sigma}_{1|2}\) are given by:
-\[
-\mathbf{\mu}_{1|2} = \mathbf{\mu}_1 + \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1} (\mathbf{x}_2 - \mathbf{\mu}_2)
-\]
-\[
-\mathbf{\Sigma}_{1|2} = \mathbf{\Sigma}_{11} - \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1}\mathbf{\Sigma}_{21}
-\]
-
+\end{bmatrix},\quad
+\mathbf{\Lambda} = \mathbf{\Sigma}^{-1} = \begin{bmatrix}
+\mathbf{\Lambda}_{11} & \mathbf{\Lambda}_{12} \\
+\mathbf{\Lambda}_{21} & \mathbf{\Lambda}_{22}
+\end{bmatrix},
+\end{align*}
+Then, the marginal distribution of $\mathbf{X}_1$ and $\mathbf{X}_2$ are given by
+\begin{align*}
+	&\mathbf{X}_1 \sim \mathcal{N}(\boldsymbol{\mu}_1, \mathbf{\Sigma}_{11})\\
+	&\mathbf{X}_2 \sim \mathcal{N}(\boldsymbol{\mu}_2, \mathbf{\Sigma}_{22})
+\end{align*}
+Subsequently, the (posteriror) conditional distribution of $\mathbf{X}_1$ given $\mathbf{X}_2$ is:
+\begin{align*}
+	\mathbf{X}_1 | \mathbf{X}_2 \sim \mathcal{N}(\boldsymbol{\mu}_{1|2}, \mathbf{\Sigma}_{1|2}),
+\end{align*}
+where the conditional mean \(\boldsymbol{\mu}_{1|2}\) and the conditional covariance \(\mathbf{\Sigma}_{1|2}\) are given by:
+\begin{align*}
+	&\boldsymbol{\mu}_{1|2} = \boldsymbol{\mu}_1 + \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1} (\mathbf{x}_2 - \boldsymbol{\mu}_2)\\
+	&\mathbf{\Sigma}_{1|2} = \mathbf{\Sigma}_{11} - \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1}\mathbf{\Sigma}_{21}
+\end{align*}
 \end{theorem}
-
 By using the theorem, we get
-$$\rvf_*|\rvf, \mathbf{X}, \mathbf{X}_*\sim \mathcal{N}(\mathbf{K}_*^T\mathbf{K}\rvf, \mathbf{K}_{**}-\mathbf{K}_*^T\mathbf{K}^{-1}\mathbf{K}_{*})$$
+$$\rvf_*|\rvf, \mathbf{X}, \mathbf{X}_*\sim \mathcal{N}(\mathbf{K}_*^T\mathbf{K}^{-1}\rvf, \mathbf{K}_{**}-\mathbf{K}_*^T\mathbf{K}^{-1}\mathbf{K}_{*})$$
 
 In practice, we typically have noisy estimations of target functions, $y = f(x)+\epsilon$. By assuming the i.i.d., Gaussian noise with variance $\sigma_n^2$, the prior on these noisy observations then becomes $cov(y) = \mathbf{K}+\sigma_n^2\mathbf{I}$. The joint distribution of the observed target values and the function values at the test locations under the prior as 
 \begin{align*}
@@ -108,7 +99,7 @@ In practice, we typically have noisy estimations of target functions, $y = f(x)+
 		\end{bmatrix}
 	\end{bmatrix}
 \end{align*}
-By deriving the condional distribution, we get the predictive equations for Gaussian process regression:
+By deriving the conditional distribution, we get the predictive equations for Gaussian process regression:
 
 
 
