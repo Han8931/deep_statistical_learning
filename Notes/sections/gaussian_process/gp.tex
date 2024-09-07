@@ -75,14 +75,15 @@ Then, the marginal distribution of $\mathbf{X}_1$ and $\mathbf{X}_2$ are given b
 \end{align*}
 Subsequently, the (posteriror) conditional distribution of $\mathbf{X}_1$ given $\mathbf{X}_2$ is:
 \begin{align*}
-	\mathbf{X}_1 | \mathbf{X}_2 \sim \mathcal{N}(\boldsymbol{\mu}_{1|2}, \mathbf{\Sigma}_{1|2}),
+	\mathbf{X}_1 | \mathbf{X}_2 = \rvx_2\sim \mathcal{N}(\boldsymbol{\mu}', \mathbf{\Sigma}'),
 \end{align*}
 where the conditional mean \(\boldsymbol{\mu}_{1|2}\) and the conditional covariance \(\mathbf{\Sigma}_{1|2}\) are given by:
 \begin{align*}
-	&\boldsymbol{\mu}_{1|2} = \boldsymbol{\mu}_1 + \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1} (\mathbf{x}_2 - \boldsymbol{\mu}_2)\\
-	&\mathbf{\Sigma}_{1|2} = \mathbf{\Sigma}_{11} - \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1}\mathbf{\Sigma}_{21}
+	&\boldsymbol{\mu}' = \boldsymbol{\mu}_1 + \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1} (\mathbf{x}_2 - \boldsymbol{\mu}_2)\\
+	&\mathbf{\Sigma}' = \mathbf{\Sigma}_{11} - \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1}\mathbf{\Sigma}_{21}
 \end{align*}
 \end{theorem}
+Note that $\mathbf{\Sigma}'$ does no depend on $\rvx_2$. It doesn't hold for general (non-Gaussian) random variables.
 By using the theorem, we get
 $$\rvf_*|\rvf, \mathbf{X}, \mathbf{X}_*\sim \mathcal{N}(\mathbf{K}_*^T\mathbf{K}^{-1}\rvf, \mathbf{K}_{**}-\mathbf{K}_*^T\mathbf{K}^{-1}\mathbf{K}_{*})$$
 
