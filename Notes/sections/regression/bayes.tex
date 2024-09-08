@@ -1,89 +1,105 @@
 \section{Bayesian Regression}
 \label{sec:regression_bayes}
 
-Integrate over all $\theta$
+Chain rule: $P(A,B|C)=P(A|B,C)P(B|C)$
+\begin{align*}
+	P(heads \mid D) &= \int_{\theta} P(heads, \theta \mid D) d\theta\\ 
+					&= \int_{\theta} P(heads \mid \theta, D) P(\theta \mid D) d\theta \\ 
+					&= \int_{\theta} \theta P(\theta \mid D) d\theta\\ 
+					&= E\left[\theta|D\right]\\ 
+					&= \frac{n_H + \alpha}{n_H + \alpha + n_T + \beta}
+\end{align*}
 
-\begin{align}
-P(heads \mid D) =& \int_{\theta} P(heads, \theta \mid D) d\theta\\
- =& \int_{\theta} P(heads \mid \theta, D) P(\theta \mid D) d\theta \quad \because  \textrm{Chain rule, } P(A,B|C)=P(A|B,C)P(B|C)\\ 
-  =& \int_{\theta} \theta P(\theta \mid D) d\theta\\ 
-  =&E\left[\theta|D\right]\\
- =&\frac{n_H + \alpha}{n_H + \alpha + n_T + \beta}
-\end{align}
+\section{Bayesian Regression}
 
+Bayesian regression is derived by combining the concepts of linear regression with Bayesian probability. In this note, we will derive Bayesian linear regression step-by-step, starting from a basic linear model and incorporating Bayesian inference.
 
-% \chapter{Introduction}
-\section{Curve Fitting}
-We can assume that a target variable has a Gaussian distribution with a mean equal to the value $y(x,\mathbf{w})$ of the polynomial curven given by
-\begin{equation}
-	p(t|x, \mathbf{w}, \beta) = \mathcal{N}(t|y(x,\mathbf{w}), \beta^{-1}),
-	\label{eq:curve}
-\end{equation}
+\section{Linear Regression Model}
+
+We assume a simple linear model:
+\begin{align*}
+	y = X\beta + \epsilon,
+\end{align*}
+where:
 \begin{itemize}
-	\item $t$: target variable
-		$$t = y(\rvx, \rvw) +\epsilon,$$
-	where $\epsilon$ is a zero mean Gaussian noise with precision (inverse variance) $\beta$. 
-	% \item $x$: input
-	% \item $\beta$: an inverse variance of the distribution.
+    \item $ y $ is the vector of observed responses (dependent variable),
+    \item $ X $ is the matrix of observed features (independent variables),
+    \item $ \beta $ is the vector of regression coefficients,
+    \item $ \epsilon \sim \mathcal{N}(0, \sigma^2 I) $ is the noise term (normally distributed with mean 0 and variance $ \sigma^2 $).
 \end{itemize}
 
-We not use the training data $\{\mathbf{x,y}\}$ to determine the values of the unknown parameters $\mathbf{w}$ and $\beta$ by maximum likelihood. If the data are assumed to be drawn independently from the distribution, then the likelihood function is given by 
-\begin{equation}
-	p(\mathbf{t}|\mathbf{x,w},\beta) = \prod_{n=1}^{N}\mathcal{N}(t_n|y(x_n,\mathbf{w}), \beta^{-1}).
-	\label{eq:curve_ml}
-\end{equation}
+This gives the likelihood function:
+\begin{align*}
+	p(y | X, \beta, \sigma^2) = \mathcal{N}(y | X\beta, \sigma^2 I)
+\end{align*}
 
-We can take a step towards a more Bayesian approach and introduce a prior distribution over the polynomial coefficients $\mathbf{w}$. For simplicity, we can use a Gaussian distribution from
-\begin{equation}
-	p(\mathbf{w}|\alpha) = \mathcal{N}(\mathbf{w|0},\alpha^{-1}\mathbf{I}),
-	\label{eq:prior_hyper}
-\end{equation}
-where $\alpha$ is the precision of the distribution. Using Bayes' theorem, the posterior distribution for $\mathbf{w}$ is proportional to the product of the prior distribution and the likelihood function
-\begin{equation}
-	p(\mathbf{w|x,t},\alpha,\beta)\propto p(\mathbf{w|x,t},\beta)p(\mathbf{w},\alpha).
-	\label{eq:bayes_reg}
-\end{equation}
-We can now determined $\mathbf{w}$ by finding the most probable value of $\mathbf{w}$ given the data, in other words by maximizing the posterior distribution, MAP (maximum posterior). Taking a negative logarithm, then we can find that the maximum of the posterior is given by the minimum of 
-\begin{equation}
-	\frac{\beta}{2}\sum_{n=1}^N \{y(x_n,\mathbf{w})-t_n\}^2+\frac{\alpha}{2}\mathbf{w}^T\mathbf{w}.
-	\label{eq:bayes_}
-\end{equation}
-Thus we see that maximizing the posteiror distribution si equivalent to minimizing the regularized sum of squares error function encountered earler with a regularization parameter given by $\lambda = \alpha/\beta$.
+In the Bayesian framework, we treat the regression coefficients $\beta$ as random variables with a prior distribution. Bayesian regression involves the following key elements:
 
+\begin{itemize}
+    \item \textbf{Prior:} $ p(\beta) $, which represents our belief about $\beta$ before observing the data.
+    \item \textbf{Likelihood:} $ p(y | X, \beta) $, the likelihood of observing the data given the regression coefficients.
+    \item \textbf{Posterior:} $ p(\beta | y, X) $, which updates the prior belief based on the observed data.
+\end{itemize}
 
+According to Bayes’ theorem, the posterior is:
+\begin{align*}
+	p(\beta | y, X) = \frac{p(y | X, \beta) p(\beta)}{p(y | X)}
+\end{align*}
+The term $ p(y | X) $ is the marginal likelihood (evidence), which acts as a normalizing constant to ensure that the posterior is a valid probability distribution.
 
-\section{Bayesian Curve Fitting}
+\subsection{Prior on $\beta$}
 
+A common choice for the prior distribution on $\beta$ is a Gaussian distribution:
+\begin{align*}
+	p(\beta) = \mathcal{N}(\beta | \mu_0, \Sigma_0),
+\end{align*}
+where $\mu_0$ is the prior mean (our prior belief about $\beta$), and $\Sigma_0$ is the prior covariance matrix (representing the uncertainty in our prior belief).
 
-% \section{Adding Noise to Regression Predictors is Ridge Regression}
-% In linear regression, we seek a vector $\hat{\beta}$ which solves the following optimization problem:
-% \begin{equation}
-% 	\hat{\beta} = \arg\min_{\beta}|y-X\beta|^2
-% 	\label{eq:linear_regression}
-% \end{equation}
+\subsection{Posterior Distribution}
+The posterior distribution of $\beta$ is obtained by combining the likelihood with the prior using Bayes' theorem.
 
-% Ridge regression is
-
-% \begin{equation}
-% 	\hat{\beta} = \arg\min_{\beta}|y-X\beta|^2+\lambda|\beta|^2
-% 	\label{eq:ridge_linear_regression}
-% \end{equation}
-
-% $$\varepsilon_1,\varepsilon_2,\cdots\sim \mathcal{N}(1,\sigma),$$
-% We can add a multiplicitive random noise to $\mathbf{X}$.
-% $$x_{ij}\to \varepsilon_{ij}x_{ij}$$
-
-% $$\hat{\beta} \sim \arg\min_{\beta} E_{G}[|y-G\cdot X\beta|^2]$$
-% where $G$ is a matrix of random Gaussian noise. 
+The likelihood is:
+\begin{align*}
+	p(y | X, \beta) = \mathcal{N}(y | X\beta, \sigma^2 I)
+\end{align*}
+The prior is given by
+\begin{align*}
+	p(\beta) = \mathcal{N}(\beta | \mu_0, \Sigma_0)
+\end{align*}
+Multiplying the prior and the likelihood (and applying properties of Gaussian distributions), we obtain the posterior distribution, which is also Gaussian:
+\begin{align*}
+	p(\beta | y, X) = \mathcal{N}(\beta | \mu_n, \Sigma_n),
+\end{align*}
+where:
+\begin{itemize}
+    \item The \textbf{posterior mean} $\mu_n$ is given by:
+		\begin{align*}
+			\mu_n = \Sigma_n \left( \Sigma_0^{-1} \mu_0 + \frac{1}{\sigma^2} X^T y \right)
+		\end{align*}
+    \item The \textbf{posterior covariance} $\Sigma_n$ is given by:
+		\begin{align*}
+			\Sigma_n = \left( \Sigma_0^{-1} + \frac{1}{\sigma^2} X^T X \right)^{-1}
+		\end{align*}
+\end{itemize}
 
 % \begin{align*}
-% 	\mathbb{E} \left[ \left| y - (G * X) \beta  \right|^2 \right] &= E \left[ y^t y - 2 y^t (G * X) \beta + \beta^t (G * X)^t (G * X) \right] \\
-% &= y^t y - 2 y^t (E[G] * X) \beta + \beta^t E \left[ M \right] \beta \\
-% &= y^t y - 2 y^t X \beta + \beta^t X^t X \beta + \beta^t diag(\sigma^2) X^t X \beta \\
-% &= \left| y - X \beta \right|^2 + \beta^t diag(\sigma^2) X^t X \beta \\
-% &= \left| y - X \beta \right|^2 + \sigma^2 \left| \Gamma \beta \right|^2
+% 	\log p(\beta| \mathcal{D}) &= \log p(\beta)+\log p(\mathcal{D}\mid \beta) + \text{const}\\ 
+% 							   &= \dots\\
+% 							   &= \dots\\
 % \end{align*}
-% where $M = (G\cdot X)^T(G\cdot X)$
-% $$m_{ij} = \sum_k e_{ki}e_{kj}x_{ki}x_{kj}$$
 
-	
+
+\subsection{Prediction}
+Once we have the posterior distribution $ p(\beta | y, X) $, we can make predictions on new data $ X_*$.
+
+The predictive distribution for the new output $ y_* $ given new input $ X_* $ is obtained by integrating over the posterior distribution of $\beta$:
+\begin{align*}
+	p(y_* | X_*, y, X) = \int p(y_* | X_*, \beta) p(\beta | y, X) d\beta
+\end{align*}
+Since both the likelihood and posterior are Gaussian, the predictive distribution is also Gaussian:
+\begin{align*}
+	p(y_* | X_*, y, X) = \mathcal{N}(y_* | X_*\mu_n, X_*\Sigma_n X_*^T + \sigma^2 I)
+\end{align*}
+
+In Bayesian regression, we incorporate prior beliefs about the regression coefficients through the prior distribution $ p(\beta) $, and update this belief after observing data to obtain the posterior distribution $ p(\beta | y, X) $. This method provides not only point estimates of the regression coefficients but also quantifies the uncertainty in these estimates through the posterior distribution.
+
