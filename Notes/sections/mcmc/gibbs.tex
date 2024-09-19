@@ -16,17 +16,14 @@ In order for all these ideas to make sense, we need to first go through some bac
 \section{Markov Chain}
 \href{https://gregorygundersen.com/blog/2019/10/28/ergodic-markov-chains/}{Reference Link}
 
-A Markov chain is a stochastic process that evolves over time by transitioning into different states. The sequence of states is denoted by the collection $\{X_i\}$ and the transition between states is random, following the rule 
-
+A Markov chain is a stochastic process that evolves over time by transitioning into different states. The sequence of states is denoted by the collection $\{X_i\}$ and the transition between states is random. Formally,
 \begin{definition}
-	Let $D$ be a finite set. A random process $X_1, X2,\dots$  with values in $D$ is called a Markov chain if
+Let $D$ be a finite set. A random process $X_1, X_2,\dots$ with values in $D$ is called a Markov chain if
 $$P(X_t=x_{t+1}|X_{t}=x_t,\dots,X_0=x_0)=P(X_{t+1}=x_{t+1}|X_{t}=x_t)$$
-\label{def:markov_chain}
 \end{definition}
 We can think of $X_t$ as a random state at time $t$, and the Markovian assumption is that the probability of transitioning from $x_t$ to $x_{t+1}$ only depends on $x_t$. In other words, the future state depends only on the present. Let $p_{ij}$ be the probability of transitioning from state $i$ to state $j$. A Markov chain can be defined by a transition probability matrix:
 \begin{definition}
 	The matrix $\mathbf{P}=(p_{ij})_{i,j}\in D$ is called the transition probability matrix.
-\label{def:markov_chain_transition_matrix}
 \end{definition}
 Thus, $P$ is a $D \times D$ matrix, where $|D|$ denotes the cardinality of $D$, and the cell value $p_{ij}$ is the probability of transitioning from state $i$ to state $j$, and the rows of $P$ must sum to one. We will restrict ourselves to time \textit{homogeneous Markov chains}:
 
@@ -38,9 +35,9 @@ It state that \textit{the transition probabilities are not changing as a functio
 
 $$\mathbb{P}_{x_0}\{\cdot\}\triangleq \mathbb{P}\{\cdot | X_0=x_0\}.$$
 
-For example, I will write $\mathbb{P}_a\{X_1=b\}$ rather than $\mathbb{P}\{X_1=b|X_0=a\}$. This is because all the conditional probabilities depend on the initial state, and it the usual notation is cumbersome.
+For example, I will write $\mathbb{P}_a\{X_1=b\}$ rather than $\mathbb{P}\{X_1=b|X_0=a\}$ for simplicity. 
 
-Consider a simple Markov chain modeling the weather. The weather has two states: rainy and sunny. Thus, $D = \{r, s\}$ and $X_n$ is the "weather on day $n$". The Markov chain model is as follows. If today is rainy ($r$), tomorrow it is sunny ($s$) with probability $p$. If today it is sunny, tomorrow it is rainy with probability $q$. Then, transition matrix is given by 
+Consider a simple Markov chain modeling the weather. The weather has two states: rainy and sunny. Thus, $D = \{r, s\}$ and $X_n$ is the ``weather on day $n$''. The Markov chain model is as follows. If today is rainy ($r$), tomorrow it is sunny ($s$) with probability $p$. If today it is sunny, tomorrow it is rainy with probability $q$. Then, transition matrix is given by 
 \begin{align*}
 	\mathbf{P} = 
 	\begin{bmatrix}
@@ -107,7 +104,10 @@ The ergodicity gives the following property:
 \end{itemize}
 Finally, we can write this as
 $$\boldsymbol{\pi}^T = \boldsymbol{\pi}^T\mathbf{P},$$
-where $\boldsymbol{\pi}$ is a column vector. Hence, the name "stationary probability distribution" denotes that it is a distribution that does not change over time.
+where $\boldsymbol{\pi}$ is a column vector. Hence, the name ``stationary probability distribution'' denotes that it is a distribution that does not change over time. Note that it can be also written as:
+$$\mathbf{P}^T\boldsymbol{\pi} = \boldsymbol{\pi}.$$
+Then, we can say $\boldsymbol{\pi}$ is an eigenvector of $\mathbf{P}^T$ with eigenvalue of 1. Thus, we can obtain the stationary distribution $\boldsymbol{\pi}$ from an eigenvectors and eigenvalues of $\mathbf{P}^T$.
+
 
 Since we are interested in ergodicity, let's now introduce some properties related to reachability and long-term behavior.
 
