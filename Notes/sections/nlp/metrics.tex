@@ -1,6 +1,39 @@
 \section{Evaluation Metrics}
 \label{sec:nlp_eval_metrics}
 
+In the context of a bigram model, likelihood refers to the probability of observing a sequence of words in a corpus based on the bigram model's parameters. The bigram model assumes that the probability of a word in a sequence depends only on the immediately preceding word, making it a **Markov model of order 1**.
+
+A bigram model represents the probability of a word sequence \( W = (w_1, w_2, \ldots, w_n) \) as a product of conditional probabilities:
+\[
+P(W) = P(w_1) \prod_{i=2}^n P(w_i | w_{i-1})
+\]
+Here, \( P(w_i | w_{i-1}) \) is the conditional probability of word \( w_i \) given the preceding word \( w_{i-1} \).
+
+The **likelihood** of a sequence of words (data) \( W = (w_1, w_2, \ldots, w_n) \) under the bigram model is:
+\[
+L(\theta | W) = P(W | \theta) = P(w_1 | \theta) \prod_{i=2}^n P(w_i | w_{i-1}, \theta)
+\]
+Here, \( \theta \) represents the model parameters, specifically the probabilities \( P(w_i | w_{i-1}) \).
+
+\paragraph{Maximum Likelihood Estimation (MLE) in the Bigram Model}
+
+To find the parameters \( P(w_i | w_{i-1}) \) that maximize the likelihood of the observed data, the **maximum likelihood estimation (MLE)** approach is commonly used.
+
+The bigram probabilities \( P(w_i | w_{i-1}) \) are estimated from the frequency counts in the training corpus:
+\[
+P(w_i | w_{i-1}) = \frac{\text{Count}(w_{i-1}, w_i)}{\text{Count}(w_{i-1})}
+\]
+where:
+\begin{itemize}
+	\item \( \text{Count}(w_{i-1}, w_i) \) is the number of times the bigram \( (w_{i-1}, w_i) \) appears in the corpus.
+	\item \( \text{Count}(w_{i-1}) \) is the number of times the word \( w_{i-1} \) appears.
+\end{itemize}
+
+To simplify computations, the log-likelihood of the sequence is used:
+\[
+\log L(\theta | W) = \log P(w_1 | \theta) + \sum_{i=2}^n \log P(w_i | w_{i-1}, \theta)
+\]
+
 \begin{itemize}
 	\item Recall: TP/(TP+FN). Find all relevant cases whithin a dataset.
 	\item Precision: TP/(TP+FP): While recall expresses the ability to find all relevant instances in a dataset, precision expresses the proportion of the data points our model says was relevant actually were relevant.
