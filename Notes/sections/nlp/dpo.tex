@@ -1,7 +1,151 @@
 \section{Direct Preference Optimization}
 \label{sec:nlp_dpo}
 
+In RL, the goal is to train an agent to maximize a reward signal. However, in many real-world scenarios, the reward function is not explicitly known or is difficult to define. Instead, we often have access to preference data, where humans provide comparisons between different outputs or trajectories (\eg ``Output A is better than Output B'').
+
+Traditional approaches to this problem involve:
+\begin{itemize}
+	\item Learning a reward function from preference data.
+	\item Using the learned reward function to train a policy via RL.
+\end{itemize}
+DPO simplifies this process by directly optimizing the policy to align with the preference data, bypassing the need for an explicit reward function. DPO can be represented as follows:
 \begin{align}
-	\mathcal{L}_{\text{DPO}}(\pi_\theta; \pi_{\text{ref}}) = -\mathbb{E}_{(x, y_w, w_l)\sim \mathcal{D}}\bigg[\log \sigma \bigg(\beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)}-\beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\bigg)\bigg].
+	\mathcal{L}_{\text{DPO}}(\pi_\theta; \pi_{\text{ref}}) = -\mathbb{E}_{(x, y_w, w_l)\sim \mathcal{D}}\bigg[\log \sigma \bigg(\beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)}-\beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\bigg)\bigg], 
 	\label{eq:dpo_loss}
 \end{align}
+where
+\begin{itemize}
+	\item \( \pi_{\text{ref}} \) represents a \textit{reference policy} (\eg a pre-trained or baseline policy).
+	\item \( \pi_{\theta} \) represents the \textit{learned policy} parameterized by \( \theta \).
+\end{itemize}
+
+Let's deep dive into this equation. DPO leverages the \textit{Bradley-Terry model}, a probabilistic framework for pairwise comparisons, to directly optimize the policy. The key idea is to express the probability of one output being preferred over another in terms of the policy's action probabilities. This allows the policy to be trained directly on preference data. 
+
+Assume that we have a dataset \( \mathcal{D} = \{(x_i, y_i^1, y_i^2, p_i)\}_{i=1}^N \), where:
+\begin{itemize}
+	\item \( x_i \): Input context.
+	\item \( y_i^1, y_i^2 \): Two possible outputs (\eg text responses or actions).
+	\item \( p_i \): Preference label, where \( p_i = 1 \) if \( y_i^1 \) is preferred over \( y_i^2 \), and \( p_i = 0 \) otherwise.
+\end{itemize}
+The Bradley-Terry model defines the probability that \( y_i^1 \) is preferred over \( y_i^2 \) as:
+\[
+P(y_i^1 \succ y_i^2 \mid x_i) = \frac{\exp(r(x_i, y_i^1))}{\exp(r(x_i, y_i^1)) + \exp(r(x_i, y_i^2))},
+\]
+where \( r(x, y) \) is a reward function.
+
+In DPO, the reward function \( r(x, y) \) is parameterized by the learned policy \( \pi_\theta(y \mid x) \) and the reference policy $\pi_{\text{ref}}$:
+\[
+r(x, y) = \beta \log \frac{\pi_{\theta}(y \mid x)}{\pi_{\text{ref}}(y \mid x)},
+\]
+where:
+\begin{itemize}
+	\item \( \beta \): A temperature parameter controlling the sharpness of the policy.
+	\item \( \pi_{\theta}(y \mid x) \): The probability of output \( y \) under the learned policy.
+	\item \( \pi_{\text{ref}}(y \mid x) \): The probability of output \( y \) under the reference policy.
+\end{itemize}
+This formulation ensures that the reward is tied to how much the learned policy \( \pi_{\theta} \) deviates from the reference policy \( \pi_{\text{ref}} \).
+
+\begin{lstlisting}[language=Python]
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, Dataset
+import numpy as np
+
+# Set random seed for reproducibility
+torch.manual_seed(42)
+np.random.seed(42)
+
+# Define a simple neural network for the policy
+class PolicyNetwork(nn.Module):
+    def __init__(self, input_dim, output_dim):
+        super(PolicyNetwork, self).__init__()
+        self.fc = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, output_dim),
+            nn.Softmax(dim=-1)  # Output is a probability distribution
+        )
+
+    def forward(self, x):
+        return self.fc(x)
+
+# Synthetic dataset for preference data
+class PreferenceDataset(Dataset):
+    def __init__(self, num_samples, input_dim):
+        self.num_samples = num_samples
+        self.input_dim = input_dim
+        self.x = torch.randn(num_samples, input_dim)  # Random input contexts
+        self.y1 = torch.randint(0, 2, (num_samples,))  # Random output 1
+        self.y2 = torch.randint(0, 2, (num_samples,))  # Random output 2
+        self.p = torch.randint(0, 2, (num_samples,))  # Random preferences (0 or 1)
+
+    def __len__(self):
+        return self.num_samples
+
+    def __getitem__(self, idx):
+        return self.x[idx], self.y1[idx], self.y2[idx], self.p[idx]
+
+# DPO loss function
+def dpo_loss(pi_theta, pi_ref, y1, y2, p, beta=1.0):
+    # Compute log probabilities under the learned and reference policies
+    log_pi_theta_y1 = torch.log(pi_theta.gather(1, y1.unsqueeze(1))).squeeze()
+    log_pi_theta_y2 = torch.log(pi_theta.gather(1, y2.unsqueeze(1))).squeeze()
+    log_pi_ref_y1 = torch.log(pi_ref.gather(1, y1.unsqueeze(1))).squeeze()
+    log_pi_ref_y2 = torch.log(pi_ref.gather(1, y2.unsqueeze(1))).squeeze()
+
+    # Compute the reward differences
+    r_y1 = beta * (log_pi_theta_y1 - log_pi_ref_y1)
+    r_y2 = beta * (log_pi_theta_y2 - log_pi_ref_y2)
+
+    # Compute the preference probability using the Bradley-Terry model
+    logits = r_y1 - r_y2
+    loss = -torch.mean(p * torch.log(torch.sigmoid(logits)) + (1 - p) * torch.log(torch.sigmoid(-logits)))
+    return loss
+
+# Hyperparameters
+input_dim = 10  # Dimension of input context
+output_dim = 2  # Number of possible outputs (binary for simplicity)
+num_samples = 1000  # Number of preference pairs
+batch_size = 32
+learning_rate = 1e-3
+num_epochs = 10
+beta = 1.0  # Temperature parameter
+
+# Create dataset and dataloader
+dataset = PreferenceDataset(num_samples, input_dim)
+dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+# Initialize policies
+pi_theta = PolicyNetwork(input_dim, output_dim)  # Learned policy
+pi_ref = PolicyNetwork(input_dim, output_dim)  # Reference policy (fixed)
+pi_ref.eval()  # Freeze the reference policy
+
+# Optimizer
+optimizer = optim.Adam(pi_theta.parameters(), lr=learning_rate)
+
+# Training loop
+for epoch in range(num_epochs):
+    for x, y1, y2, p in dataloader:
+        # Forward pass: compute probabilities under the learned and reference policies
+        pi_theta_probs = pi_theta(x)
+        with torch.no_grad():
+            pi_ref_probs = pi_ref(x)
+
+        # Compute DPO loss
+        loss = dpo_loss(pi_theta_probs, pi_ref_probs, y1, y2, p, beta)
+
+        # Backward pass and optimization
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+    print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}")
+
+# Test the learned policy
+test_x = torch.randn(1, input_dim)  # Random test input
+pi_theta_probs = pi_theta(test_x)
+print(f"Test input: {test_x}")
+print(f"Learned policy probabilities: {pi_theta_probs}")
+\end{lstlisting}
+
