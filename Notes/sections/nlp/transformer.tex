@@ -1,144 +1,419 @@
+
+\paragraph{TLDR}
+\begin{itemize}
+	\item \textit{Attention is a communication mechanism}, which can be seen as nodes in a directed graph looking at each other and aggregating information with a weighted sum from all nodes that point to them, with data-dependent weights.
+	\item There is no notion of space. Attention simply acts over a set of vectors. This is why we need to positionally encode tokens.
+	\item Each example across batch dimension is of course processed completely independently and never ``talk'' to each other
+	\item In an ``encoder'' attention block just delete the single line that does masking with `tril`, allowing all tokens to communicate. This block here is called a ``decoder'' attention block because it has triangular masking, and is usually used in autoregressive settings, like language modeling.
+	\item ``self-attention'' just means that the keys and values are produced from the same source as queries. In ``cross-attention'', the queries still get produced from $x$, but the keys and values come from some other, external source (\eg an encoder module)
+	\item ``Scaled'' attention additional divides `wei` by $1/sqrt(head\_size)$. This makes it so when input Q,K are unit variance, wei will be unit variance too and Softmax will stay diffuse and not saturate too much. Illustration below
+\end{itemize}
+
 \section{Attention Mechanism}
 \label{sec:nlp_attention}
-The attention mechanism mimics the retrieval of a value $v_i$ for a query $q$ based on a key $k_i$ in database.
-$$attn(q, k, v) = \sum_i sim(q,k_i)\times v_i$$
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=1.8]{./images/transformer/attention_database.pdf}
-	\caption{The most similar key will be selected by measuring a \textbf{similarity} between a query and a key.}
-\end{figure}
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=0.6]{./images/transformer/attention.pdf}
-	\caption{The similarity $s_t$ is computed by a query and keys}
-\end{figure}
-There are several choices for a similarity function.
+The attention mechanism assigns \textit{attention scores} (\ie \textit{weights}) to different parts of the input sequence, indicating how much each part contributes to the current output. In essence, the model ``pays attention'' to certain parts of the input more than others while processing each token in the sequence.
+
+% The attention mechanism mimics the retrieval of a value $v_i$ for a query $q$ based on a key $k_i$ in database.
+% $$attn(q, k, v) = \sum_i sim(q,k_i)\times v_i$$
+% \begin{figure}[h]
+% 	\centering
+% 	\includegraphics[scale=1.8]{./images/transformer/attention_database.pdf}
+% 	\caption{The most similar key will be selected by measuring a \textbf{similarity} between a query and a key.}
+% \end{figure}
+
+% \begin{figure}[h]
+% 	\centering
+% 	\includegraphics[scale=0.6]{./images/transformer/attention.pdf}
+% 	\caption{The similarity $s_t$ is computed by a query and keys}
+% \end{figure}
+% There are several choices for a similarity function.
+% \begin{itemize}
+% 	\item $q^Tk_i$: dot product.
+% 	\item $\frac{q^Tk_i}{\sqrt{d}}$: scaled dot product $\to$ reduce the variance of the final attention weights. 
+% 	\item $q^TWk_i$: general dot product.
+% 	\item $w_q^Tq+ w_k^Tk_i$: additive similarity.
+% \end{itemize}
+% Finally, the \textbf{attention score} can be computed by using a softmax:
+% $$a_i = \frac{\exp(s_i)}{\sum_j \exp(s_j)}$$
+
+
+Assume the encoder produces 3 hidden states (each a 2-dimensional vector):
+
+\[
+h_1 = \begin{bmatrix} 1 \\ 0 \end{bmatrix}, \quad
+h_2 = \begin{bmatrix} 0 \\ 1 \end{bmatrix}, \quad
+h_3 = \begin{bmatrix} 1 \\ 1 \end{bmatrix}.
+\]
+
+Let the decoder’s previous hidden state at time \( t-1 \) be:
+
+\[
+s_{t-1} = \begin{bmatrix} 0.5 \\ 0.2 \end{bmatrix}.
+\]
+
+Using the \textit{dot product} as our score function, the alignment score for each encoder hidden state is:
+
+\[
+e_{tj} = s_{t-1}^\top h_j.
+\]
+
+Compute each:
+\begin{enumerate}
+	\item  For \( h_1 \):
+   \[
+   e_{t1} = [0.5 \quad 0.2] \cdot \begin{bmatrix} 1 \\ 0 \end{bmatrix} = 0.5 \times 1 + 0.2 \times 0 = 0.5.
+   \]
+\item For \( h_2 \):
+   \[
+   e_{t2} = [0.5 \quad 0.2] \cdot \begin{bmatrix} 0 \\ 1 \end{bmatrix} = 0.5 \times 0 + 0.2 \times 1 = 0.2.
+   \]
+\item For \( h_3 \):
+   \[
+   e_{t3} = [0.5 \quad 0.2] \cdot \begin{bmatrix} 1 \\ 1 \end{bmatrix} = 0.5 \times 1 + 0.2 \times 1 = 0.7.
+   \]
+\end{enumerate}
+
+The attention weight for each encoder time step is given by:
+
+\[
+\alpha_{tj} = \frac{\exp(e_{tj})}{\sum_{k=1}^{3} \exp(e_{tk})}.
+\]
+
+Calculate the exponentials:
+
+- \(\exp(0.5) \approx 1.6487\),
+- \(\exp(0.2) \approx 1.2214\),
+- \(\exp(0.7) \approx 2.0138\).
+
+Sum of exponentials:
+
+\[
+S = 1.6487 + 1.2214 + 2.0138 \approx 4.8839.
+\]
+
+Now compute each attention weight:
+\begin{enumerate}
+	\item For \( \alpha_{t1} \):
+   \[
+   \alpha_{t1} = \frac{1.6487}{4.8839} \approx 0.3374.
+   \]
+\item For \( \alpha_{t2} \):
+   \[
+   \alpha_{t2} = \frac{1.2214}{4.8839} \approx 0.2501.
+   \]
+\item For \( \alpha_{t3} \):
+   \[
+   \alpha_{t3} = \frac{2.0138}{4.8839} \approx 0.4125.
+   \]
+\end{enumerate}
+
+These weights sum to 1 (up to rounding):
+
+\[
+0.3374 + 0.2501 + 0.4125 \approx 1.0000.
+\]
+
+The context vector \( c_t \) is the weighted sum of the encoder hidden states:
+
+\[
+c_t = \alpha_{t1} h_1 + \alpha_{t2} h_2 + \alpha_{t3} h_3.
+\]
+
+Substitute in the values:
+
+\[
+\begin{aligned}
+c_t &= 0.3374 \begin{bmatrix} 1 \\ 0 \end{bmatrix} 
++ 0.2501 \begin{bmatrix} 0 \\ 1 \end{bmatrix} 
++ 0.4125 \begin{bmatrix} 1 \\ 1 \end{bmatrix} \\
+&= \begin{bmatrix} 0.3374 \\ 0 \end{bmatrix} 
++ \begin{bmatrix} 0 \\ 0.2501 \end{bmatrix} 
++ \begin{bmatrix} 0.4125 \\ 0.4125 \end{bmatrix} \\
+&= \begin{bmatrix} 0.3374 + 0.4125 \\ 0 + 0.2501 + 0.4125 \end{bmatrix} \\
+&= \begin{bmatrix} 0.7499 \\ 0.6626 \end{bmatrix}.
+\end{aligned}
+\]
+
+So, the context vector is approximately:
+
+\[
+c_t \approx \begin{bmatrix} 0.75 \\ 0.66 \end{bmatrix}.
+\]
+
+In a typical decoder, the context vector \( c_t \) is combined with the previous hidden state and possibly the previously generated output to update the current hidden state. For example, an update could be:
+
+\[
+s_t = f(s_{t-1}, y_{t-1}, c_t),
+\]
+
+or, if you are using a simple formulation with a combined input, it might be:
+
+\[
+s_t = \tanh(W [s_{t-1}; c_t]),
+\]
+
+where \( [s_{t-1}; c_t] \) denotes the concatenation of \( s_{t-1} \) and \( c_t \), and \( W \) is a learnable weight matrix. The updated state \( s_t \) would then be used to predict the next output token.
+
+Let's use a machine translation task (English to French) as an example. Suppose we are translating the sentence ``I am learning'' into French. 
 \begin{itemize}
-	\item $q^Tk_i$: dot product.
-	\item $\frac{q^Tk_i}{\sqrt{d}}$: scaled dot product $\to$ reduce the variance of the final attention weights. 
-	\item $q^TWk_i$: general dot product.
-	\item $w_q^Tq+ w_k^Tk_i$: additive similarity.
+	\item Input: Sequence of words in English: `[I, am, learning]`
+	\item Output: Sequence of words in French: `[Je, suis, en, train, d'apprendre]`
 \end{itemize}
-Finally, the \textbf{attention score} can be computed by using a softmax:
-$$a_i = \frac{\exp(s_i)}{\sum_j \exp(s_j)}$$
-
-
-
-### Key Idea:
-The attention mechanism assigns **weights** (often called attention scores) to different parts of the input sequence, indicating how much each part contributes to the current output. In essence, the model "pays attention" to certain parts of the input more than others while processing each token in the sequence.
-
-### Example of Attention Mechanism (Seq2Seq)
-Let's use a machine translation task (English to French) as an example. Suppose we are translating the sentence "I am learning" into French. 
-
-1. **Input**: Sequence of words in English: `[I, am, learning]`
-2. **Output**: Sequence of words in French: `[Je, suis, en, train, d'apprendre]`
 
 Instead of compressing all the input information into a fixed-size context vector (like in traditional encoder-decoder models), the attention mechanism allows the decoder to look at different parts of the input sentence at each step of the decoding process.
 
-### Basic Structure of Attention
+\begin{table}[h]
+\centering
+\begin{tabular}{lccc}
+\toprule
+& I & am & learning \\
+\midrule
+Je   & 0.7  & 0.2  & 0.1 \\
+suis & 0.1  & 0.8  & 0.1 \\
+en   & 0.05 & 0.15 & 0.8 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-Given:
-- An input sequence with tokens: \(\mathbf{x}_1, \mathbf{x}_2, ..., \mathbf{x}_n\)
-- A decoder hidden state at time step \(t\): \(\mathbf{h}_t\)
+This matrix shows that ``Je'' strongly attends to ``I'', ``suis'' attends mostly to ``am'', and ``en'' attends primarily to ``learning''.
 
-The attention mechanism computes a **context vector** that represents a weighted combination of the encoder hidden states corresponding to the input tokens.
-
-#### Steps in the Attention Mechanism:
-
-1. **Step 1: Compute attention scores**  
-   For each hidden state \(\mathbf{h}_t\) of the decoder, calculate the **alignment score** \(e_{t,i}\) between the decoder hidden state \(\mathbf{h}_t\) and each encoder hidden state \(\mathbf{s}_i\) (for input \(\mathbf{x}_i\)):
-
-   \[
-   e_{t,i} = \text{score}(\mathbf{h}_t, \mathbf{s}_i)
-   \]
-
-   The score function can vary, common ones include:
-   - **Dot product**: \( e_{t,i} = \mathbf{h}_t^\top \mathbf{s}_i \)
-   - **Additive** (Bahdanau Attention): \( e_{t,i} = \mathbf{v}_a^\top \tanh(\mathbf{W}_a \mathbf{h}_t + \mathbf{U}_a \mathbf{s}_i) \)
-
-2. **Step 2: Compute attention weights**  
-   Normalize the alignment scores using a softmax function to obtain the **attention weights**:
-
-   \[
-   \alpha_{t,i} = \frac{\exp(e_{t,i})}{\sum_{j=1}^{n} \exp(e_{t,j})}
-   \]
-
-   These weights \(\alpha_{t,i}\) tell us how much attention to pay to each input token when generating the output at time step \(t\).
-
-3. **Step 3: Compute context vector**  
-   Use the attention weights to compute a **context vector** \(\mathbf{c}_t\), which is a weighted sum of the encoder hidden states:
-
-   \[
-   \mathbf{c}_t = \sum_{i=1}^{n} \alpha_{t,i} \mathbf{s}_i
-   \]
-
-4. **Step 4: Generate output**  
-   The context vector \(\mathbf{c}_t\) is then used along with the decoder hidden state \(\mathbf{h}_t\) to generate the final output (such as a translated word):
-
-   \[
-   \mathbf{o}_t = \text{generate}(\mathbf{h}_t, \mathbf{c}_t)
-   \]
-
-### Attention Matrix Visualization:
-The attention weights \(\alpha_{t,i}\) can be represented as a matrix. Each row corresponds to a target word, and each column corresponds to a source word. The values in this matrix indicate how much each source word contributes to the target word at each step.
-
-For example, if you're translating "I am learning" to French, the attention weights might look like this:
-
-|             | I    | am   | learning |
-|-------------|------|------|----------|
-| Je          | 0.7  | 0.2  | 0.1      |
-| suis        | 0.1  | 0.8  | 0.1      |
-| en          | 0.05 | 0.15 | 0.8      |
-
-This matrix shows that "Je" strongly attends to "I", "suis" attends mostly to "am", and "en" attends primarily to "learning".
-
-### Types of Attention:
-
-1. **Global Attention**: Attends to all input tokens at each step.
-2. **Local Attention**: Attends to a subset of the input tokens (a window) at each step.
-
-### Scaled Dot-Product Attention (Used in Transformers):
-In Transformer models, the attention mechanism is slightly modified to include scaling:
-
-\[
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
-\]
-
-Where:
-- \(Q\): Query matrix (derived from the decoder hidden state)
-- \(K\): Key matrix (derived from the encoder hidden states)
-- \(V\): Value matrix (also derived from encoder hidden states)
-- \(d_k\): Dimension of the key vectors (used for scaling)
-
-This version of attention allows for parallelization across different tokens and is the backbone of the Transformer architecture.
-
-### Summary:
-- **Attention** is a mechanism that helps the model focus on relevant parts of the input sequence at each decoding step.
-- It assigns **weights** (attention scores) to different parts of the input and combines them into a **context vector**.
-- The **context vector** is then used along with the decoder state to generate the output token.
-
-The attention mechanism has dramatically improved the performance of models handling sequence-to-sequence tasks and is now used in modern architectures like the Transformer.
-
-
-
-
-\section{Transformer}
-\label{sec:nlp_transformer}
 % The encoder's inputs first flow through a self-attention layer – a layer that helps the encoder look at other words in the input sentence as it encodes a specific word. 
 
-
 \subsection{Self-Attention}
-$$attn(Q,K,V) = softmax\bigg(\frac{Q^TK}{\sqrt{d_k}}\bigg)V$$
+% $$attn(Q,K,V) = softmax\bigg(\frac{Q^TK}{\sqrt{d_k}}\bigg)V$$
 
-Here, $Q, K, V\in \mathbb{R}^{N\times d}$, $QK^T$'s time complexity is $O(N^2d)$. This quadratic cost is massive for long input-sequences such as documents to be summarized or character-level inputs.
+\begin{itemize}
+	\item \( n \): the number of tokens in the sequence.
+	\item \( d_{\text{model}} \): the dimension of the input embeddings.
+	\item \( d_k \): the dimension of the query and key vectors.
+	\item \( d_v \): the dimension of the value vectors (often \( d_k = d_v \), but they need not be equal).
+\end{itemize}
 
+Assume we have an input sequence of \( n \) tokens. For each token \( i \) (with \( 1 \leq i \leq n \)) we start with an embedding vector \( \mathbf{x}_i \in \mathbb{R}^{d_{\text{model}}} \). In self‐attention, we first linearly project these embeddings into three different spaces to obtain the \textit{query}, \textit{key}, and \textit{value} vectors:
 
-\subsection{Masked attention}
-The masked attention is often referred to cross-attention. This is just a self-attention in decoder.
+\[
+\begin{aligned}
+\mathbf{q}_i &= \mathbf{x}_i \, W^Q, \\
+\mathbf{k}_i &= \mathbf{x}_i \, W^K, \\
+\mathbf{v}_i &= \mathbf{x}_i \, W^V,
+\end{aligned}
+\]
+
+where
+\begin{itemize}
+	\item \( W^Q, W^K \in \mathbb{R}^{d_{\text{model}} \times d_k} \) are the query and key projection matrices,
+	\item \( W^V \in \mathbb{R}^{d_{\text{model}} \times d_v} \) is the value projection matrix,
+	\item \( d_k \) (and sometimes \( d_v \)) is a chosen dimensionality for these spaces.
+\end{itemize}
+
+For a given token \( i \), we compute its output representation as a weighted sum of the value vectors of all tokens. The weights are determined by the similarity between the query \( \mathbf{q}_i \) and the keys \( \mathbf{k}_j \) of all tokens \( j \) in the sequence.
+
+First, compute the \textit{dot-product scores} between the query for token \( i \) and every key:
+
+\[
+s_{ij} = \mathbf{q}_i \cdot \mathbf{k}_j, \quad \text{for } j = 1, 2, \dots, n.
+\]
+
+To prevent the dot products from growing too large in magnitude (especially when \( d_k \) is large), we \textit{scale the scores} by \( \sqrt{d_k} \):
+
+\[
+\tilde{s}_{ij} = \frac{s_{ij}}{\sqrt{d_k}}.
+\]
+
+Next, we apply the softmax function over the scaled scores for token \( i \) to obtain the attention weights \( \alpha_{ij} \):
+
+\[
+\alpha_{ij} = \frac{\exp(\tilde{s}_{ij})}{\displaystyle \sum_{l=1}^{n} \exp(\tilde{s}_{il})}.
+\]
+
+These weights satisfy \( \sum_{j=1}^{n} \alpha_{ij} = 1 \).
+
+Finally, the output for token \( i \), denoted by \( \mathbf{z}_i \), is the weighted sum of the value vectors:
+
+\[
+\mathbf{z}_i = \sum_{j=1}^{n} \alpha_{ij} \, \mathbf{v}_j.
+\]
+
+In matrix form for all tokens, if we define matrices \( Q \), \( K \), and \( V \) whose rows are the vectors \( \mathbf{q}_i \), \( \mathbf{k}_i \), and \( \mathbf{v}_i \) respectively, the self-attention operation is:
+
+\[
+\text{Attention}(Q, K, V) = \operatorname{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right) V.
+\]
+
+Here, $Q, K, V\in \mathbb{R}^{n\times d_{model}}$, $QK^T$'s time complexity is $O(N^2d)$. This quadratic cost is massive for long input-sequences such as documents to be summarized or character-level inputs.
+
+\paragraph{Input Embeddings}
+
+   Each token \( i \) is represented by an embedding:
+   \[
+   \mathbf{x}_i \in \mathbb{R}^{d_{\text{model}}}.
+   \]
+   
+   You can think of all the tokens put together as a matrix:
+   \[
+   X \in \mathbb{R}^{n \times d_{\text{model}}}.
+   \]
+
+\paragraph{Projection Matrices}
+
+   To obtain the queries, keys, and values, we use learned projection matrices:
+   \[
+   \begin{aligned}
+   W^Q &\in \mathbb{R}^{d_{\text{model}} \times d_k}, \\
+   W^K &\in \mathbb{R}^{d_{\text{model}} \times d_k}, \\
+   W^V &\in \mathbb{R}^{d_{\text{model}} \times d_v}.
+   \end{aligned}
+   \]
+
+\paragraph{Projected Matrices}
+   Multiplying the input \( X \) by these weight matrices gives:
+   \[
+   \begin{aligned}
+   Q &= X\,W^Q \in \mathbb{R}^{n \times d_k}, \\
+   K &= X\,W^K \in \mathbb{R}^{n \times d_k}, \\
+   V &= X\,W^V \in \mathbb{R}^{n \times d_v}.
+   \end{aligned}
+   \]
+   
+   Here, each row of \( Q \) (or \( K \), or \( V \)) corresponds to the query (or key, or value) of one token.
+
+\paragraph{Dot-Product Attention Scores}
+
+   The attention scores between tokens are computed using:
+   \[
+   QK^\top \in \mathbb{R}^{n \times n}.
+   \]
+   
+   In this product:
+   \begin{itemize}
+	   \item \( Q \) is \( n \times d_k \)
+	   \item \( K^\top \) is \( d_k \times n \)
+   \end{itemize}
+   
+   
+   Therefore, the result is an \( n \times n \) matrix where each entry \((i,j)\) represents the (unnormalized) similarity between token \( i \) and token \( j \).
+
+   \paragraph{Scaled Dot-Product and Softmax}
+
+   Before applying the softmax, the scores are scaled by \( \sqrt{d_k} \):
+   \[
+   \frac{QK^\top}{\sqrt{d_k}} \in \mathbb{R}^{n \times n}.
+   \]
+   
+   Then, applying the softmax function row-wise produces an attention weight matrix \( A \in \mathbb{R}^{n \times n} \):
+   \[
+   A = \operatorname{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right).
+   \]
+
+   \paragraph{Final Output}
+   Finally, the output of the self-attention layer is computed as:
+   \[
+   \text{Attention}(Q, K, V) = A\,V.
+   \]
+   
+   Since:
+   \begin{itemize}
+	   \item \( A \) is \( n \times n \),
+	   \item \( V \) is \( n \times d_v \),
+   \end{itemize}
+   
+   The final output is:
+   \[
+   \text{Attention}(Q, K, V) \in \mathbb{R}^{n \times d_v}.
+   \]
+
+\subsection{Masked Attention}
+In autoregressive tasks (\eg language modeling), it is essential that when predicting a token at position ii, the model does not ``peek'' at any tokens at positions $j>i$. \textit{Masked attention} ensures that each token only attends to tokens at the same or earlier positions. The masked attention is often referred to \textit{cross-attention}. This is just a self-attention in decoder.
 $$\textrm{MA}(Q,K,V) = softmax\bigg(\frac{Q^TK+M}{\sqrt{d_k}}\bigg)V,$$
-where $M$ is a matrix of 0 and $-\infty$. Note that $-\infty$ will make $exp$ term to be zero.
+where $M$ 
+\begin{align*}
+	M_{ij} = \begin{cases}
+		0&\text{if } j\leq i\\
+		-\infty&\text{if } j>i
+	\end{cases}
+\end{align*}
+Note that $-\infty$ will make $exp$ term to be zero.
 
+\subsection{Multi-Head Attention}
+Multi-head attention allows the model to jointly attend to information from different representation subspaces at different positions. \textbf{Rather than computing a single attention function with full-dimensional queries, keys, and values, the mechanism splits them into multiple ``heads'' and computes attention in parallel}. 
+
+Suppose:
+\begin{itemize}
+	\item The input embeddings (or previous layer outputs) form the matrix \(X \in \mathbb{R}^{n \times d_{\text{model}}}\),
+	\item \(d_{\text{model}}\) is the model (or embedding) dimension,
+	\item We decide to use \(h\) attention heads.
+\end{itemize}
+
+Each head will work with lower-dimensional projections of the input. In particular, we typically set:
+\[
+d_k' = d_v' = \frac{d_{\text{model}}}{h},
+\]
+so that each head processes queries, keys, and values of dimensions \(d_k'\) and \(d_v'\), and the total computation remains efficient.
+
+\paragraph{Linear Projections for Each Head}
+
+   For each head \(i \in \{1, \dots, h\}\), we define learned projection matrices:
+   \[
+   \begin{aligned}
+   W_i^Q &\in \mathbb{R}^{d_{\text{model}} \times d_k'}, \\
+   W_i^K &\in \mathbb{R}^{d_{\text{model}} \times d_k'}, \\
+   W_i^V &\in \mathbb{R}^{d_{\text{model}} \times d_v'}.
+   \end{aligned}
+   \]
+   We then project the input \(X\) to obtain:
+   \[
+   \begin{aligned}
+   Q_i &= X W_i^Q \in \mathbb{R}^{n \times d_k'}, \\
+   K_i &= X W_i^K \in \mathbb{R}^{n \times d_k'}, \\
+   V_i &= X W_i^V \in \mathbb{R}^{n \times d_v'}.
+   \end{aligned}
+   \]
+
+\paragraph{Compute Scaled (Masked) Dot-Product Attention for Each Head}
+
+   For each head \(i\), compute:
+   \[
+   \text{head}_i = \operatorname{Attention}(Q_i, K_i, V_i),
+   \]
+   where the attention function is defined as:
+   \[
+   \text{head}_i = \operatorname{softmax}\!\left(\frac{Q_iK_i^\top + M}{\sqrt{d_k'}}\right) V_i.
+   \]
+   \begin{itemize}
+	   \item If masking is not required (\eg in the encoder or in \textit{non-autoregressive} settings), simply set \(M = 0\).
+	   \item \textit{For decoder self-attention in autoregressive models}, \(M\) is defined as in the Masked Attention section above.
+   \end{itemize}
+
+\paragraph{Concatenate the Heads and Project}
+
+   Once all heads are computed, we concatenate their outputs:
+   \[
+   \text{Concat}(\text{head}_1, \text{head}_2, \dots, \text{head}_h) \in \mathbb{R}^{n \times (h \cdot d_v')}.
+   \]
+   Finally, we apply a learned linear projection:
+   \[
+   W^O \in \mathbb{R}^{(h \cdot d_v') \times d_{\text{model}}},
+   \]
+   to obtain the final multi-head attention output:
+   \[
+   \text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) W^O \in \mathbb{R}^{n \times d_{\text{model}}}.
+   \]
+
+   % \begin{itemize}
+		% \item Input \(X\): \( n \times d_{\text{model}} \)
+		% \item Projection matrices \(W_i^Q, W_i^K, W_i^V\): \( d_{\text{model}} \times d_k' \) (or \( d_v' \))
+		% \item Projected matrices for each head:
+		% \item  \( Q_i, K_i \in \mathbb{R}^{n \times d_k'} \)
+		% \item  \( V_i \in \mathbb{R}^{n \times d_v'} \)
+		% \item Attention score matrix (per head):
+		% \item \( Q_iK_i^\top \in \mathbb{R}^{n \times n} \)
+		% \item Output of each head: \( \text{head}_i \in \mathbb{R}^{n \times d_v'} \)
+		% \item Concatenated heads: \( n \times (h \cdot d_v') \)
+		% \item Final projection \(W^O\): \( (h \cdot d_v') \times d_{\text{model}} \)
+		% \item Final multi-head attention output: \( n \times d_{\text{model}} \)
+   % \end{itemize}
+   
 \subsection{Skip Connection}
 This is a regularization technique.
 
@@ -174,92 +449,170 @@ def forward(self, tgt: Tensor, memory: Tensor) -> Tensor:
 \end{lstlisting}
 
 
-Self-attention (or intra-attention) is a mechanism where each token in an input sequence attends to every other token, including itself. It allows the model to capture dependencies within a sequence.
+\section{Inference of Autoregressive Model}
 
-Given an input sequence $X = [x_1, x_2, \dots, x_n]$, where each $x_i$ is a word embedding (or token embedding), the self-attention mechanism follows these steps:
+In an autoregressive transformer (such as GPT), tokens are generated one at a time. During inference, the model must compute attention for the next token based on all previously generated tokens. However, because recomputing the entire attention from scratch at each time step would be inefficient, these models use \textit{caching} to store intermediate results (the keys and values) from previous time steps. Below is an explanation with equations and clear notations.
 
-\subsection*{1. Create Query, Key, and Value vectors}
-
-For each input token $x_i$, we create three vectors:
+\paragraph{Inference Overview in Autoregressive Models}
 \begin{itemize}
-	\item Query vector $Q_i$
-	\item Key vector $K_i$
-	\item Value vector $V_i$
+	\item Training: The model can process the entire sequence in parallel using masked self-attention. A mask (typically a triangular matrix) prevents tokens from ``seeing'' future tokens.
+	\item Inference: The model generates one token at a time. At time step \( t+1 \), it uses the already generated tokens \( [x_1, x_2, \dots, x_t] \) to compute the probability distribution for the next token.
 \end{itemize}
 
-These vectors are computed by multiplying the input embeddings with learned weight matrices:
-\begin{itemize}
-	\item Query: \( Q = XW_Q \)
-	\item Key: \( K = XW_K \)
-	\item Value: \( V = XW_V \)
-\end{itemize}
-Where \(W_Q\), \(W_K\), and \(W_V\) are the learned weight matrices.
+To avoid recomputing keys and values for tokens \( x_1, \dots, x_t \) at every step, the model stores them (usually for each layer). When a new token is generated, only its query needs to be computed, and then the cached keys and values are used to compute the attention.
 
-Let's walk through an example of how self-attention works using a small sequence. Let's say we are given a sentence: ``She likes cats.''
+The technique of storing and reusing the computed keys and values from previous tokens during autoregressive generation is commonly called \textit{KV caching} (short for Key-Value Caching).
 
-Suppose the model has the following 3 word embeddings for "She", "likes", and "cats":
+\paragraph{Step 1: Previous Tokens and Cached Representations}
+
+Assume that by time step \( t \) the model has generated tokens:
 \[
-X = [x_{\text{she}}, x_{\text{likes}}, x_{\text{cats}}]
+x_1,\, x_2,\, \dots,\, x_t.
 \]
 
-1. **Compute Queries, Keys, and Values:**
-   Each word's embedding is transformed into a Query, Key, and Value using learned weight matrices \(W_Q\), \(W_K\), and \(W_V\):
+For a given transformer layer, let the cached key and value matrices be:
+\[
+\begin{aligned}
+K_{\leq t} &\in \mathbb{R}^{t \times d_k}, \\
+V_{\leq t} &\in \mathbb{R}^{t \times d_v},
+\end{aligned}
+\]
+where \( d_k \) is the key (and query) dimension and \( d_v \) is the value dimension.
 
+\paragraph{Step 2: Compute the Query for the New Token}
+
+When generating the next token \( x_{t+1} \), its input (often the embedding of the previously generated token or a special “start” symbol) is used to compute a query vector for each layer:
+\[
+q_{t+1} \in \mathbb{R}^{d_k}.
+\]
+
+This is computed by a linear projection:
+\[
+q_{t+1} = x_{t+1} \, W^Q,
+\]
+where \( W^Q \in \mathbb{R}^{d_{\text{model}} \times d_k} \) is the learned projection matrix.
+
+\paragraph{Step 3: Compute the Attention Scores}
+
+The new query \( q_{t+1} \) is compared with all the cached keys. In a single attention head, the (scaled) dot-product attention scores are computed as:
+\[
+s_{t+1,j} = \frac{q_{t+1} \cdot k_j}{\sqrt{d_k}} \quad \text{for } j=1,2,\dots,t,
+\]
+and often, for implementation convenience, the new token's own key \( k_{t+1} \) is also computed and appended to the cache. In that case, you would have:
+\[
+s_{t+1,j} = \frac{q_{t+1} \cdot k_j}{\sqrt{d_k}} \quad \text{for } j=1,2,\dots,t+1.
+\]
+
+Since the model is autoregressive, the mask is implicit. There are no ``future'' tokens beyond \( t+1 \) at inference time. (If you do compute for all \( t+1 \) positions, a mask would ensure that token \( t+1 \) only attends to tokens \( 1 \) through \( t+1 \).)
+
+\paragraph{Step 4: Apply the Softmax to Get Attention Weights}
+
+The scores are then normalized with the softmax function to obtain the attention weights:
+\[
+\alpha_{t+1,j} = \frac{\exp(s_{t+1,j})}{\sum_{j'=1}^{t+1} \exp(s_{t+1,j'})}, \quad j = 1,\dots,t+1.
+\]
+
+These weights determine how much the new token attends to each of the previous tokens (and its own representation, if included).
+
+\paragraph{Step 5: Compute the Weighted Sum of Values}
+
+The output of the attention layer for the new token is then computed as:
+\[
+z_{t+1} = \sum_{j=1}^{t+1} \alpha_{t+1,j}\, v_j,
+\]
+where each \( v_j \) is the value vector from the cache (or computed for the new token in the case of \( j=t+1 \)):
+\[
+v_j = x_j\, W^V, \quad j = 1,\dots,t+1.
+\]
+
+This \( z_{t+1} \) is then passed on through the rest of the transformer layer (including feed-forward sub-layers, layer normalization, etc.) to eventually produce logits over the vocabulary.
+
+\paragraph{Step 6: Generate the Next Token and Update the Cache}
+\begin{itemize}
+	\item The model uses the final output (after all transformer layers) to compute a probability distribution over the vocabulary.
+	\item A token is chosen (\eg via sampling or greedy decoding) and appended to the sequence.
+	\item The new token's key and value vectors (from each layer) are computed and added to the cache so that future tokens can attend to it.
+\end{itemize}
+
+\subsection{Inference without Caching}
+
+Let's take a look at the following example:
+\begin{itemize}
+	\item Number of tokens so far: \(t=3\). We have already generated tokens \(\{x_1, x_2, x_3\}\). We now want to generate token \(x_4\).  
+	\item Model dimensionality: To keep it simple, let's say each token embedding is 2-dimensional (\(d_{\text{model}} = 2\)) and the attention uses a single head with key/query dimension \(d_k = 2\) and value dimension \(d_v = 2\). 
+	\item Token embeddings (just made-up numbers):
+	  \[
+		x_1 = \begin{bmatrix}1 \\ 2\end{bmatrix}, \quad
+		x_2 = \begin{bmatrix}3 \\ 4\end{bmatrix}, \quad
+		x_3 = \begin{bmatrix}5 \\ 6\end{bmatrix}, \quad
+		x_4 = \begin{bmatrix}? \\ ?\end{bmatrix} \; 
+	  \]
+	  The forth one is the one we want to generate. We will compute attention for tokens \(x_1, x_2, x_3, x_4\) all at once.  
+  \item Projection matrices (\(W^Q, W^K, W^V\)) are each \(2 \times 2\) for this example. For instance, we have the following matrices:
+  \[
+    W^Q = \begin{bmatrix}1 & 0 \\[6pt] 0 & 1\end{bmatrix}, \quad
+    W^K = \begin{bmatrix}1 & 2 \\[6pt] 0 & 1\end{bmatrix}, \quad
+    W^V = \begin{bmatrix}0.5 & -0.5 \\[6pt] 1.0 & 0.5\end{bmatrix}.
+  \]
+\end{itemize}
+
+\paragraph{Step A: Compute Queries, Keys, and Values}
+
+\begin{itemize}
+	\item Queries:  
    \[
-   Q = XW_Q, \quad K = XW_K, \quad V = XW_V
+     q_i = x_i \, W^Q 
    \]
+   For \(i=1,2,3,4\):
+   \begin{itemize}
+	   \item \(q_1 = [1\;\;2] \begin{bmatrix}1 & 0 \\ 0 & 1\end{bmatrix} = \begin{bmatrix}1 \\ 2\end{bmatrix}\)
+	   \item \(q_2 = [3\;\;4] \begin{bmatrix}1 & 0 \\ 0 & 1\end{bmatrix} = \begin{bmatrix}3 \\ 4\end{bmatrix}\)
+	   \item \(q_3 = [5\;\;6] \begin{bmatrix}1 & 0 \\ 0 & 1\end{bmatrix} = \begin{bmatrix}5 \\ 6\end{bmatrix}\)
+	   \item \(q_4 = [?,\; ?] \begin{bmatrix}1 & 0 \\ 0 & 1\end{bmatrix} = \begin{bmatrix}? \\ ?\end{bmatrix}\)
+   \end{itemize}
+	\item Keys:
+	   \[
+		 k_i = x_i \, W^K
+	   \]
+	   For \(i=1,2,3,4\):
+	   \begin{itemize}
+		   \item \(k_1 = [1\;\;2] \begin{bmatrix}1 & 2 \\ 0 & 1\end{bmatrix}
+			 = \begin{bmatrix}1 \\ 4\end{bmatrix}\)
+		   \item \(k_2 = [3\;\;4] \begin{bmatrix}1 & 2 \\ 0 & 1\end{bmatrix} 
+			 = \begin{bmatrix}3 \\ 10\end{bmatrix}\)
+		   \item \(k_3 = [5\;\;6] \begin{bmatrix}1 & 2 \\ 0 & 1\end{bmatrix} 
+			 = \begin{bmatrix}5 \\ 16\end{bmatrix}\)
+		   \item \(k_4 = [?,\; ?] \begin{bmatrix}1 & 2 \\ 0 & 1\end{bmatrix} 
+			 = \begin{bmatrix}? \\ ?\end{bmatrix}\)
+	   \end{itemize}
+	\item Values:
+	   \[
+		 v_i = x_i \, W^V
+	   \]
+	   For \(i=1,2,3,4\):
+	   \begin{itemize}
+		   \item \(v_1 = [1\;\;2] \begin{bmatrix}0.5 & -0.5 \\ 1.0 & 0.5\end{bmatrix} 
+			 = \begin{bmatrix}2.5 \\ 0.5\end{bmatrix}\)
+		   \item \(v_2 = [3\;\;4] \begin{bmatrix}0.5 & -0.5 \\ 1.0 & 0.5\end{bmatrix} 
+			 = \begin{bmatrix}5.5 \\ 0.5\end{bmatrix}\)
+		   \item \(v_3 = [5\;\;6] \begin{bmatrix}0.5 & -0.5 \\ 1.0 & 0.5\end{bmatrix} 
+			 = \begin{bmatrix}8.5 \\ 0.5\end{bmatrix}\)
+		   \item \(v_4 = [?,\; ?] \begin{bmatrix}0.5 & -0.5 \\ 1.0 & 0.5\end{bmatrix} 
+			 = \begin{bmatrix}? \\ ?\end{bmatrix}\)
+	   \end{itemize}
+\end{itemize}
 
-   For simplicity, let's say the embeddings for each word are transformed into vectors:
-   - **She**: \(Q_{\text{she}}, K_{\text{she}}, V_{\text{she}}\)
-   - **Likes**: \(Q_{\text{likes}}, K_{\text{likes}}, V_{\text{likes}}\)
-   - **Cats**: \(Q_{\text{cats}}, K_{\text{cats}}, V_{\text{cats}}\)
+All of the above must be computed at the current time step if we do not use caching.
 
-2. **Compute attention scores:**
-   For each token, calculate attention scores with all other tokens. For instance, to compute how much "She" attends to "likes", we calculate \(Q_{\text{she}} \cdot K_{\text{likes}}\).
+With KV caching, you would \emph{not} recalculate \(k_1, k_2, k_3\) and \(v_1, v_2, v_3\). Instead:
 
-3. **Apply softmax to get weights:**
-   After calculating the scores, apply the softmax function to get normalized attention weights. The attention weight tells how much attention "She" should pay to "likes" and "cats".
-
-4. **Compute the weighted sum of values:**
-   The output representation for "She" will be the weighted sum of the Value vectors for all tokens, with the weights being the attention scores.
-
-### Scaled Dot-Product Self-Attention Equation
-
-In general, the self-attention mechanism can be summarized by the following equation:
-
-\[
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{Q K^\top}{\sqrt{d_k}}\right) V
-\]
-
-Where:
-- \(Q\): Matrix of queries (from input embeddings).
-- \(K\): Matrix of keys (from input embeddings).
-- \(V\): Matrix of values (from input embeddings).
-- \(d_k\): Dimensionality of the key vectors.
-
-### Multi-Head Self-Attention:
-
-In practice, self-attention is often used in a **multi-head** configuration, which means multiple self-attention mechanisms are applied in parallel, each with its own learned weights. The results of these parallel attention heads are concatenated and linearly transformed. This allows the model to focus on different parts of the sequence simultaneously.
-
-Mathematically:
-\[
-\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \text{head}_2, \ldots, \text{head}_h)W^O
-\]
-Where:
-- \(\text{head}_i = \text{Attention}(QW_Q^i, KW_K^i, VW_V^i)\)
-- \(W_Q^i\), \(W_K^i\), \(W_V^i\) are learned weight matrices for each head.
-- \(W^O\) is a weight matrix applied after concatenation.
-
-### Intuition:
-
-In a sentence like "The animal didn't cross the street because it was too tired", the word "it" could refer to "animal" or "street". Self-attention helps by allowing "it" to attend to the word "animal" based on the learned attention scores, enabling the model to resolve ambiguities and focus on the right words.
-
-### Advantages of Self-Attention:
-
-1. **Parallelization**: Unlike RNNs, which process tokens sequentially, self-attention can be computed in parallel for all tokens, making it highly efficient.
-2. **Captures Long-Range Dependencies**: Self-attention can capture relationships between tokens that are far apart in the sequence.
-3. **Scalability**: It works well with large sequences, as it allows each token to attend to all others.
-
-Self-attention has become the foundation for modern models like the Transformer, BERT, GPT, and many others, significantly improving the ability to handle complex sequence tasks.
-
+\begin{itemize}
+	\item You already have \(\{k_1, k_2, k_3\}\) and \(\{v_1, v_2, v_3\}\) stored from the previous steps.  
+	\item You only compute:
+		\begin{itemize}
+			\item \(q_4\) (the query for the new token),
+			\item \(k_4, v_4\) (the new key and value to add to the cache).  
+		\end{itemize}
+\end{itemize}
+In other words, you skip re-projecting and re-computing every key and value from tokens \(\{1,2,3\}\). This saves a substantial amount of computation when generating long sequences, especially in large transformers (like GPT).
 
