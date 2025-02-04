@@ -243,6 +243,12 @@ In matrix form for all tokens, if we define matrices \( Q \), \( K \), and \( V 
 
 Here, $Q, K, V\in \mathbb{R}^{n\times d_{model}}$, $QK^T$'s time complexity is $O(N^2d)$. This quadratic cost is massive for long input-sequences such as documents to be summarized or character-level inputs.
 
+\begin{figure}[t]
+	\centering
+	\includegraphics[scale=1.0]{./images/transformer/attention.pdf}
+	\caption{An Illustration of the self-attention.}
+\end{figure}
+
 \paragraph{Input Embeddings}
 
    Each token \( i \) is represented by an embedding:
@@ -615,4 +621,18 @@ With KV caching, you would \emph{not} recalculate \(k_1, k_2, k_3\) and \(v_1, v
 		\end{itemize}
 \end{itemize}
 In other words, you skip re-projecting and re-computing every key and value from tokens \(\{1,2,3\}\). This saves a substantial amount of computation when generating long sequences, especially in large transformers (like GPT).
+
+\textbf{Note that storing data in the cache uses up memory space.} Systems with limited memory resources may struggle to accommodate this additional memory overhead, potentially resulting in out-of-memory errors. This is especially the case when long inputs need to be processed, as the memory required for the cache grows linearly with the input length and the batch size.
+
+\paragraph{Summary}
+\begin{itemize}
+	\item Without caching, each step of generation must feed the entire partial sequence \(\{x_1, \ldots, x_t\}\) through all attention layers, resulting in \(\mathcal{O}(t)\) computations per token. Doing that for each of the \(t\) tokens leads to \(\mathcal{O}(t^2)\) complexity for generating \(t\) tokens.
+	\item With caching, the complexity for each new token is \(\mathcal{O}(1)\) on the transformer's forward pass for the new key/value (plus the cost of computing attention of dimension \(\mathcal{O}(t)\) for the new query). Overall, this significantly speeds up autoregressive decoding.
+\end{itemize}
+
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[scale=0.8]{./images/transformer/kv_caching.pdf}
+\end{figure}
 
