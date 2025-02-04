@@ -1,4 +1,10 @@
 
+\begin{figure}[t]
+	\centering
+	\includegraphics[scale=0.2]{./images/transformer/transformer.png}
+	\caption{An illustration of Transformer architecture.}
+\end{figure}
+
 \paragraph{TLDR}
 \begin{itemize}
 	\item \textit{Attention is a communication mechanism}, which can be seen as nodes in a directed graph looking at each other and aggregating information with a weighted sum from all nodes that point to them, with data-dependent weights.
@@ -12,34 +18,10 @@
 \section{Attention Mechanism}
 \label{sec:nlp_attention}
 
+
 The attention mechanism assigns \textit{attention scores} (\ie \textit{weights}) to different parts of the input sequence, indicating how much each part contributes to the current output. In essence, the model ``pays attention'' to certain parts of the input more than others while processing each token in the sequence.
 
-% The attention mechanism mimics the retrieval of a value $v_i$ for a query $q$ based on a key $k_i$ in database.
-% $$attn(q, k, v) = \sum_i sim(q,k_i)\times v_i$$
-% \begin{figure}[h]
-% 	\centering
-% 	\includegraphics[scale=1.8]{./images/transformer/attention_database.pdf}
-% 	\caption{The most similar key will be selected by measuring a \textbf{similarity} between a query and a key.}
-% \end{figure}
-
-% \begin{figure}[h]
-% 	\centering
-% 	\includegraphics[scale=0.6]{./images/transformer/attention.pdf}
-% 	\caption{The similarity $s_t$ is computed by a query and keys}
-% \end{figure}
-% There are several choices for a similarity function.
-% \begin{itemize}
-% 	\item $q^Tk_i$: dot product.
-% 	\item $\frac{q^Tk_i}{\sqrt{d}}$: scaled dot product $\to$ reduce the variance of the final attention weights. 
-% 	\item $q^TWk_i$: general dot product.
-% 	\item $w_q^Tq+ w_k^Tk_i$: additive similarity.
-% \end{itemize}
-% Finally, the \textbf{attention score} can be computed by using a softmax:
-% $$a_i = \frac{\exp(s_i)}{\sum_j \exp(s_j)}$$
-
-
 Assume the encoder produces 3 hidden states (each a 2-dimensional vector):
-
 \[
 h_1 = \begin{bmatrix} 1 \\ 0 \end{bmatrix}, \quad
 h_2 = \begin{bmatrix} 0 \\ 1 \end{bmatrix}, \quad
@@ -47,13 +29,11 @@ h_3 = \begin{bmatrix} 1 \\ 1 \end{bmatrix}.
 \]
 
 Let the decoder’s previous hidden state at time \( t-1 \) be:
-
 \[
 s_{t-1} = \begin{bmatrix} 0.5 \\ 0.2 \end{bmatrix}.
 \]
 
 Using the \textit{dot product} as our score function, the alignment score for each encoder hidden state is:
-
 \[
 e_{tj} = s_{t-1}^\top h_j.
 \]
@@ -62,32 +42,31 @@ Compute each:
 \begin{enumerate}
 	\item  For \( h_1 \):
    \[
-   e_{t1} = [0.5 \quad 0.2] \cdot \begin{bmatrix} 1 \\ 0 \end{bmatrix} = 0.5 \times 1 + 0.2 \times 0 = 0.5.
+   e_{t1} = [0.5 \quad 0.2] \cdot \begin{bmatrix} 1 \\ 0 \end{bmatrix} = 0.5.
    \]
 \item For \( h_2 \):
    \[
-   e_{t2} = [0.5 \quad 0.2] \cdot \begin{bmatrix} 0 \\ 1 \end{bmatrix} = 0.5 \times 0 + 0.2 \times 1 = 0.2.
+   e_{t2} = [0.5 \quad 0.2] \cdot \begin{bmatrix} 0 \\ 1 \end{bmatrix} = 0.2.
    \]
 \item For \( h_3 \):
    \[
-   e_{t3} = [0.5 \quad 0.2] \cdot \begin{bmatrix} 1 \\ 1 \end{bmatrix} = 0.5 \times 1 + 0.2 \times 1 = 0.7.
+   e_{t3} = [0.5 \quad 0.2] \cdot \begin{bmatrix} 1 \\ 1 \end{bmatrix} = 0.7.
    \]
 \end{enumerate}
 
 The attention weight for each encoder time step is given by:
-
 \[
 \alpha_{tj} = \frac{\exp(e_{tj})}{\sum_{k=1}^{3} \exp(e_{tk})}.
 \]
 
 Calculate the exponentials:
-
-- \(\exp(0.5) \approx 1.6487\),
-- \(\exp(0.2) \approx 1.2214\),
-- \(\exp(0.7) \approx 2.0138\).
+\begin{itemize}
+	\item \(\exp(0.5) \approx 1.6487\),
+	\item \(\exp(0.2) \approx 1.2214\),
+	\item \(\exp(0.7) \approx 2.0138\).
+\end{itemize}
 
 Sum of exponentials:
-
 \[
 S = 1.6487 + 1.2214 + 2.0138 \approx 4.8839.
 \]
@@ -419,17 +398,325 @@ so that each head processes queries, keys, and values of dimensions \(d_k'\) and
 		% \item Final projection \(W^O\): \( (h \cdot d_v') \times d_{\text{model}} \)
 		% \item Final multi-head attention output: \( n \times d_{\text{model}} \)
    % \end{itemize}
-   
-\subsection{Skip Connection}
-This is a regularization technique.
 
-\subsection{Positional Embedding}
+
+\subsection{Variations of MHA}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[scale=0.5]{./images/transformer/multi_head_attention.png}
+\end{figure}
+
+If we use a single value and a single key over all queries, we can significantly reduce the memory usage for KV caching. This is the basic idea of the multi-query attention and the grouped query attention.
+   
+% \subsection{Skip Connection}
+% This is a regularization technique.
+
+\section{Positional Embedding}
+
+The self-attention mechanism in transformers treats all tokens in a sequence in parallel without an inherent notion of order. This means that, by itself, self-attention is invariant to the order of input tokens. Positional encoding is introduced to inject order information so that the model can differentiate between tokens based on their positions.
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[scale=0.6]{./images/transformer/positional_1.png}
 	\caption{Positional embedding.}
 \end{figure}
+
+\subsection{RoPE}
+
+RoPE represents a novel approach in encoding positional information. Traditional methods, either absolute or relative, come with their limitations. Absolute positional embeddings assign a unique vector to each position, which though straightforward, doesn't scale well and fails to capture relative positions effectively. Relative embeddings, on the other hand, focus on the distance between tokens, enhancing the model’s understanding of token relationships but complicating the model architecture.
+
+RoPE ingeniously combines the strengths of both. It encodes positional information in a way that allows the model to understand both the absolute position of tokens and their relative distances. This is achieved through a rotational mechanism, where each position in the sequence is represented by a rotation in the embedding space. The elegance of RoPE lies in its simplicity and efficiency, enabling models to better grasp the nuances of language syntax and semantics.
+
+RoPE introduces a novel concept. Instead of adding a positional vector, it applies a rotation to the word vector. Imagine a two-dimensional word vector for ``dog.'' To encode its position in a sentence, RoPE rotates this vector. The angle of rotation ($\theta$) is proportional to the word's position in the sentence. For instance, the vector is rotated by $\theta$ for the first position, $2\theta$ for the second, and so on. This approach has several benefits
+
+RoPE introduces position information by rotating the query and key vectors in each attention head by a position-specific angle. Each pair \((2k, 2k+1)\) of embedding dimensions corresponds to a 2D plane in which a rotation is applied. As the position index \(i\) changes, the rotation angle changes accordingly.
+Let:
+\begin{itemize}
+	\item \( \mathbf{x}_i \in \mathbb{R}^d \) be the embedding vector (for either query \(Q\) or key \(K\)) at position \(i\).
+	\item We partition \(\mathbf{x}_i\) into \(d/2\) ``complex'' components or 2D planes.  
+	  Concretely, we can view \(\mathbf{x}_i\) as $(x_{i,2k}, x_{i,2k+1})$, where $k = 0, 1, \ldots, \frac{d}{2}-1$.
+\end{itemize}
+
+
+We define a rotation angle \(\theta_{i, k}\) for each pair of dimensions \((2k, 2k+1)\). One common choice is:
+\[
+\theta_{i, k} \;=\; i \cdot \alpha_k,
+\]
+where \(\alpha_k\) might be a scaling based on the dimension index \(k\). A popular definition (akin to sinusoidal absolute embeddings) sets:
+\[
+\alpha_k \;=\; \frac{1}{10000^{\frac{2k}{d}}}.
+\]
+For each pair \((2k, 2k+1)\), define the rotary transformation \(\text{RoPE}(\cdot)\) as follows. Let
+\[
+\mathbf{x}_i^{(k)} 
+= \begin{pmatrix}
+x_{i, 2k} \\[6pt]
+x_{i, 2k+1}
+\end{pmatrix}.
+\]
+Then,
+\[
+\text{RoPE}_i \bigl(\mathbf{x}_i^{(k)}\bigr)
+= \begin{pmatrix}
+\cos(\theta_{i, k}) & -\sin(\theta_{i, k}) \\
+\sin(\theta_{i, k}) & \cos(\theta_{i, k})
+\end{pmatrix}
+\begin{pmatrix}
+x_{i, 2k} \\[4pt]
+x_{i, 2k+1}
+\end{pmatrix}.
+\]
+
+Hence, the updated 2D coordinates are:
+
+\[
+\begin{aligned}
+\tilde{x}_{i, 2k} &= x_{i, 2k}\,\cos(\theta_{i,k}) \;-\; x_{i, 2k+1}\,\sin(\theta_{i,k}),\\[6pt]
+\tilde{x}_{i, 2k+1} &= x_{i, 2k+1}\,\cos(\theta_{i,k}) \;+\; x_{i, 2k}\,\sin(\theta_{i,k}).
+\end{aligned}
+\]
+
+We perform this rotation across all \(k = 0, 1, \dots, \frac{d}{2}-1\), concatenating the results back into a \(d\)-dimensional vector \(\tilde{\mathbf{x}}_i\).
+
+In many implementations, we apply RoPE to both the query \(\mathbf{q}_i\) and key \(\mathbf{k}_j\) vectors for each position \(i, j\). That is:
+\[
+\begin{aligned}
+\tilde{\mathbf{q}}_i &= \text{RoPE}_i(\mathbf{q}_i), \\
+\tilde{\mathbf{k}}_j &= \text{RoPE}_j(\mathbf{k}_j).
+\end{aligned}
+\]
+Then, during the attention calculation:
+\[
+\text{Attention}(i, j) 
+= \frac{\tilde{\mathbf{q}}_i \,\cdot\, \tilde{\mathbf{k}}_j}{\sqrt{d}}.
+\]
+
+The key property is that
+\[
+\tilde{\mathbf{q}}_i^\top \, \tilde{\mathbf{k}}_j
+\;\;=\;\;
+\mathbf{q}_i^\top\, \mathbf{M}(i,j)\, \mathbf{k}_j,
+\]
+
+where \(\mathbf{M}(i,j)\) is a matrix encoding the position difference \((i-j)\). This yields a relative-positional effect without explicitly storing or adding embedding vectors for each position pair.
+
+
+\begin{itemize}
+	\item Stability of Vectors: Adding tokens at the end of a sentence doesn't affect the vectors for words at the beginning, facilitating efficient caching.
+		\item Preservation of Relative Positions: If two words, say ``pig'' and ``dog,'' maintain the same relative distance in different contexts, their vectors are rotated by the same amount. This ensures that the angle, and consequently the dot product between these vectors, remains constant
+\end{itemize}
+
+## Rotary Positional Encoding (RoPE): A Comprehensive Explanation
+
+### **Background: Why Positional Encoding Matters**
+
+In transformer models, the self-attention mechanism treats all tokens as a set without any inherent order. However, many tasks (like language processing) depend on the sequential order of tokens. Traditional methods to incorporate this order include:
+
+- **Absolute Positional Embeddings:**  
+  Each position in the sequence is assigned a unique vector. Although straightforward, these embeddings don’t scale well to longer sequences and fail to capture the nuances of relative positions between tokens.
+
+- **Relative Positional Embeddings:**  
+  These embeddings focus on the distance between tokens, which can improve the model’s understanding of token relationships. However, they typically introduce additional complexity into the model architecture.
+
+**RoPE cleverly combines the strengths of both approaches** by encoding position information directly into the query and key vectors using a rotation-based mechanism. This approach allows the model to capture both the absolute positions of tokens and the relative differences between them without adding extra learned parameters for position.
+
+---
+
+### **The Core Idea of RoPE**
+
+Rather than adding a positional vector to the token embeddings, RoPE **rotates** the embeddings by a position-specific angle. Think of it as "twisting" the embedding in space based on its position. For example, if you have a simple two-dimensional embedding for the word “dog,” you can imagine its vector being rotated by an angle \(\theta\) if it’s the first word, \(2\theta\) if it’s the second word, and so on.
+
+#### **Decomposing High-Dimensional Embeddings into 2D Subspaces**
+
+For high-dimensional embeddings (say, in \(\mathbb{R}^d\)), RoPE divides the vector into \(d/2\) pairs (or 2D subspaces). For a token at position \(i\), denote its embedding by:
+\[
+\mathbf{x}_i \in \mathbb{R}^d.
+\]
+We partition \(\mathbf{x}_i\) into pairs:
+\[
+\mathbf{x}_i^{(k)} = 
+\begin{pmatrix}
+x_{i,2k} \\
+x_{i,2k+1}
+\end{pmatrix},\quad k = 0, 1, \ldots, \frac{d}{2}-1.
+\]
+
+#### **Defining the Rotation Angle**
+
+For each 2D subspace indexed by \(k\), RoPE defines a rotation angle:
+\[
+\theta_{i, k} = i \cdot \alpha_k,
+\]
+where \(\alpha_k\) is a scaling factor that typically depends on the dimension \(k\). A popular choice is:
+\[
+\alpha_k = \frac{1}{10000^{\frac{2k}{d}}}.
+\]
+This scaling mimics the frequency scaling in sinusoidal embeddings, ensuring that different subspaces capture positional information at different granularities.
+
+---
+
+### **Where Does \(R(\theta)\) Come From?**
+
+In two-dimensional geometry, any rotation by an angle \(\theta\) can be represented by a **rotation matrix** \(R(\theta)\). This matrix is a standard tool in linear algebra and has the form:
+\[
+R(\theta) = 
+\begin{pmatrix}
+\cos(\theta) & -\sin(\theta) \\
+\sin(\theta) & \cos(\theta)
+\end{pmatrix}.
+\]
+
+**Why use \(R(\theta)\)?**  
+- **Geometric Interpretation:**  
+  The rotation matrix \(R(\theta)\) rotates any 2D vector by the angle \(\theta\) (in the counterclockwise direction) while preserving its magnitude. This property makes it ideal for encoding positional shifts—rotating a vector does not change its “content” (its norm) but changes its direction, thereby encoding positional information.
+  
+- **Simplicity and Efficiency:**  
+  Because the rotation matrix is defined entirely by trigonometric functions (which are computationally efficient), it adds minimal overhead to the model.
+
+- **Inherent Relative Encoding:**  
+  When different positions correspond to different rotation angles, the relationship between any two positions can be captured by the difference in their rotation angles. This leads to a natural encoding of relative position without having to explicitly compute or store separate relative position vectors.
+
+---
+
+### **Applying RoPE to Token Embeddings**
+
+For each 2D subspace, the rotary transformation is applied as follows. Given the subvector:
+\[
+\mathbf{x}_i^{(k)} = 
+\begin{pmatrix}
+x_{i,2k} \\
+x_{i,2k+1}
+\end{pmatrix},
+\]
+we compute its rotated version:
+\[
+\text{RoPE}_i \bigl(\mathbf{x}_i^{(k)}\bigr)
+= R(\theta_{i, k})\, \mathbf{x}_i^{(k)}
+= \begin{pmatrix}
+\cos(\theta_{i, k}) & -\sin(\theta_{i, k}) \\
+\sin(\theta_{i, k}) & \cos(\theta_{i, k})
+\end{pmatrix}
+\begin{pmatrix}
+x_{i,2k} \\
+x_{i,2k+1}
+\end{pmatrix}.
+\]
+This yields the updated coordinates:
+\[
+\begin{aligned}
+\tilde{x}_{i, 2k} &= x_{i,2k}\cos(\theta_{i,k}) - x_{i,2k+1}\sin(\theta_{i,k}),\\[6pt]
+\tilde{x}_{i, 2k+1} &= x_{i,2k+1}\cos(\theta_{i,k}) + x_{i,2k}\sin(\theta_{i,k}).
+\end{aligned}
+\]
+After processing all \(d/2\) subspaces, we concatenate the results back into a full \(d\)-dimensional vector \(\tilde{\mathbf{x}}_i\).
+
+---
+
+### **Integration into the Self-Attention Mechanism**
+
+In transformer architectures, RoPE is applied to both the query and key vectors:
+
+\[
+\begin{aligned}
+\tilde{\mathbf{q}}_i &= \text{RoPE}_i(\mathbf{q}_i), \\
+\tilde{\mathbf{k}}_j &= \text{RoPE}_j(\mathbf{k}_j).
+\end{aligned}
+\]
+
+Then, the attention score between positions \(i\) and \(j\) is calculated as:
+\[
+\text{Attention}(i, j) = \frac{\tilde{\mathbf{q}}_i \cdot \tilde{\mathbf{k}}_j}{\sqrt{d}}.
+\]
+
+---
+
+### **Understanding the Matrix \(\mathbf{M}(i,j)\) and Its Connection to \(R(\theta)\)**
+
+A key property of RoPE is that the dot product between the rotated vectors can be reinterpreted to show how relative positions are encoded. In particular, one can derive that:
+\[
+\tilde{\mathbf{q}}_i^\top \tilde{\mathbf{k}}_j = \mathbf{q}_i^\top\, \mathbf{M}(i,j)\, \mathbf{k}_j,
+\]
+where \(\mathbf{M}(i,j)\) is a block diagonal matrix that encapsulates the effect of the relative positional difference \(j-i\).
+
+#### **Derivation in a Single 2D Subspace**
+
+Focus on one 2D subspace (indexed by \(k\)):
+- The query subvector at position \(i\) is rotated by \(\theta_{i,k} = i\alpha_k\).
+- The key subvector at position \(j\) is rotated by \(\theta_{j,k} = j\alpha_k\).
+
+The dot product in this subspace is:
+\[
+\tilde{\mathbf{q}}_i^{(k)\top} \tilde{\mathbf{k}}_j^{(k)} 
+= \left(\mathbf{q}_i^{(k)}\right)^\top R(\theta_{i,k})^\top R(\theta_{j,k}) \, \mathbf{k}_j^{(k)}.
+\]
+Since the transpose of a rotation matrix is its inverse (i.e., \(R(\theta)^\top = R(-\theta)\)), we have:
+\[
+R(\theta_{i,k})^\top R(\theta_{j,k}) = R(-\theta_{i,k})R(\theta_{j,k}) = R\bigl(\theta_{j,k} - \theta_{i,k}\bigr).
+\]
+Because \(\theta_{j,k} - \theta_{i,k} = (j-i)\alpha_k\), the transformation becomes:
+\[
+R\bigl((j-i)\alpha_k\bigr).
+\]
+
+#### **Constructing \(\mathbf{M}(i,j)\)**
+
+Repeating this for each 2D subspace results in a block diagonal matrix:
+\[
+\mathbf{M}(i,j) = \text{diag}\Bigl(
+R\bigl((j-i)\alpha_0\bigr),\,
+R\bigl((j-i)\alpha_1\bigr),\,
+\ldots,\,
+R\bigl((j-i)\alpha_{\frac{d}{2}-1}\bigr)
+\Bigr).
+\]
+Each block is the 2×2 rotation matrix:
+\[
+R\bigl((j-i)\alpha_k\bigr)
+= \begin{pmatrix}
+\cos\bigl((j-i)\alpha_k\bigr) & -\sin\bigl((j-i)\alpha_k\bigr) \\
+\sin\bigl((j-i)\alpha_k\bigr) & \cos\bigl((j-i)\alpha_k\bigr)
+\end{pmatrix}.
+\]
+
+#### **Intuition Behind \(\mathbf{M}(i,j)\)**
+
+- **Relative Positional Bias:**  
+  The matrix \(\mathbf{M}(i,j)\) adjusts the dot product between queries and keys based on their relative positions \((j-i)\). Instead of explicitly adding a relative position embedding, the rotation inherently modulates the interaction between tokens.
+  
+- **Unified Encoding:**  
+  Because \(\mathbf{M}(i,j)\) is built from standard rotation matrices \(R(\theta)\), it seamlessly encodes the relative positional difference across all 2D subspaces. This results in a unified treatment where both absolute and relative positional cues are embedded into the attention calculation.
+  
+- **Elegant Mathematical Foundation:**  
+  The use of \(R(\theta)\) comes directly from classical geometry and linear algebra. It leverages the well-known properties of rotations in 2D—specifically, that rotations preserve vector norms and that the composition of rotations is itself a rotation (with the angle being the sum or difference of the individual angles). This mathematical elegance translates into an efficient and effective mechanism for positional encoding.
+
+---
+
+### **Summary**
+
+1. **Rotary Positional Encoding (RoPE)** rotates the token embeddings by a position-dependent angle rather than simply adding a positional vector.
+2. **Decomposition into 2D Subspaces:**  
+   The \(d\)-dimensional embedding is split into \(d/2\) pairs. For each pair (treated as a 2D vector), a rotation is applied.
+3. **Rotation Matrix \(R(\theta)\):**  
+   The standard 2D rotation matrix,
+   \[
+   R(\theta) = 
+   \begin{pmatrix}
+   \cos(\theta) & -\sin(\theta) \\
+   \sin(\theta) & \cos(\theta)
+   \end{pmatrix},
+   \]
+   rotates vectors by \(\theta\) and comes from classical geometry. It is used here because it naturally encodes a continuous positional shift.
+4. **Position-Specific Rotation:**  
+   For token at position \(i\) in subspace \(k\), the rotation angle is \(\theta_{i, k} = i \cdot \alpha_k\), where \(\alpha_k\) scales the rotation differently for each subspace.
+5. **Integration with Attention:**  
+   RoPE is applied to both query and key vectors. The dot product between rotated vectors can be re-expressed as:
+   \[
+   \tilde{\mathbf{q}}_i^\top \tilde{\mathbf{k}}_j = \mathbf{q}_i^\top\, \mathbf{M}(i,j)\, \mathbf{k}_j,
+   \]
+   where \(\mathbf{M}(i,j)\) is a block diagonal matrix with blocks \(R((j-i)\alpha_k)\) that capture the relative position between tokens.
+
+By rotating the embeddings with \(R(\theta)\), RoPE introduces a sophisticated yet efficient mechanism to encode both absolute and relative positional information, enhancing the transformer’s ability to capture the structure and nuances inherent in sequential data.
 
 
 \begin{lstlisting}[language=Python]
@@ -439,6 +726,7 @@ def position_encoding(seq_len: int, dim_model: int)->Tensor:
     phase = pos / (1e4 ** (dim // dim_model))
     return torch.where(dim.long() % 2 == 0, torch.sin(phase), torch.cos(phase))
 \end{lstlisting}
+
 
 \subsection{Encoder}
 
