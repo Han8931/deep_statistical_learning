@@ -444,15 +444,42 @@ In other words, you skip re-projecting and re-computing every key and value from
 
 \textbf{Note that storing data in the cache uses up memory space.} Systems with limited memory resources may struggle to accommodate this additional memory overhead, potentially resulting in out-of-memory errors. This is especially the case when long inputs need to be processed, as the memory required for the cache grows linearly with the input length and the batch size.
 
-\paragraph{Summary}
-\begin{itemize}
-	\item Without caching, each step of generation must feed the entire partial sequence \(\{x_1, \ldots, x_t\}\) through all attention layers, resulting in \(\mathcal{O}(t)\) computations per token. Doing that for each of the \(t\) tokens leads to \(\mathcal{O}(t^2)\) complexity for generating \(t\) tokens.
-	\item With caching, the complexity for each new token is \(\mathcal{O}(1)\) on the transformer's forward pass for the new key/value (plus the cost of computing attention of dimension \(\mathcal{O}(t)\) for the new query). Overall, this significantly speeds up autoregressive decoding.
-\end{itemize}
-
-
 \begin{figure}[t]
 	\centering
 	\includegraphics[scale=0.8]{./images/transformer/kv_caching.pdf}
+	\caption{An example of KV caching}
 \end{figure}
+
+\paragraph{Computational Cost}
+
+In sum, the vanilla self-attention on $n$ tokens,
+\begin{itemize}
+	\item each token needs to look at all $n$ tokens to get attention scores
+    \item Thus, the cost is $O(n^2)$ 
+\end{itemize}
+
+For instance, if we given a sentence with three tokens,
+\begin{enumerate}
+	\item First token: Look at 1 token (cost: $O(1^2)$)
+	\item Second token: Look at 2 tokens (cost: $O(2^2)$)
+	\item Third token: Look at 3 tokens (cost: $O(3^2)$)
+\end{enumerate}
+
+If we add up all these costs for generating a sequence of length $n$, we get:
+\begin{align*}
+	O(1^2+2^2+3^2+\dots+n^2)\approx O(n^3)
+\end{align*}
+
+With caching,
+\begin{enumerate}
+	\item Process 1 token cost $O(1)$
+	\item Process 1 new token + look at 1 cached token cost $O(2)$
+	\item Process 1 new token + look at 2 cached tokens cost $O(3)$ 
+\end{enumerate}
+
+Adding these up:
+\begin{align*}
+	O(1+2+3+\dots+n)=O(n^2)
+\end{align*}
+
 
