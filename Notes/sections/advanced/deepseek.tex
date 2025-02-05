@@ -46,6 +46,19 @@ Moreover, in order to reduce the activation memory during training, we also perf
 
 \section{DeepSeek MoE}
 
+
+
+This paper mentioned that the conventional TopK MoE has Knowledge Hybridity and Knowledge Redundancy. Knowledge Hybridity: existing MoE practices often employ a limited number of experts (e.g., 8 or 16), and thus tokens assigned to a specific expert will be likely to cover diverse knowledge. Consequently, the designated expert will intend to assemble vastly different types of knowledge in its parameters, which are hard to utilize simultaneously. (2) Knowledge Redundancy: tokens assigned to different experts may require common knowledge. As a result, multiple experts may converge in acquiring shared knowledge in their respective parameters, thereby leading to redundancy in expert parameters. These issues collectively hinder the expert specialization in existing MoE practices, preventing them from reaching the theoretical upper-bound performance of MoE models. By finely segmenting to more experts and introducing shared experts, DeepSeekMoE mitigated above tow issues.
+
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[scale=0.35]{./images/transformer/moe_block.png}
+	\caption{MoE Transformer Encoder from the GShard Paper}
+\end{figure}
+A typical practice to construct an MoE language model usually substitutes FFNs in a Transformer with MoE layers at specified intervals. An MoE layer is composed of multiple experts, where each expert is structurally identical to a standard FFN. Then, each token will be assigned to one or two experts. If the 𝑙-th FFN is substituted with an MoE layer, the computation for its output hidden state h𝑙 𝑡is expressed as:
+
+
 \begin{align*}
 	\rvh_t' = \rvu_t+\sum^{N_s}_{i=1}FFN_i^{(s)}(\rvu_t)+\sum^{N_r}_{i=1}g_{i,t}FFN_i^{(r)}(\rvu_t),
 \end{align*}
@@ -65,10 +78,17 @@ Moreover, in order to reduce the activation memory during training, we also perf
 	\item $\rvh_t'$ FFN output
 	\item $N_s$ and $N_r$ are the number of \textit{shared} experts and the \textit{routed} experts, respectively.
 	\item $FFN_i^{(s)}(\cdot)$ and $FFN_i^{(r)}(\cdot)$ are the $i$-th \textit{shared} expert and the $i$-th \textit{routed} expert, respectively.
+		\begin{itemize}
+			\item The shared experts are always activated, aiming at capturing and consolidating common knowledge across varying contexts. 
+			\item Through compressing common knowledge into these shared experts, redundancy among other routed experts will be mitigated.
+		\end{itemize}
 	\item $K_r$ is the number of activated routed experts
-	\item $g_{i,t}$: gating value for the $i$-th expert
+	\item $g_{i,t}$: gating value for the $i$-th expert, which is sparse by its nature. 
 	\item $s_{i,t}$: a token assigned to an expert (\ie affinity score)
-	\item $\rve_i$: the centroid vector of the $i$-th routed expert
+	\item $\rve_i$: the centroid vector of the $i$-th (routed) expert 
+		\begin{itemize}
+			\item This is an (learnable) expert embedding. 
+		\end{itemize}
 	\item $TopK(\cdot, K)$: the set comprising $K$ highest scores among the affinity scores calculated for the $t$-th token and all routed experts.
 	\item $\sigma$: Sigmoid function.
 \end{itemize}
@@ -81,7 +101,53 @@ Let's closely look at the equation
 	\item $\rvu_t+\dots$: this is just a skip connection
 	\item $\sum^{N_s}_{i=1}FFN_i^{(s)}(\rvu_t)$: Always activated
 	\item $\sum^{N_r}_{i=1}g_{i,t}FFN_i^{(r)}(\rvu_t)$
+		\begin{itemize}
+			\item Here, we can notice that $g_{i,t}$ is the weight for the corresponding (routed) experts
+		\end{itemize}
 \end{itemize}
+
+To balance the load of the experts, DeepSeek also introduces a bias term $b_i$ for each expert and add it to the corresponding scores $s_{i,t}$ as follows:
+\begin{align*}
+	g_{i,t}' = \begin{cases}
+		s_{i,t}&\text{ } s_{i,t}+b_i\in TopK(\{s_{j,t}+b_i|1\leq j \leq N_r\}, K_r)\\
+		0&\text{otherwise,}
+	\end{cases}
+\end{align*}
+During training, the bias term decreases by $\gamma$ at the end of each step if its corresponding expert is overloaded. 
+
+
+\section{Multi-Token Prediction}
+
+DeepSeek also adopts a multi-token prediction approach and they show that it can improve the output quality and generalization behaviors. One of potential reasons would be that MTP may mitigate the distributional discrepancy between training time teacher forcing and inference time autoregressive generation.
+
+Unlike the conventional MTP approach, they keep the complete causal chain at each prediction depth by introducing MTP modules.
+
+The input tokens $[t_1,t_2,t_3,t_4]$ go through the main model's transformer blocks and then go through the output head of main model to produce next predicted token $t_5$. Meanwhile the representation of the input tokens $[t_1,t_2,t_3,t_4]$ (\ie output of main model's transformer blocks) will be passed to the MTP module and combine them with new input tokens' embedding$[t_2,t_3,t_4,t_5]$ to help produce additional token $t_6$. In DeepSeek-V3, the model is designed to predict next 2 tokens.
+
+\begin{align*}
+	\rvh_i^{'k} = M_k[\text{RMSNorm}(\rvh_i^{k-1}); \text{RMSNorm}(\text{Emb}(t_{i+k}))]
+\end{align*}
+\begin{itemize}
+	\item $\rvh_i^{k-1}$: $i$-th token at the $(k-1)$-th depth 
+	\item $(i+k)$-th token embedding $\text{Emb}(t_{i+k})$
+\end{itemize}
+
+\section{Decoupled RoPE}
+\section{Training FrameWork}
+\begin{itemize}
+	\item 2048 H800 GPUs
+	\item HAI-LLM framework: their custom framework. 
+	\item 16-way Pipeline Parallelism
+		\begin{itemize}
+			\item The layers of a model are sharded across multiple devices. 
+		\end{itemize}
+	\item Expert Parallelism: evenly distributes some of the experts' full weight to different GPUs, which means each GPU holds part of the experts' full weight. \eg experts 1, 2, and 3 are assigned to the first GPU, while experts 4, 5, and 6 are assigned to the second one.
+	\item ZeRO-1 DP
+\end{itemize}
+\section{DualPipe}
+\section{FP8}
+\section{RL}
+
 
 
 
