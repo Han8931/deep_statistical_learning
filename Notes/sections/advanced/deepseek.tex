@@ -36,18 +36,23 @@ The core of Multi-Head Latent Attention (MLA) is the low-rank joint compression 
 	[\rvv_{t,1}^C; \rvv_{t,2}^C; \dots ;\rvv_{t,n_h}^C;] = \rvv_t^{C} &= W^{UV}\rvc_t^{KV}
 \end{align*}
 \begin{itemize}
-	\item $\rvc_t^{KV}\in \mathbb{R}^{d_c}$ is the compressed \textit{latent vector} for keys and values, where $d_c\ll d_hn_h$. \textbf{Note that this is not a query vector.}
+	\item $D$ and $U$ superscripts denote the up and down projection
+	\item $\rvc_t^{KV}\in \mathbb{R}^{d_c}$ is the compressed (\ie $c$) \textit{latent vector} for keys and values, where $d_c\ll d_hn_h$. \textbf{Note that this is not a query vector.}
 	\item $W^{DKV}\in \mathbb{R}^{d_c\times d}$ is the down-projection matrix
 	\item $W^{UK},W^{UV}\in \mathbb{R}^{d_hn_h\times d_c}$ are the up-projection matrices for keys and values, respectively.
 	\item $W^{KR}\in \mathbb{R}^{d_h^R\times d}$ is the matrix used for generating the decoupled key of RoPE. 
 	\item \textbf{During inference, MLA only needs to cache $\rvc_t^{KV}$ and $\rvk_t^{R}$, which is a compressed latent vector, rather than high-dimensional key and value vector.} Thus, it can still have the multiple heads. This alleviates the issue of GQA or MQA while keeping their benefits. 
+	\item Also, we do not have to explicitly compute the key and the values for attention.
+		\begin{itemize}
+			\item To leverage this advantage, we need to use the decoupled RoPE
+		\end{itemize}
+		\begin{align*}
+			\rvq_t^T\rvk_t = (\rvc_t^Q)^T((W^{UQ})^TW^{UK})\rvc_T^{KV}
+		\end{align*}
 	% \item Thus, KV cache has only $d_c\times l$ elements, where $l$ is the number of layers.
 	% \item Note that during inference the up-projection matrices W^UK and W^UV can be absorbed (Associative law of matrix multiplication) into the query(W^Q) and output(W^O) projections matrices, eliminating the need to compute keys and values explicitly.
 \end{itemize}
 % Unlike the MHA, MLA only needs to keep the $\rvc_t^{KV}$ and $\rvk_t^{R}$ (\ie cache). This leads to a significant memory usage. It does not look very clear at first. Let's closely look at the inner product of $\rvq$ and $\rvk$:
-% \begin{align*}
-% 	\rvq_t^T\rvk_t = \rvc_t^Q(W^{UQ}W^{UK})\rvc_T^{KV}
-% \end{align*}
 % \begin{itemize}
 % 	\item As you can see the query and the key projected from the weight matrices allow them to be defined specifically in advance. 
 % \end{itemize}
@@ -159,7 +164,7 @@ The input tokens $[t_1,t_2,t_3,t_4]$ go through the main model's transformer blo
 	\item $(i+k)$-th token embedding $\text{Emb}(t_{i+k})$
 \end{itemize}
 
-\section{Decoupled RoPE}
+% \section{Decoupled RoPE}
 \section{Training FrameWork}
 \begin{itemize}
 	\item 2048 H800 GPUs
@@ -173,7 +178,63 @@ The input tokens $[t_1,t_2,t_3,t_4]$ go through the main model's transformer blo
 \end{itemize}
 \section{DualPipe}
 \section{FP8}
+
+
 \section{RL}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[scale=0.5]{./images/transformer/grpo.png}
+\end{figure}
+
+The PPO objective is 
+
+$$ \theta_{k+1} = \underset{\theta}{\operatorname{argmax}} \underset{s,a\sim \pi_{\theta_k}}{\mathbb{E}} [L(s, a, \theta_k, \theta)],$$
+where $L$ is given by
+$$L(s, a, \theta_k, \theta) = \min \Bigg(\frac{\pi_{\theta}\left(a | s\right)}{\pi_{\theta_{\text {k}}}\left(a | s\right)} A^{\pi_{\theta_k}}(s,a), \textrm{ Clip}\Bigg(\frac{\pi_{\theta}\left(a | s\right)}{\pi_{\theta_{\text {k}}}\left(a | s\right)}, 1-\varepsilon, 1+\varepsilon\Bigg) A^{\pi_{\theta_k}}(s,a)\Bigg).$$
+Roughly, $\varepsilon$ is a hyperparameter which says how far away the new policy is allowed to go from the old one. A simpler expression of the above expression is
+\begin{align}
+	L(s, a, \theta_k, \theta) = \min \Bigg(\frac{\pi_{\theta}\left(a | s\right)}{\pi_{\theta_{\text {k}}}\left(a | s\right)} A^{\pi_{\theta_k}}(s,a), g(\varepsilon, A^{\pi_{\theta_k}}(s,a)) \Bigg),
+	\label{eq:ppo_objective}
+\end{align}
+where 
+\begin{align}
+	g(\varepsilon,A) = 
+	\begin{cases}
+		(1+\varepsilon)A & A\geq 0\\
+		(1-\varepsilon)A & A< 0.
+	\end{cases}
+	\label{eq:ppo_clip}
+\end{align}
+
+\paragraph{Positive Advantage:} Suppose the advantage for that state-action pair is positive, in which case its contribution to the objective reduces to
+\begin{align}
+	L(s, a, \theta_k, \theta) = \min \Bigg(\frac{\pi_{\theta}\left(a | s\right)}{\pi_{\theta_{\text {k}}}\left(a | s\right)}, 1+\varepsilon \Bigg) A^{\pi_{\theta_k}}(s,a).
+	\label{eq:ppo_positive}
+\end{align}
+Because the advantage is positive, the objective will increase if the action becomes more likely that is, if $\pi_{\theta}(a|s)$ increases. But the min in this term puts a limit to how much the objective can increase. Once $\pi_{\theta}(a|s) > (1+\epsilon) \pi_{\theta_k}(a|s)$, the min kicks in and this term hits a ceiling of $(1+\epsilon) A^{\pi_{\theta_k}}(s,a)$. Thus, the new policy does not benefit by going far away from the old policy.
+
+\paragraph{Negative Advantage:} Suppose the advantage for that state-action pair is negative, in which case its contribution to the objective reduces to
+\begin{align}
+	L(s, a, \theta_k, \theta) = \max \Bigg(\frac{\pi_{\theta}\left(a | s\right)}{\pi_{\theta_{\text {k}}}\left(a | s\right)}, 1-\varepsilon \Bigg) A^{\pi_{\theta_k}}(s,a).
+	\label{eq:ppo_negative}
+\end{align}
+
+Because the advantage is negative, the objective will increase if the action becomes less likely—that is, if $\pi_{\theta}(a|s)$ decreases. But the max in this term puts a limit to how much the objective can increase. Once $\pi_{\theta}(a|s) < (1-\epsilon) \pi_{\theta_k}(a|s)$, the max kicks in and this term hits a ceiling of $(1-\epsilon) A^{\pi_{\theta_k}}(s,a)$. Thus, again, the new policy does not benefit by going far away from the old policy.
+
+What we have seen so far is that clipping serves as a regularizer by removing incentives for the policy to change dramatically, and the hyperparameter $\epsilon$ corresponds to how far away the new policy can go from the old while still profiting the objective.
+
+Similarly, in DeepSeek, they leveraged a RL objective called Group Relative Policy Optimization, which is a variant of PPO. 
+\begin{align*}
+	\mathcal{J} = \frac{1}{G}\sum_{i=1}^{G} \min \Bigg(\frac{\pi_{\theta}\left(o_i | q\right)}{\pi_{\theta_{\text {k}}}\left(o_i | q\right)} A_i, \textrm{ Clip}\Bigg(\frac{\pi_{\theta}\left(o_i | q\right)}{\pi_{\theta_{\text {k}}}\left(o_i | q\right)}, 1-\varepsilon, 1+\varepsilon\Bigg) A_{i}\Bigg) -\beta D_{KL}(\pi_{\theta}\| \pi_{\text{ref}}).
+\end{align*}
+\begin{itemize}
+	\item GRPO samples a group of outputs $\{o_1, o_2,\dots, o_G \}$ from the old policy $\pi_{\theta_k}$ and then optimizes the policy model by maximizing the objective 
+	\item The KL-divergence is used to restrict the sudden change of policy.
+	\item The advantage can be calculated by averaging and normalizing the rewards.
+\end{itemize}
+
+
 
 
 
