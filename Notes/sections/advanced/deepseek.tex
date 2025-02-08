@@ -25,7 +25,7 @@ During inference, all keys and values need to be cached to accelerate inference,
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1.1]{./images/transformer/mla.pdf}
-	\caption{The overview of MLA}
+	\caption{An overview of MLA.}
 \end{figure}
 The core of Multi-Head Latent Attention (MLA) is the low-rank joint compression for attention keys and values to reduce Key-Value (KV) cache during inference:
 \begin{align*}
@@ -165,7 +165,7 @@ The input tokens $[t_1,t_2,t_3,t_4]$ go through the main model's transformer blo
 \end{itemize}
 
 \section{Reinforcement Learning}
-\subsection{Proximal Policy Optimization}
+\subsection{Backgrounds: Proximal Policy Optimization}
 The objective function of Proximal Policy Optimization (PPO) can be represented as follows:
 \begin{align*}
 	\theta_{k+1} = \underset{\theta}{\operatorname{argmax}} \underset{s,a\sim \pi_{\theta_k}}{\mathbb{E}} [L(s, a, \theta_k, \theta)],
@@ -208,6 +208,7 @@ In sum, \textbf{clipping serves as a regularizer} by restricting the rewards to 
 \begin{figure}[t]
 	\centering
 	\includegraphics[scale=0.5]{./images/transformer/grpo.png}
+	\caption{An illustration of GRPO. The policy model $\pi$ takes an question (\ie observation, $q$) and generates answers (\ie actions, $o_1$) of the question. }
 \end{figure}
 
 Similarly, in DeepSeek, they leveraged a RL objective called Group Relative Policy Optimization (GRPO), which is a variant of PPO. 
@@ -218,14 +219,12 @@ Similarly, in DeepSeek, they leveraged a RL objective called Group Relative Poli
 	\item GRPO samples a group of outputs $\{o_1, o_2,\dots, o_G \}$ from the old policy $\pi_{\theta_k}$ and then optimizes the policy model by maximizing the objective 
 	\item The KL-divergence is used to restrict the sudden change of policy.
 	\item The advantage can be calculated by averaging and normalizing the rewards.
+	\item Instead of using a value model explicitly, GRPO computes a value of the states (\ie $o_i$) by averaging them. 
+		\begin{itemize}
+			\item $A(s,a) = Q(s,a)-V(s)$
+		\end{itemize}
+	\item $\pi_{\text{}}$ is the reference model, which is an initial SFT model. 
 \end{itemize}
-
-
-
-
-
-
-
 
 \section{Training FrameWork}
 \begin{itemize}
