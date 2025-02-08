@@ -164,33 +164,13 @@ The input tokens $[t_1,t_2,t_3,t_4]$ go through the main model's transformer blo
 	\item $(i+k)$-th token embedding $\text{Emb}(t_{i+k})$
 \end{itemize}
 
-% \section{Decoupled RoPE}
-\section{Training FrameWork}
-\begin{itemize}
-	\item 2048 H800 GPUs
-	\item HAI-LLM framework: their custom framework. 
-	\item 16-way Pipeline Parallelism
-		\begin{itemize}
-			\item The layers of a model are sharded across multiple devices. 
-		\end{itemize}
-	\item Expert Parallelism: evenly distributes some of the experts' full weight to different GPUs, which means each GPU holds part of the experts' full weight. \eg experts 1, 2, and 3 are assigned to the first GPU, while experts 4, 5, and 6 are assigned to the second one.
-	\item ZeRO-1 DP
-\end{itemize}
-\section{DualPipe}
-\section{FP8}
-
-
-\section{RL}
-
-\begin{figure}[t]
-	\centering
-	\includegraphics[scale=0.5]{./images/transformer/grpo.png}
-\end{figure}
-
-The PPO objective is 
-
-$$ \theta_{k+1} = \underset{\theta}{\operatorname{argmax}} \underset{s,a\sim \pi_{\theta_k}}{\mathbb{E}} [L(s, a, \theta_k, \theta)],$$
-where $L$ is given by
+\section{Reinforcement Learning}
+\subsection{Proximal Policy Optimization}
+The objective function of Proximal Policy Optimization (PPO) can be represented as follows:
+\begin{align*}
+	\theta_{k+1} = \underset{\theta}{\operatorname{argmax}} \underset{s,a\sim \pi_{\theta_k}}{\mathbb{E}} [L(s, a, \theta_k, \theta)],
+\end{align*}
+where $\theta_{k}$ is a parameter of a policy network at $k$-th step, $\theta$ is the current policy we want to update, and the $A$ is the advantage (\ie reward). Finally, the $L$ is given by
 $$L(s, a, \theta_k, \theta) = \min \Bigg(\frac{\pi_{\theta}\left(a | s\right)}{\pi_{\theta_{\text {k}}}\left(a | s\right)} A^{\pi_{\theta_k}}(s,a), \textrm{ Clip}\Bigg(\frac{\pi_{\theta}\left(a | s\right)}{\pi_{\theta_{\text {k}}}\left(a | s\right)}, 1-\varepsilon, 1+\varepsilon\Bigg) A^{\pi_{\theta_k}}(s,a)\Bigg).$$
 Roughly, $\varepsilon$ is a hyperparameter which says how far away the new policy is allowed to go from the old one. A simpler expression of the above expression is
 \begin{align}
@@ -207,24 +187,30 @@ where
 	\label{eq:ppo_clip}
 \end{align}
 
-\paragraph{Positive Advantage:} Suppose the advantage for that state-action pair is positive, in which case its contribution to the objective reduces to
+\begin{enumerate}
+	\item Positive Advantage: Suppose the advantage for that state-action pair is positive, in which case its contribution to the objective reduces to
 \begin{align}
 	L(s, a, \theta_k, \theta) = \min \Bigg(\frac{\pi_{\theta}\left(a | s\right)}{\pi_{\theta_{\text {k}}}\left(a | s\right)}, 1+\varepsilon \Bigg) A^{\pi_{\theta_k}}(s,a).
 	\label{eq:ppo_positive}
 \end{align}
-Because the advantage is positive, the objective will increase if the action becomes more likely that is, if $\pi_{\theta}(a|s)$ increases. But the min in this term puts a limit to how much the objective can increase. Once $\pi_{\theta}(a|s) > (1+\epsilon) \pi_{\theta_k}(a|s)$, the min kicks in and this term hits a ceiling of $(1+\epsilon) A^{\pi_{\theta_k}}(s,a)$. Thus, the new policy does not benefit by going far away from the old policy.
-
-\paragraph{Negative Advantage:} Suppose the advantage for that state-action pair is negative, in which case its contribution to the objective reduces to
+As the advantage is positive, the objective will increase if the action becomes more likely that is, if $\pi_{\theta}(a|s)$ increases. But the min in this term puts a limit to how much the objective can increase. Once $\pi_{\theta}(a|s) > (1+\epsilon) \pi_{\theta_k}(a|s)$, the min kicks in and this term hits a ceiling of $(1+\epsilon) A^{\pi_{\theta_k}}(s,a)$. Thus, the new policy does not benefit by going far away from the old policy.
+\item Negative Advantage: Suppose the advantage for that state-action pair is negative, in which case its contribution to the objective reduces to
 \begin{align}
 	L(s, a, \theta_k, \theta) = \max \Bigg(\frac{\pi_{\theta}\left(a | s\right)}{\pi_{\theta_{\text {k}}}\left(a | s\right)}, 1-\varepsilon \Bigg) A^{\pi_{\theta_k}}(s,a).
 	\label{eq:ppo_negative}
 \end{align}
+Since the advantage is negative, the objective will increase if the action becomes less likely. In other words, if $\pi_{\theta}(a|s)$ decreases. But the max in this term puts a limit to how much the objective can increase. Once $\pi_{\theta}(a|s) < (1-\epsilon) \pi_{\theta_k}(a|s)$, the max kicks in and this term hits a ceiling of $(1-\epsilon) A^{\pi_{\theta_k}}(s,a)$. Thus, again, the new policy does not benefit by going far away from the old policy.
+\end{enumerate}
+In sum, \textbf{clipping serves as a regularizer} by restricting the rewards to the policy, which change it dramatically with the hyperparameter $\epsilon$ corresponds to how far away the new policy can go from the old while still profiting the objective.
 
-Because the advantage is negative, the objective will increase if the action becomes less likely—that is, if $\pi_{\theta}(a|s)$ decreases. But the max in this term puts a limit to how much the objective can increase. Once $\pi_{\theta}(a|s) < (1-\epsilon) \pi_{\theta_k}(a|s)$, the max kicks in and this term hits a ceiling of $(1-\epsilon) A^{\pi_{\theta_k}}(s,a)$. Thus, again, the new policy does not benefit by going far away from the old policy.
+\subsection{Group Relative Policy Optimization}
 
-What we have seen so far is that clipping serves as a regularizer by removing incentives for the policy to change dramatically, and the hyperparameter $\epsilon$ corresponds to how far away the new policy can go from the old while still profiting the objective.
+\begin{figure}[t]
+	\centering
+	\includegraphics[scale=0.5]{./images/transformer/grpo.png}
+\end{figure}
 
-Similarly, in DeepSeek, they leveraged a RL objective called Group Relative Policy Optimization, which is a variant of PPO. 
+Similarly, in DeepSeek, they leveraged a RL objective called Group Relative Policy Optimization (GRPO), which is a variant of PPO. 
 \begin{align*}
 	\mathcal{J} = \frac{1}{G}\sum_{i=1}^{G} \min \Bigg(\frac{\pi_{\theta}\left(o_i | q\right)}{\pi_{\theta_{\text {k}}}\left(o_i | q\right)} A_i, \textrm{ Clip}\Bigg(\frac{\pi_{\theta}\left(o_i | q\right)}{\pi_{\theta_{\text {k}}}\left(o_i | q\right)}, 1-\varepsilon, 1+\varepsilon\Bigg) A_{i}\Bigg) -\beta D_{KL}(\pi_{\theta}\| \pi_{\text{ref}}).
 \end{align*}
@@ -237,5 +223,22 @@ Similarly, in DeepSeek, they leveraged a RL objective called Group Relative Poli
 
 
 
+
+
+
+
+\section{Training FrameWork}
+\begin{itemize}
+	\item 2048 H800 GPUs
+	\item HAI-LLM framework: their custom framework. 
+	\item 16-way Pipeline Parallelism
+		\begin{itemize}
+			\item The layers of a model are sharded across multiple devices. 
+		\end{itemize}
+	\item Expert Parallelism: evenly distributes some of the experts' full weight to different GPUs, which means each GPU holds part of the experts' full weight. \eg experts 1, 2, and 3 are assigned to the first GPU, while experts 4, 5, and 6 are assigned to the second one.
+	\item ZeRO-1 DP
+\end{itemize}
+\section{DualPipe}
+\section{FP8}
 
 

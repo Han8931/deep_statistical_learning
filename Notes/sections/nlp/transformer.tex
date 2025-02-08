@@ -11,20 +11,70 @@ The self-attention mechanism in transformers treats all tokens in a sequence in 
 	\item \textbf{Relative Positional Embeddings}: These embeddings focus on the distance between tokens, which can improve the model’s understanding of token relationships. However, they typically introduce additional complexity into the model architecture.
 \end{itemize}
 
+\subsection{Permutation Invariance of Self-Attention}
+
+Without positional embeddings, the transformer's self-attention would treat the input as a bag of tokens, ignoring the order entirely. The added positional embeddings break this permutation invariance by encoding the position directly into the token representation. As a result, even if the same tokens are present, the model can infer their relative order and roles in the sentence.
+
+Imagine you have a short sentence, ``I feel good''. If you simply pass this sentence into a transformer, the model wouldn't know the order of the words. The same set of token (\ie word) embeddings could represent the sentence ``good feel I'' if no ordering information were provided.
+
+We formulate this as follows: With a permutation matrix \( P \) of shape \( (n, n) \), the input tokens can be permuted as 
+\[
+X' = P X.
+\]
+Let's follow the same self-attention process for \( X' \):
+\[
+Q' = X'W_q = P X W_q = P Q,
+\]
+\[
+K' = X'W_k = P X W_k = P K,
+\]
+\[
+V' = X'W_v = P X W_v = P V.
+\]
+Then, compute the scores using \( Q' \) and \( K' \):
+\[
+S' = \frac{Q'(K')^T}{\sqrt{d_k}} = \frac{(P Q)(P K)^T}{\sqrt{d_k}}.
+\]
+   
+Note that
+\[
+(P K)^T = K^T P^T,
+\]
+so
+\[
+S' = \frac{P Q K^T P^T}{\sqrt{d_k}} = P \, S \, P^T.
+\]
+
+The softmax is applied row-wise. 
+\[
+A' = \text{Softmax}(S').
+\]
+   
+Since \( P \) and \( P^T \) are just reordering rows and columns, respectively, the attention weights $A$ are simply permuted like below:
+\[
+A' = P \, A \, P^T.
+\]
+Finally, the output for the permuted input is:
+\[
+\text{Attention}(X') = A' V' = (P A P^T)(P V) = P A V = P \, \text{Attention}(X).
+\]
+As you can see the self-attention mechanism is \textit{equivariant} to permutations. This means that if you permute the input tokens, the output is permuted in the same way. There is no mechanism in the equations above that distinguishes one ordering from another; the operations treat all tokens symmetrically.
+
+Thus, without additional positional encodings, if you were to shuffle the tokens, the model would compute the same set of pairwise interactions—just in a different order. The structure of the equations does not provide any mechanism for the model to know that one token came before or after another.
+
 \subsection{Sinusoidal Positional Encoding}
 
 In a Transformer model, positional encoding vectors are added to the token (word) embeddings before the input is fed into the self-attention layers. This addition gives the model a sense of the order in the sequence, enabling it to capture the sequential relationships between tokens despite processing them in parallel.
-\begin{aligned}
-\text{PE}(pos,\, 2i) &= \sin\Bigl(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\Bigr),\\[1mm]
-\text{PE}(pos,\, 2i+1) &= \cos\Bigl(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\Bigr),
-\end{aligned}
-\]
 
+\begin{itemize}
+	\item $\text{PE}(pos, 2i) &= \sin\Bigg(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\Bigg)$
+	\item $\text{PE}(pos, 2i+1) &= \cos\Bigg(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\Bigg)$,
+\end{itemize}
 where:
 \begin{itemize}
-	\item \( pos \) is the position of the token in the sequence (starting at 0),
-	\item \( i \) is the index along the embedding dimension,
-	\item \( d_{\text{model}} \) is the total dimension of the model’s embeddings.
+	\item \( pos \): the position of the token in the sequence (starting at 0),
+	\item \( i \): the index along the embedding dimension,
+	\item \( d_{\text{model}} \): the total dimension of the model’s embeddings.
 \end{itemize}
 
 Let's work through a concrete example with a very small embedding dimension:
