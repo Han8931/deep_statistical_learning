@@ -207,7 +207,7 @@ This yields the updated coordinates:
 \]
 After processing all \(d/2\) subspaces, we concatenate the results back into a full \(d\)-dimensional vector \(\tilde{\mathbf{x}}_i\).
 
-In transformer architectures, RoPE is applied to both the query and key vectors:
+In transformer architectures, RoPE is applied to both the query and the key vectors except the value vecotrs:
 \[
 \begin{aligned}
 \tilde{\mathbf{q}}_i &= \text{RoPE}_i(\mathbf{q}_i), \\
@@ -225,8 +225,6 @@ A key property of RoPE is that the dot product between the rotated vectors can b
 \tilde{\mathbf{q}}_i^\top \tilde{\mathbf{k}}_j = \mathbf{q}_i^\top\, \mathbf{M}(i,j)\, \mathbf{k}_j,
 \]
 where \(\mathbf{M}(i,j)\) is a block diagonal matrix that encapsulates the effect of the relative positional difference \(j-i\).
-
-
 
 Focus on one 2D subspace (indexed by \(k\)):
 \begin{itemize}
@@ -268,7 +266,7 @@ R\bigl((j-i)\alpha_k\bigr)
 
 \begin{itemize}
 	\item Relative Positional Bias:  
-  The matrix \(\mathbf{M}(i,j)\) adjusts the dot product between queries and keys based on their relative positions \((j-i)\). Instead of explicitly adding a relative position embedding, the rotation inherently modulates the interaction between tokens.
+  The matrix \(\mathbf{M}(i,j)\) adjusts the dot product between queries and keys based on their relative positions \((j-i)\). Thus, the value vectors are not modified. Instead of explicitly adding a relative position embedding, the rotation inherently modulates the interaction between tokens.
 	\item Unified Encoding: Since \(\mathbf{M}(i,j)\) is built from standard rotation matrices \(R(\theta)\), it seamlessly encodes the relative positional difference across all 2D subspaces. This results in a unified treatment where both absolute and relative positional cues are embedded into the attention calculation.
 	\item Elegant Mathematical Foundation: The use of \(R(\theta)\) comes directly from classical geometry and linear algebra. It leverages the well-known properties of rotations in 2D—specifically, that rotations preserve vector norms and that the composition of rotations is itself a rotation (with the angle being the sum or difference of the individual angles). This mathematical elegance translates into an efficient and effective mechanism for positional encoding.
 \end{itemize}

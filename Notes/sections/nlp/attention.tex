@@ -177,7 +177,6 @@ Assume we have an input sequence of \( n \) tokens. For each token \( i \) (with
 \mathbf{v}_i &= \mathbf{x}_i \, W^V,
 \end{aligned}
 \]
-
 where
 \begin{itemize}
 	\item \( W^Q, W^K \in \mathbb{R}^{d_{\text{model}} \times d_k} \) are the query and key projection matrices,
@@ -188,7 +187,6 @@ where
 For a given token \( i \), we compute its output representation as a weighted sum of the value vectors of all tokens. The weights are determined by the similarity between the query \( \mathbf{q}_i \) and the keys \( \mathbf{k}_j \) of all tokens \( j \) in the sequence.
 
 First, compute the \textit{dot-product scores} between the query for token \( i \) and every key:
-
 \[
 s_{ij} = \mathbf{q}_i \cdot \mathbf{k}_j, \quad \text{for } j = 1, 2, \dots, n.
 \]
