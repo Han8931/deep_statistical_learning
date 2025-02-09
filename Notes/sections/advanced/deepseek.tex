@@ -96,15 +96,16 @@ A typical practice to construct an MoE language model usually substitutes FFNs i
 \end{align*}
 \begin{itemize}
 	\item 
-		$$g_{i,t} = \frac{g_{i,t}'}{\sum^{N_r}_{j=1}g_{j,t}'}$$
-	\item 
+		\begin{align*}
+			g_{i,t} = \frac{g_{i,t}'}{\sum^{N_r}_{j=1}g_{j,t}'},
+		\end{align*}
+		where
 		\begin{align*}
 			g_{i,t}' = \begin{cases}
 				s_{i,t}&\text{ } s_{i,t}\in TopK(\{s_{j,t}|1\leq j \leq N_r\}, K_r)\\
 				0&\text{otherwise,}
 			\end{cases}
 		\end{align*}
-	\item 
 		$$s_{i,t} = \sigma(\rvu_t^T\rve_i)$$
 	\item $\rvu_t$: FFN input of the $t$-th token. 
 	\item $\rvh_t'$ FFN output
@@ -119,7 +120,7 @@ A typical practice to construct an MoE language model usually substitutes FFNs i
 	\item $s_{i,t}$: a token assigned to an expert (\ie affinity score)
 	\item $\rve_i$: the centroid vector of the $i$-th (routed) expert 
 		\begin{itemize}
-			\item This is an (learnable) expert embedding. 
+			\item This is an (learnable) expert embedding representing assignment scores for each token claimed by each expert. The shared expert would get a vector like $\mathbf{1}$, which is a vector of ones.
 		\end{itemize}
 	\item $TopK(\cdot, K)$: the set comprising $K$ highest scores among the affinity scores calculated for the $t$-th token and all routed experts.
 	\item $\sigma$: Sigmoid function.
