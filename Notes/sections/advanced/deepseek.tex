@@ -43,19 +43,30 @@ The core of Multi-Head Latent Attention (MLA) is the low-rank joint compression 
 	\item $W^{KR}\in \mathbb{R}^{d_h^R\times d}$ is the matrix used for generating the decoupled key of RoPE. 
 	\item \textbf{During inference, MLA only needs to cache $\rvc_t^{KV}$ and $\rvk_t^{R}$, which is a compressed latent vector, rather than high-dimensional key and value vector.} Thus, it can still have the multiple heads. This alleviates the issue of GQA or MQA while keeping their benefits. 
 	\item Also, we do not have to explicitly compute the key and the values for attention.
+		\begin{align*}
+			q_t^Tk_t &= (W^{UQ}c_Q^t)^T(W^{UK}c_{KV}^t)\\
+					 &= (c_Q^t)^T(W^{UQT}W^{UK})c_{KV}^t\\
+		\end{align*}
 		\begin{itemize}
-			\item To leverage this advantage, we need to use the decoupled RoPE
+			\item Here, $W^{UQT}W^{UK}$ is a combined matrix of the projection matrices.
+		\end{itemize}
+		Similarly, for values,
+		\begin{align*}
+			o_{t,i} = \text{AttnScore}\cdot v_t^C
+		\end{align*}
+		The final output is
+		\begin{align*}
+			u_t &= W^O[o_{t,1}, \dots, o_{t,n_h}]\\
+				&= W^O[\text{AttnScore}\cdot (W^{UV}c_{KV}^t)]\\
+				&= W^OW^{UV}[\text{AttnScore}\cdot (c_{KV}^t)]
+		\end{align*}
+		\begin{itemize}
+			\item To leverage this advantage, we need to use the \textit{decoupled RoPE}. Otherwise, the RoPE would be coupled with projection matrices.
 		\end{itemize}
 		\begin{align*}
 			\rvq_t^T\rvk_t = (\rvc_t^Q)^T((W^{UQ})^TW^{UK})\rvc_T^{KV}
 		\end{align*}
-	% \item Thus, KV cache has only $d_c\times l$ elements, where $l$ is the number of layers.
-	% \item Note that during inference the up-projection matrices W^UK and W^UV can be absorbed (Associative law of matrix multiplication) into the query(W^Q) and output(W^O) projections matrices, eliminating the need to compute keys and values explicitly.
 \end{itemize}
-% Unlike the MHA, MLA only needs to keep the $\rvc_t^{KV}$ and $\rvk_t^{R}$ (\ie cache). This leads to a significant memory usage. It does not look very clear at first. Let's closely look at the inner product of $\rvq$ and $\rvk$:
-% \begin{itemize}
-% 	\item As you can see the query and the key projected from the weight matrices allow them to be defined specifically in advance. 
-% \end{itemize}
 
 Moreover, in order to reduce the activation memory during training, we also perform low-rank compression for the queries, even if it cannot reduce the KV cache:
 \begin{align*}
@@ -227,18 +238,18 @@ Similarly, in DeepSeek, they leveraged a RL objective called Group Relative Poli
 	\item $\pi_{\text{}}$ is the reference model, which is an initial SFT model. 
 \end{itemize}
 
-\section{Training FrameWork}
-\begin{itemize}
-	\item 2048 H800 GPUs
-	\item HAI-LLM framework: their custom framework. 
-	\item 16-way Pipeline Parallelism
-		\begin{itemize}
-			\item The layers of a model are sharded across multiple devices. 
-		\end{itemize}
-	\item Expert Parallelism: evenly distributes some of the experts' full weight to different GPUs, which means each GPU holds part of the experts' full weight. \eg experts 1, 2, and 3 are assigned to the first GPU, while experts 4, 5, and 6 are assigned to the second one.
-	\item ZeRO-1 DP
-\end{itemize}
-\section{DualPipe}
-\section{FP8}
+% \section{Training FrameWork}
+% \begin{itemize}
+% 	\item 2048 H800 GPUs
+% 	\item HAI-LLM framework: their custom framework. 
+% 	\item 16-way Pipeline Parallelism
+% 		\begin{itemize}
+% 			\item The layers of a model are sharded across multiple devices. 
+% 		\end{itemize}
+% 	\item Expert Parallelism: evenly distributes some of the experts' full weight to different GPUs, which means each GPU holds part of the experts' full weight. \eg experts 1, 2, and 3 are assigned to the first GPU, while experts 4, 5, and 6 are assigned to the second one.
+% 	\item ZeRO-1 DP
+% \end{itemize}
+% \section{DualPipe}
+% \section{FP8}
 
 
