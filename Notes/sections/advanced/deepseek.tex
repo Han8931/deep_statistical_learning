@@ -4,7 +4,7 @@
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.32]{./images/transformer/mla.png}
+	\includegraphics[scale=0.32]{./images/DeepSeek/mla.png}
 \end{figure}
 
 The query, key, and value of the vanilla multi-head attention can be expressed as follows:
@@ -21,13 +21,12 @@ The query, key, and value of the vanilla multi-head attention can be expressed a
 \end{itemize}
 During inference, all keys and values need to be cached to accelerate inference, so MHA needs to cache $2n_hd_hl$ elements (\ie key, value for each layer and head) for each token. In model deployment, this heavy KV cache is a large bottleneck that limits the maximum batch size and sequence length.
 
-
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=1.1]{./images/transformer/mla.pdf}
+	\includegraphics[scale=1.1]{./images/DeepSeek/mla.pdf}
 	\caption{An overview of MLA.}
 \end{figure}
-The core of Multi-Head Latent Attention (MLA) is the low-rank joint compression for attention keys and values to reduce Key-Value (KV) cache during inference:
+In DeepSeek The key idea of Multi-Head Latent Attention (MLA) is the low-rank joint compression for attention keys and values to reduce Key-Value (KV) cache during inference:
 \begin{align*}
 	\rvc_t^{KV} &= W^{DKV}\rvh_t\\
 	[\rvk_{t,1}^C; \rvk_{t,2}^C; \dots ;\rvk_{t,n_h}^C;] = \rvk_t^{C} &= W^{UK}\rvc_t^{KV}\\
@@ -44,8 +43,8 @@ The core of Multi-Head Latent Attention (MLA) is the low-rank joint compression 
 	\item \textbf{During inference, MLA only needs to cache $\rvc_t^{KV}$ and $\rvk_t^{R}$, which is a compressed latent vector, rather than high-dimensional key and value vector.} Thus, it can still have the multiple heads. This alleviates the issue of GQA or MQA while keeping their benefits. 
 	\item Also, we do not have to explicitly compute the key and the values for attention.
 		\begin{align*}
-			q_t^Tk_t &= (W^{UQ}c_Q^t)^T(W^{UK}c_{KV}^t)\\
-					 &= (c_Q^t)^T(W^{UQT}W^{UK})c_{KV}^t\\
+			q_t^Tk_t &= (W^{UQ}c_t^Q)^T(W^{UK}c_t^{KV})\\
+					 &= (c_t^Q)^T(W^{UQT}W^{UK})c_t^{KV}
 		\end{align*}
 		\begin{itemize}
 			\item Here, $W^{UQT}W^{UK}$ is a combined matrix of the projection matrices.
@@ -57,8 +56,8 @@ The core of Multi-Head Latent Attention (MLA) is the low-rank joint compression 
 		The final output is
 		\begin{align*}
 			u_t &= W^O[o_{t,1}, \dots, o_{t,n_h}]\\
-				&= W^O[\text{AttnScore}\cdot (W^{UV}c_{KV}^t)]\\
-				&= W^OW^{UV}[\text{AttnScore}\cdot (c_{KV}^t)]
+				&= W^O[\text{AttnScore}\cdot (W^{UV}c_t^{KV})]\\
+				&= W^OW^{UV}[\text{AttnScore}\cdot (c_t^{KV})]
 		\end{align*}
 		\begin{itemize}
 			\item To leverage this advantage, we need to use the \textit{decoupled RoPE}. Otherwise, the RoPE would be coupled with projection matrices.
@@ -91,17 +90,22 @@ where $W^O\in \mathbb{R}^{d\times d_hn_h}$ is the output projection matrix.
 
 \section{DeepSeek MoE}
 
-This paper mentioned that the conventional TopK MoE has Knowledge Hybridity and Knowledge Redundancy. Knowledge Hybridity: existing MoE practices often employ a limited number of experts (e.g., 8 or 16), and thus tokens assigned to a specific expert will be likely to cover diverse knowledge. Consequently, the designated expert will intend to assemble vastly different types of knowledge in its parameters, which are hard to utilize simultaneously. (2) Knowledge Redundancy: tokens assigned to different experts may require common knowledge. As a result, multiple experts may converge in acquiring shared knowledge in their respective parameters, thereby leading to redundancy in expert parameters. These issues collectively hinder the expert specialization in existing MoE practices, preventing them from reaching the theoretical upper-bound performance of MoE models. By finely segmenting to more experts and introducing shared experts, DeepSeekMoE mitigated above tow issues.
+\begin{figure}[t]
+	\centering
+	\includegraphics[scale=0.4]{./images/DeepSeek/deepseek_moe.png}
+	\caption{An overview of DeepSeek MoE.}
+	\label{fig:}
+\end{figure}
 
+This paper mentioned that the conventional TopK MoE has Knowledge Hybridity and Knowledge Redundancy. Knowledge Hybridity: existing MoE practices often employ a limited number of experts (e.g., 8 or 16), and thus tokens assigned to a specific expert will be likely to cover diverse knowledge. Consequently, the designated expert will intend to assemble vastly different types of knowledge in its parameters, which are hard to utilize simultaneously. (2) Knowledge Redundancy: tokens assigned to different experts may require common knowledge. As a result, multiple experts may converge in acquiring shared knowledge in their respective parameters, thereby leading to redundancy in expert parameters. These issues collectively hinder the expert specialization in existing MoE practices, preventing them from reaching the theoretical upper-bound performance of MoE models. By finely segmenting to more experts and introducing shared experts, DeepSeekMoE mitigated above two issues.
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[scale=0.35]{./images/transformer/moe_block.png}
 	\caption{MoE Transformer Encoder from the GShard Paper}
 \end{figure}
+
 A typical practice to construct an MoE language model usually substitutes FFNs in a Transformer with MoE layers at specified intervals. An MoE layer is composed of multiple experts, where each expert is structurally identical to a standard FFN. Then, each token will be assigned to one or two experts. If the 𝑙-th FFN is substituted with an MoE layer, the computation for its output hidden state h𝑙 𝑡is expressed as:
-
-
 \begin{align*}
 	\rvh_t' = \rvu_t+\sum^{N_s}_{i=1}FFN_i^{(s)}(\rvu_t)+\sum^{N_r}_{i=1}g_{i,t}FFN_i^{(r)}(\rvu_t),
 \end{align*}
@@ -219,7 +223,7 @@ In sum, \textbf{clipping serves as a regularizer} by restricting the rewards to 
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[scale=0.5]{./images/transformer/grpo.png}
+	\includegraphics[scale=0.5]{./images/DeepSeek/grpo.png}
 	\caption{An illustration of GRPO. The policy model $\pi$ takes an question (\ie observation, $q$) and generates answers (\ie actions, $o_1$) of the question. }
 \end{figure}
 
@@ -235,7 +239,7 @@ Similarly, in DeepSeek, they leveraged a RL objective called Group Relative Poli
 		\begin{itemize}
 			\item $A(s,a) = Q(s,a)-V(s)$
 		\end{itemize}
-	\item $\pi_{\text{}}$ is the reference model, which is an initial SFT model. 
+	\item $\pi_{\text{ref}}$ is the reference model, which is an initial SFT model. 
 \end{itemize}
 
 % \section{Training FrameWork}
