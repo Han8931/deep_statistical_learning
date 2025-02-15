@@ -29,10 +29,10 @@ During inference, all keys and values need to be cached to accelerate inference,
 In DeepSeek The key idea of Multi-Head Latent Attention (MLA) is the low-rank joint compression for attention keys and values to reduce Key-Value (KV) cache during inference:
 \begin{align*}
 	\rvc_t^{KV} &= W^{DKV}\rvh_t\\
-	[\rvk_{t,1}^C; \rvk_{t,2}^C; \dots ;\rvk_{t,n_h}^C;] = \rvk_t^{C} &= W^{UK}\rvc_t^{KV}\\
+	[\rvk_{t,1}^C; \rvk_{t,2}^C; \dots ;\rvk_{t,n_h}^C] = \rvk_t^{C} &= W^{UK}\rvc_t^{KV}\\
 	\rvk_t^{R} &= \text{RoPE}(W^{KR}\rvh_t)\\
 	\rvk_{t,i} &= [\rvk_{t,i}^C;\rvk_t^{R}]\\
-	[\rvv_{t,1}^C; \rvv_{t,2}^C; \dots ;\rvv_{t,n_h}^C;] = \rvv_t^{C} &= W^{UV}\rvc_t^{KV}
+	[\rvv_{t,1}^C; \rvv_{t,2}^C; \dots ;\rvv_{t,n_h}^C] = \rvv_t^{C} &= W^{UV}\rvc_t^{KV}
 \end{align*}
 \begin{itemize}
 	\item $D$ and $U$ superscripts denote the up and down projection
@@ -70,8 +70,8 @@ In DeepSeek The key idea of Multi-Head Latent Attention (MLA) is the low-rank jo
 Moreover, in order to reduce the activation memory during training, we also perform low-rank compression for the queries, even if it cannot reduce the KV cache:
 \begin{align*}
 	\rvc_t^{Q} &= W^{DQ}\rvh_t\\
-	[\rvq_{t,1}^C; \rvq_{t,2}^C; \dots ;\rvq_{t,n_h}^C;] = \rvq_t^{C} &= W^{UQ}\rvc_t^{Q}\\
-	[\rvq_{t,1}^R; \rvq_{t,2}^R; \dots ;\rvq_{t,n_h}^R;] = \rvq_t^{R} &= \text{RoPE}(W^{QR}\rvc_t^Q)\\
+	[\rvq_{t,1}^C; \rvq_{t,2}^C; \dots ;\rvq_{t,n_h}^C] = \rvq_t^{C} &= W^{UQ}\rvc_t^{Q}\\
+	[\rvq_{t,1}^R; \rvq_{t,2}^R; \dots ;\rvq_{t,n_h}^R] = \rvq_t^{R} &= \text{RoPE}(W^{QR}\rvc_t^Q)\\
 	\rvq_{t,i} &= [\rvq_{t,i}^C;\rvq_{t,i}^{R}]
 \end{align*}
 \begin{itemize}
