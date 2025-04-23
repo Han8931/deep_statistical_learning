@@ -50,7 +50,7 @@
 				\item Diffusion model$\approx$Generative Markov Chain.
 			\end{itemize}
 		\item Learn a transition model:
-			$$p_\theta(\mathbf{x}_{t-1}|x_t) = \mathcal{N}(\mathbf{x}_{t-1}|\boldsymbol{\mu}_{\theta}(\mathbf{x}_{t}, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t,t)).$$
+			$$p_\theta(\mathbf{x}_{t-1}|\rvx_t) = \mathcal{N}(\mathbf{x}_{t-1}|\boldsymbol{\mu}_{\theta}(\mathbf{x}_{t}, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t,t)).$$
 		\item Base case: $p(\mathbf{x}_T) = \mathcal{N}(0,I)$ 
 		\item Marginal distribution over $\mathbf{x}_0$:
 			$$p_\theta(\mathbf{x}_0) = \int p_\theta(\rvx_0,\dots,\mathbf{x}_T)d\rvx_1,\dots,\rvx_T$$

@@ -23,15 +23,18 @@ p(\mathcal{C}_3) p(\mathbf{x}_i | \mathcal{C}_3) & \text{if } z_i = 2 \\
 \end{cases}
 \]
 
+
+
 Given \( N \) observations, the joint distribution for the entire dataset \( \{ \mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N \} \) along with their corresponding latent variables \( \{ \mathbf{z}_1, \mathbf{z}_2, \ldots, \mathbf{z}_N \} \) is:
 
 \[
 p(\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N, \mathbf{z}_1, \mathbf{z}_2, \ldots, \mathbf{z}_N | \boldsymbol{\theta}) = \prod_{n=1}^{N} \prod_{k=1}^{K} \pi_k^{z_{nk}} \mathcal{N}(\mathbf{x}_n | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)^{z_{nk}}
 \]
 
-Here, \( \pi_k = p(\mathcal{C}_k) \) represents the prior probability of the \( k \)-th component, and \( p(\mathbf{x}_n | \mathcal{C}_k) = \mathcal{N}(\mathbf{x}_n | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \) denotes the Gaussian distribution associated with component \( \mathcal{C}_k \).
+Here, \( \pi_k = p(\mathcal{C}_k) \) represents the prior probability of the \( k \)-th component, and \( p(\mathbf{x}_n | \mathcal{C}_k) = \mathcal{N}(\mathbf{x}_n | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \) denotes the Gaussian distribution associated with component \( \mathcal{C}_k \). Also, \(z_{nk}\in\{0,1\}\) and \(\sum_k z_{nk}=1\).
 
 However, in practice, the latent variables \( \mathbf{z}_k \) are often not directly observable, which complicates the modeling process.
 
 In the following sections, we present various methods for identifying and handling these latent variables to improve the classification and modeling of data.
+
 
