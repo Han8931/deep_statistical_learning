@@ -2,12 +2,38 @@
 
 \section{Introduction}
 \label{sec:gaussian_process}
-A Gaussian process (GP) is a probability distribution over possible functions that fit a set of points fully specified by a mean and covariance function. More formally, GPs are distributions over functions $f(x)$ of which the distribution is defined by a mean function $m(x)$ and positive definite covariance function $k(x,x')$ (\ie \textit{kernel}). Thus, it is a distribution over functions whose shape is defined by the kernel:
-$$f(x) \sim \mathcal{GP}(m(x),k(x,x')).$$
+A Gaussian process (GP) is a probability distribution over possible functions that fit a set of points fully specified by a mean and covariance function. \textbf{It means that GPs don't give you a single function to fit data. They will give you an entire distribution of possible functions.} More formally, GPs define \textbf{distributions over functions} $f(x)$ of which the distribution is defined by a mean function $m(x)=\mathbb{E}[f(x)]$ and positive definite covariance function $k(x,x')=\mathbb{E}[(f(x)-m(x))(f(x')-m(x'))]$, which tells us how points are related to each other (\ie \textit{kernel}). Thus, it is a distribution over functions whose shape is defined by the kernel:
+% A GP is a collection of R.Vs., where any finite subset follows a multivariate Gaussian distribution.
+\begin{align*}
+	f(x) \sim \mathcal{GP}(m(x),k(x,x')).
+\end{align*}
 
-Since we have the probability distribution over all possible functions, we can calculate the mean and the variance of the function to determine how confident in our predictions.
+% Since we have the probability distribution over all possible functions, we can calculate the mean and the variance of the function to determine how confident in our predictions.
+Let's say we have points then GPs assume that the function values of the points follow a multivariate Gaussian distribution. For example, we have observations $\mX=\{x_1, \dots, x_5\}$, then we have
 
-Let's say we have observations $\mX=\{x_1, \dots, x_n\}$, and we have estimated functions $\rvf = [f(x_1), \dots, f(x_n)]$ with these observations. Now say we have some new points $\mathbf{X}_*$ where we want to predict $f(\mathbf{X}_*)$.
+\begin{align*}
+	\begin{bmatrix}
+		f(x_1)\\
+		f(x_2)\\
+		\vdots \\
+		f(x_5)
+	\end{bmatrix}\sim \mathcal{N}
+	\begin{pmatrix}
+	\begin{bmatrix}
+		m(x_1)\\
+		m(x_2)\\
+		\vdots\\
+		m(x_5)
+	\end{bmatrix},
+	\begin{bmatrix}
+		k(x_1,x_1)& \cdots& k(x_1,x_5)\\
+		\vdots& \ddots& \vdots\\
+		k(x_5,x_1)& \cdots& k(x_5,x_5)\\
+	\end{bmatrix}
+	\end{pmatrix},
+\end{align*}
+
+More formally, let' say we have estimated functions $\rvf = [f(x_1), \dots, f(x_n)]$ with these observations. Now say we have some new points $\mathbf{X}_*$ where we want to predict $f(\mathbf{X}_*)$.
 
 The joint distribution of $\rvf$ and $\rvf_*$ can be modeled as:
 \begin{align*}
@@ -38,7 +64,7 @@ where $m(X) = [m(x_1),\dots, m(x_n)]$ and
 \end{align*}
 The mean is assumed to be $(m(\mathbf{X}), m(\mathbf{X}_*))=0$. 
 
-While this equation describes the joint probability distribution $P(\rvf, \rvf_*|\mathbf{X}, \mathbf{X}_*)$ over $\rvf$ and $\rvf_*$ in regressions, we need the conditional distribution $P(\rvf_*|\rvf, \mathbf{X}, \mathbf{X}_*)$ from the joint distribution. The conditional distribution can be achieved by the Marginal and conditional distributions of MVN theorem:
+While this equation describes the joint probability distribution $P(\rvf, \rvf_*|\mathbf{X}, \mathbf{X}_*)$ over $\rvf$ and $\rvf_*$ in regressions, we need the conditional distribution $P(\rvf_*|\rvf, \mathbf{X}, \mathbf{X}_*)$ for a prediction. The conditional distribution can be achieved by the Marginal and conditional distributions of MVN theorem:
 
 \begin{theorem} Marginals and conditionals of an MVN:
 A random vector $\mathbf{X}$ follows a multivariate normal distribution:
@@ -172,3 +198,6 @@ Then, compute the posterior mean and variance by Using the posterior mean and po
 \end{itemize}
 This gives the complete predictive distribution for the function value at $x_*$.
 
+\section{Time Complexity}
+
+One drawback of Gaussian processes is that it scales very badly with the number of observations $N$. It takes $O(N^3)$ time.
