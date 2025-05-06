@@ -100,7 +100,7 @@ Let's delve into the last three terms:
 	\item $\mathbb{E}_{q(\rvx_{1}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})]$: Reconstruction term. 
 	\item $D_{KL} [ q(\rvx_{T}|\rvx_0)||p(\rvx_T) ]$: Prior matching term.
 		\begin{itemize}
-			\item No trainable parameters 
+			\item No trainable parameters, since it can be fully characterized by $\rvx_t$ and $\rvx_0$, so we don't need a neural network to estimate it. 
 		\end{itemize}
 	\item $\sum_{t=2}^{T}\mathbb{E}_{q(\rvx_{t}|\rvx_0)}[D_{KL}(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p(\rvx_{t-1}|\rvx_{t}))]$: Consistency term (or denoising matching term).
 		% \begin{itemize}
@@ -133,44 +133,55 @@ Then, $q(\rvx_{t}|\rvx_{t-1}, \rvx_0) = q(\rvx_{t}|\rvx_{t-1})$ by Markov proper
 								 &\propto \mathcal{N}\bigg(\rvx_{t-1};\underbrace{\frac{\sqrt{{\alpha}_{t}}(1-\bar{\alpha}_{t-1})\rvx_t+\sqrt{\bar{\alpha}_{t-1}}(1-{\alpha}_{t})\rvx_0}{1-\bar{\alpha}_{t}}}_{\mu_q(\rvx_t,\rvx_0)}, \underbrace{\frac{(1-{\alpha}_{t})(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_{t}}\mathbf{I}}_{\Sigma_{q}(t)}\bigg),
 	\label{eq:diffusion_kl_true_denoising}
 \end{align}
-where $\alpha_t = 1-\beta_t$ and $\bar{\alpha}_t = \prod_{s=1}^t \alpha_s$. We have shown that at each step, $\rvx_{t-1} \sim q(\rvx_{t-1}|\rvx_t, \rvx_0)$ is still normally distributed, with mean $\mu_q(\rvx_t,\rvx_0)$ that is a function of $\rvx_t$ and $\rvx_0$, and variance $\Sigma_q(t)$ as a function of $\alpha$ coefficients. 
+where $\alpha_t = 1-\beta_t$ and $\bar{\alpha}_t = \prod_{s=1}^t \alpha_s$. We have shown that at each step, $\rvx_{t-1} \sim q(\rvx_{t-1}|\rvx_t, \rvx_0)$ is still normally distributed, with mean $\mu_q(\rvx_t,\rvx_0)$ that is a function of $\rvx_t$ and $\rvx_0$, and variance $\Sigma_q(t)$ as a function of $\alpha$ coefficients. We can rewrite the variance as $\Sigma_q(t) = \sigma^2_q(t)\mathbf{I}$.
 
 We can also notice that the mean $\boldsymbol{\mu}_q(\rvx_t,\rvx_0)$ is a linear combination of $\rvx_t$ and $\rvx_0$. Geometrically, it lives on the straight line connecting $\rvx_t$ and $\rvx_0$. In other words, the denoised sample $\rvx_{t-1}$ stays somewhere between the $\rvx_t$ and $\rvx_0$.
 
 Another observation is that the coefficient of $\rvx_t$ increases and that of $\rvx_0$ decreases. Conversely, $\rvx_t$ decreases and that of $\rvx_0$ increases as $t$ goes to 0 from $T$.
 
-In order to match approximate denoising transition step $p_\theta(\rvx_{t-1}|\rvx_{t})$ to the denoising transition step $q(\rvx_{t-1}|\rvx_t, \rvx_0)$ as closely as possible, we can also model it as a Gaussian.
-
-Next, we can use the \Cref{eq:diffusion_kl_true_denoising} to compute the optimal $\theta$ by solving $\min_\theta D_{KL}(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p_\theta(\rvx_{t-1}|\rvx_{t}))$, but we can simplify the optimization problem by using \Cref{eq:diffusion_forward_sampling}:
+In order to match approximate denoising transition step $p_\theta(\rvx_{t-1}|\rvx_{t})$ to the denoising transition step $q(\rvx_{t-1}|\rvx_t, \rvx_0)$ as closely as possible, we can also model it as a Gaussian. Let's simplify the KL divergence:
 \begin{align*}
-	\rvx_t &= \sqrt{\bar{\alpha}_t} \mathbf{x}_{0}+ \sqrt{1-\bar{\alpha}_t} \odot \epsilon\\
-	\mathbf{x}_{0} &= \frac{\rvx_t - \sqrt{1-\bar{\alpha}_t}\odot \epsilon}{\sqrt{\bar{\alpha}_t}}.
+	&D_{KL}(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p_\theta(\rvx_{t-1}|\rvx_{t}))\\ 
+	&= D_{KL}(\mathcal{N}(\rvx_{t-1};\mu_q,\Sigma_q(t))\|\mathcal{N}(\rvx_{t-1};\mu_\theta,\Sigma_q(t)))\\ 
+	& \vdots\\ 
+	&= \frac{1}{2\sigma^2_q(t)}\|\boldsymbol{\mu}_\theta(\rvx_t)- \boldsymbol{\mu}_q(\rvx_t, \rvx_0)\|^2_2.
 \end{align*}
-
-By plugging the above equation into $\boldsymbol{\mu}_q(\rvx_t,\rvx_0)$, we can exclude $\rvx_0$ term as follows:
-\begin{align}
-	\boldsymbol{\mu}_q(\rvx_t,\rvx_0) &= \frac{\sqrt{{\alpha}_{t}}(1-\bar{\alpha}_{t-1})\rvx_t+\sqrt{\bar{\alpha}_{t-1}}(1-{\alpha}_{t})\rvx_0}{1-\bar{\alpha}_{t}}\\
-									  &= \frac{\sqrt{{\alpha}_{t}}(1-\bar{\alpha}_{t-1})\rvx_t+\sqrt{\bar{\alpha}_{t-1}}(1-{\alpha}_{t})\frac{\rvx_t - \sqrt{1-\bar{\alpha}_t}\odot \epsilon}{\sqrt{\bar{\alpha}_t} }}{1-\bar{\alpha}_{t}}\\
-									  &\vdots\\
-									  &= \frac{1}{\sqrt{\alpha_t}}\rvx_t - \frac{1-\alpha_t}{\sqrt{1-\bar{\alpha_t}}\sqrt{\alpha_t}}\boldsymbol{\epsilon}_0
-	\label{eq:diffusion_mean_simple}
-\end{align}
-Thus, we can force $\boldsymbol{\mu}_\theta(\mathbf{x}_t, t)$, which has no dependency on $\rvx_0$ term, to match the $\boldsymbol{\mu}_q$. Since the $\rvx_t$ is given at training time, we just need to predict the $\boldsymbol{\epsilon}_t$. Then, we can express $\boldsymbol{\mu}_\theta(\mathbf{x}_t, t)$ as follows:
+By using this, we can rewrite the ELBO that we want to maximize:
 \begin{align*}
-\boldsymbol{\mu}_\theta(\mathbf{x}_t, t) &= \frac{1}{\sqrt{\alpha_t}} \bigg( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \bigg) \\
+	\text{ELBO}_\theta(\rvx) = \mathbb{E}_{q(\rvx_{1}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})] -\sum_{t=2}^{T}\mathbb{E}_{q(\rvx_{t}|\rvx_0)}\left[\frac{1}{2\sigma^2_q(t)}\|\boldsymbol{\mu}_\theta(\rvx_t)- \boldsymbol{\mu}_q(\rvx_t, \rvx_0)\|^2_2\right]
 \end{align*}
-Thus, $\rvx_{t-1}\sim p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ can be expressed as follows:
-\begin{align*}
-	\mathcal{N}\Bigg(\mathbf{x}_{t-1}; \frac{1}{\sqrt{\alpha_t}} \bigg( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \bigg), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t)\Bigg)
-\end{align*}
-Note that we can use the variance derived in \Cref{eq:diffusion_kl_true_denoising} instead of estimating it from a network for simplicity. Finally, we can solve the KL-divergence term:
+Note that the reconstruction term can be analytically computed, so we can make simplify further. 
 
-\begin{align}
-	\mathcal{L} &= \min_\theta D_{KL}(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p_\theta(\rvx_{t-1}|\rvx_{t}))\\
-				& \vdots\\
-				&= \min_\theta \frac{1}{2\sigma^2_q(t)}\frac{(1-\alpha_t)^2}{(1-\bar{\alpha}_t)\alpha_t}\big[\|\boldsymbol{\epsilon}_0- \hat{\boldsymbol{\epsilon}}_\theta(\rvx_t,t)\|^2_2\big].
-	\label{eq:diffusion_kl_mean_simple}
-\end{align}
-Here $\hat{\boldsymbol{\epsilon}}_\theta(\rvx_t,t)$ is a is a neural network that learns to predict the source noise $\boldsymbol{\epsilon}_0 \sim \mathcal{N}(\boldsymbol{\epsilon} \mathbf{0}, \mathbf{I})$ that determines $\rvx_t$ from $\rvx_0$. We have therefore shown that the overall learning objective is equivalent to learning to predict the noise.
+% Next, we can use the \Cref{eq:diffusion_kl_true_denoising} to compute the optimal $\theta$ by solving $\min_\theta D_{KL}(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p_\theta(\rvx_{t-1}|\rvx_{t}))$, but we can simplify the optimization problem by using \Cref{eq:diffusion_forward_sampling}:
+% \begin{align*}
+% 	\rvx_t &= \sqrt{\bar{\alpha}_t} \mathbf{x}_{0}+ \sqrt{1-\bar{\alpha}_t} \odot \epsilon\\
+% 	\mathbf{x}_{0} &= \frac{\rvx_t - \sqrt{1-\bar{\alpha}_t}\odot \epsilon}{\sqrt{\bar{\alpha}_t}}.
+% \end{align*}
+
+% By plugging the above equation into $\boldsymbol{\mu}_q(\rvx_t,\rvx_0)$, we can exclude $\rvx_0$ term as follows:
+% \begin{align}
+% 	\boldsymbol{\mu}_q(\rvx_t,\rvx_0) &= \frac{\sqrt{{\alpha}_{t}}(1-\bar{\alpha}_{t-1})\rvx_t+\sqrt{\bar{\alpha}_{t-1}}(1-{\alpha}_{t})\rvx_0}{1-\bar{\alpha}_{t}}\\
+% 									  &= \frac{\sqrt{{\alpha}_{t}}(1-\bar{\alpha}_{t-1})\rvx_t+\sqrt{\bar{\alpha}_{t-1}}(1-{\alpha}_{t})\frac{\rvx_t - \sqrt{1-\bar{\alpha}_t}\odot \epsilon}{\sqrt{\bar{\alpha}_t} }}{1-\bar{\alpha}_{t}}\\
+% 									  &\vdots\\
+% 									  &= \frac{1}{\sqrt{\alpha_t}}\rvx_t - \frac{1-\alpha_t}{\sqrt{1-\bar{\alpha_t}}\sqrt{\alpha_t}}\boldsymbol{\epsilon}_0
+% 	\label{eq:diffusion_mean_simple}
+% \end{align}
+% Thus, we can force $\boldsymbol{\mu}_\theta(\mathbf{x}_t, t)$, which has no dependency on $\rvx_0$ term, to match the $\boldsymbol{\mu}_q$. Since the $\rvx_t$ is given at training time, we just need to predict the $\boldsymbol{\epsilon}_t$. Then, we can express $\boldsymbol{\mu}_\theta(\mathbf{x}_t, t)$ as follows:
+% \begin{align*}
+% \boldsymbol{\mu}_\theta(\mathbf{x}_t, t) &= \frac{1}{\sqrt{\alpha_t}} \bigg( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \bigg) \\
+% \end{align*}
+% Thus, $\rvx_{t-1}\sim p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ can be expressed as follows:
+% \begin{align*}
+% 	\mathcal{N}\Bigg(\mathbf{x}_{t-1}; \frac{1}{\sqrt{\alpha_t}} \bigg( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \bigg), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t)\Bigg)
+% \end{align*}
+% Note that we can use the variance derived in \Cref{eq:diffusion_kl_true_denoising} instead of estimating it from a network for simplicity. Finally, we can solve the KL-divergence term:
+
+% \begin{align}
+% 	\mathcal{L} &= \min_\theta D_{KL}(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p_\theta(\rvx_{t-1}|\rvx_{t}))\\
+% 				& \vdots\\
+% 				&= \min_\theta \frac{1}{2\sigma^2_q(t)}\frac{(1-\alpha_t)^2}{(1-\bar{\alpha}_t)\alpha_t}\big[\|\boldsymbol{\epsilon}_0- \hat{\boldsymbol{\epsilon}}_\theta(\rvx_t,t)\|^2_2\big].
+% 	\label{eq:diffusion_kl_mean_simple}
+% \end{align}
+% Here $\hat{\boldsymbol{\epsilon}}_\theta(\rvx_t,t)$ is a is a neural network that learns to predict the source noise $\boldsymbol{\epsilon}_0 \sim \mathcal{N}(\boldsymbol{\epsilon} \mathbf{0}, \mathbf{I})$ that determines $\rvx_t$ from $\rvx_0$. We have therefore shown that the overall learning objective is equivalent to learning to predict the noise.
 
 

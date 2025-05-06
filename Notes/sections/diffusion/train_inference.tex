@@ -1,0 +1,28 @@
+\section{Training and Inference}
+Recall that the ELBO we derived suggests that we need to minimize the following equation:
+\begin{align*}
+	\frac{1}{2\sigma^2_q(t)}\|\boldsymbol{\mu}_\theta(\rvx_t)- \boldsymbol{\mu}_q(\rvx_t, \rvx_0)\|^2_2
+\end{align*}
+We already know that $\boldsymbol{\mu}_q(\rvx_t,\rvx_0)$ is given by
+\begin{align*}
+	\boldsymbol{\mu}_q(\rvx_t,\rvx_0) = \frac{\sqrt{{\alpha}_{t}}(1-\bar{\alpha}_{t-1})\rvx_t+\sqrt{\bar{\alpha}_{t-1}}(1-{\alpha}_{t})\rvx_0}{1-\bar{\alpha}_{t}}.
+\end{align*}
+Therefore, $\boldsymbol{\mu}_q(\rvx_t,\rvx_0)$ can be fully characterized by $\rvx_t$ and $\rvx_0$.
+
+Next, we need to design $\boldsymbol{\mu}_\theta$ and we can set it to follow a simple form, which is similar to $\boldsymbol{\mu}_q$. Then, we get
+\begin{align*}
+	\boldsymbol{\mu}_\theta(\rvx_t) = \frac{\sqrt{{\alpha}_{t}}(1-\bar{\alpha}_{t-1})\rvx_t+\sqrt{\bar{\alpha}_{t-1}}(1-{\alpha}_{t})\hat{\rvx}_\theta(\rvx_t)}{1-\bar{\alpha}_{t}},
+\end{align*}
+where $\hat{\rvx}_\theta$ is another network that seeks to predict $\rvx_0$ from noisy image $\rvx_t$ at $t$-th step. Then, the KL divergence becomes
+\begin{align*}
+	\frac{1}{2\sigma^2_q(t)}\|\boldsymbol{\mu}_\theta(\rvx_t)- \boldsymbol{\mu}_q(\rvx_t, \rvx_0)\|^2_2 = \frac{1}{2\sigma^2_q(t)}\frac{\bar{\alpha}_{t-1}(1-{\alpha}_{t})^2}{(1-\bar{\alpha}_{t})^2}\|\hat{\rvx}_\theta(\rvx_t)-\rvx_0\|^2_2
+\end{align*}
+This tells us optimizing a VDM boils down to learning a neural network to predict the original ground truth sample from an arbitrarily noisy version of it.
+
+
+Finally, we get 
+\begin{align*}
+	\text{ELBO}_\theta(\rvx) &= \mathbb{E}_{q(\rvx_{1}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})] -\sum_{t=2}^{T}\mathbb{E}_{q(\rvx_{t}|\rvx_0)}\left[\frac{1}{2\sigma^2_q(t)}\frac{\bar{\alpha}_{t-1}(1-{\alpha}_{t})^2}{(1-\bar{\alpha}_{t})^2}\|\hat{\rvx}_\theta(\rvx_t)-\rvx_0\|^2_2\right]\\
+							 &= -\sum_{t=1}^{T}\mathbb{E}_{q(\rvx_{t}|\rvx_0)}\left[\frac{1}{2\sigma^2_q(t)}\frac{\bar{\alpha}_{t-1}(1-{\alpha}_{t})^2}{(1-\bar{\alpha}_{t})^2}\|\hat{\rvx}_\theta(\rvx_t)-\rvx_0\|^2_2\right]\\
+\end{align*}
+

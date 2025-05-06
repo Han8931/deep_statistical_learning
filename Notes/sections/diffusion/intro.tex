@@ -7,19 +7,7 @@
 		\item Outperform GANs on image synthesis (DDPM) $\sim$ 2020.
 		\item Stable training dynamics.
 		\item Image synthesis, super resolution, text-to-image, and so on.
-%		\item DMs are inspired by non-equilibrium thermodynamics. 
-%			\begin{itemize}
-%				\item Random motion of molecules from a region of high concentration to a region of low concentration.
-%			\end{itemize}
 	\end{itemize}
-%	\begin{figure}[h]
-%		\centering
-%		\includegraphics[scale=0.15]{./images/diffusion.png}
-%		\caption{Disffusion.}
-%		\label{fig:diffusion}
-%	\end{figure}
-% \vskip0pt plus 1filll
-% \href{https://arxiv.org/abs/1503.03585}{\tiny \blue{ICML 2015 Deep Unsupervised Learning using Nonequilibrium Thermodynamics}}
 
 The overall idea is to construct a Markov chain of progressively less noisy samples. Each transition denoises a noisy sample. Diffusion models consist of two Markov chains:
 \begin{enumerate}
@@ -41,8 +29,8 @@ This particular structure is called the \textit{variational diffusion model}.
 \begin{figure}[t]
 	\centering
 	\includegraphics[scale=0.28]{./images/diffusion/diffusion_model.png}
+	\caption{\href{https://cvpr2022-tutorial-diffusion-models.github.io/}{\tiny \blue{CVRP 2022 Tutorial: Denoising Diffusion-based Generative Modeling: Foundations and Applications}}}
 \end{figure}
-	% \href{https://cvpr2022-tutorial-diffusion-models.github.io/}{\tiny \blue{CVRP 2022 Tutorial: Denoising Diffusion-based Generative Modeling: Foundations and Applications}}
 
 \textbf{Some properties of diffusion models}:
 \begin{enumerate}
@@ -126,12 +114,6 @@ In the forward process, we model the diffusion process, which turns the input da
 
 To generate data, we will reverse the forward process. Then, we can reconstruct the true data. We call this process \textit{Backward process}! The backward process works as follows:
 
-\begin{figure}[t]
-	\centering
-	\includegraphics[scale=0.30]{./images/diffusion/reverse.png}
-\end{figure}
-% \href{https://cvpr2022-tutorial-diffusion-models.github.io/}{\tiny \blue{CVPR 2022 Tutorial: Denoising Diffusion-based Generative Modeling: Foundations and Applications}}
-
 \begin{itemize}
 	\item Start from the noise distribution $q(\rvx_T)\approx \mathcal{N}(0,I)$.
 	\item Then, sample a noise $\rvx_T\sim \mathcal{N}(\rvx_T|0,I)$
@@ -151,11 +133,6 @@ To generate data, we will reverse the forward process. Then, we can reconstruct 
 			\item We can model the denoising distribution as Normal distribution like above (\cf \Cref{eq:diffusion_kl_true_denoising}).
 			\item Note that the reverse conditional probability $q(\rvx_{t-1}|\rvx_t)$ is tractable when it is conditioned on $\rvx_0$ as shown in \Cref{eq:diffusion_kl_true_denoising}. This allows us to train a neural network to model this denoising distribution. 
 		\end{itemize}
-		% \begin{itemize}
-		% 	\item Network outputs mean and variance ($\boldsymbol{\mu}_{\theta}$ and $\boldsymbol{\Sigma}_{\theta}$). 
-		% 	\item We are not going to make a model to predict them directly.
-		% 	\item \textbf{Train a noise prediction network.}
-		% \end{itemize}
 	\item Key to the success of this sampling process is training the reverse Markov chain to match the actual time reversal of the forward Markov chain. 
 	\item After optimizing the backward process, the sampling procedure is that just sample Gaussian noise from $p(\rvx_T)$ and then iteratively running the denoising transitions (backward process) for $T$ steps to generate a novel $\rvx_0$.
 \end{itemize}
