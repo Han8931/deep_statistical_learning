@@ -17,12 +17,16 @@ where $\hat{\rvx}_\theta$ is another network that seeks to predict $\rvx_0$ from
 \begin{align*}
 	\frac{1}{2\sigma^2_q(t)}\|\boldsymbol{\mu}_\theta(\rvx_t)- \boldsymbol{\mu}_q(\rvx_t, \rvx_0)\|^2_2 = \frac{1}{2\sigma^2_q(t)}\frac{\bar{\alpha}_{t-1}(1-{\alpha}_{t})^2}{(1-\bar{\alpha}_{t})^2}\|\hat{\rvx}_\theta(\rvx_t)-\rvx_0\|^2_2
 \end{align*}
-This tells us optimizing a VDM boils down to learning a neural network to predict the original ground truth sample from an arbitrarily noisy version of it.
-
+This indicates that optimizing a VDM boils down to learning a neural network to predict the original ground truth sample from an arbitrarily noisy version of it.
 
 Finally, we get 
 \begin{align*}
-	\text{ELBO}_\theta(\rvx) &= \mathbb{E}_{q(\rvx_{1}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})] -\sum_{t=2}^{T}\mathbb{E}_{q(\rvx_{t}|\rvx_0)}\left[\frac{1}{2\sigma^2_q(t)}\frac{\bar{\alpha}_{t-1}(1-{\alpha}_{t})^2}{(1-\bar{\alpha}_{t})^2}\|\hat{\rvx}_\theta(\rvx_t)-\rvx_0\|^2_2\right]\\
-							 &= -\sum_{t=1}^{T}\mathbb{E}_{q(\rvx_{t}|\rvx_0)}\left[\frac{1}{2\sigma^2_q(t)}\frac{\bar{\alpha}_{t-1}(1-{\alpha}_{t})^2}{(1-\bar{\alpha}_{t})^2}\|\hat{\rvx}_\theta(\rvx_t)-\rvx_0\|^2_2\right]\\
+	\text{ELBO}_\theta(\rvx) = \mathbb{E}_{q(\rvx_{1}|\rvx_0)}[\log p(\rvx_0|\rvx_{1})] -\sum_{t=2}^{T}\mathbb{E}_{q(\rvx_{t}|\rvx_0)}\left[\frac{1}{2\sigma^2_q(t)}\frac{\bar{\alpha}_{t-1}(1-{\alpha}_{t})^2}{(1-\bar{\alpha}_{t})^2}\|\hat{\rvx}_\theta(\rvx_t)-\rvx_0\|^2_2\right].
 \end{align*}
+This implies that optimizing VDM is equivalent to a denoising problem as we need to find a network  $\hat{\rvx}_\theta(\rvx_t)$ such that $\rvx_t$ will be close to the ground truth $\rvx_0$.
+\begin{itemize}
+	\item We are not going to predict arbitrary noisy samples. 
+	\item The noisy sample $\rvx_t$ is carefully crafted by the forward sampling equation. 
+\end{itemize}
+
 

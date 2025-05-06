@@ -1,0 +1,17 @@
+\section{Noise Prediction}
+
+\begin{align*}
+	\rvx_0 = \frac{\rvx_t - \sqrt{1-\bar{\alpha}_t\boldsymbol{\epsilon}_0}}{\sqrt{\bar{\alpha}_t}}
+\end{align*}
+
+By plugging the above equation, we get:
+\begin{align*}
+	\boldsymbol{\mu}_\theta(\rvx_t) = \frac{1}{\sqrt{\alpha_t}}\rvx_t - \frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}}_t\sqrt{\alpha_t}}\boldsymbol{\hat{\epsilon}_\theta}(\rvx_t)
+\end{align*}
+
+\begin{align*}
+	D_{KL}&(q(\rvx_{t-1}|\rvx_t, \rvx_0)\|p(\rvx_{t-1}|\rvx_{t})) \\
+																 & \vdots\\
+																 &= \frac{1}{2\sigma^2_q(t)}\frac{(1-{\alpha}_{t})^2}{(1-\bar{\alpha}_{t})\alpha_t}\left[\|\hat{\boldsymbol{\epsilon}}_\theta(\rvx_t)-\boldsymbol{\epsilon}_0\|^2_2\right].
+\end{align*}
+The $\hat{\boldsymbol{\epsilon}}_\theta(\rvx_t)$ is a neural network that learns to predict the source noise $\boldsymbol{\epsilon}_0\sim \mathcal{N}(\boldsymbol{\epsilon}; \mathbf{0}, \mathbf{I})$. This indicates that learning a VDM by predicting the original image $\rvx_0$ is equivalent to learning to predict the noise; empirically, however, some works have found that predicting the noise resulted in better performance.
