@@ -21,48 +21,53 @@
 % \vskip0pt plus 1filll
 % \href{https://arxiv.org/abs/1503.03585}{\tiny \blue{ICML 2015 Deep Unsupervised Learning using Nonequilibrium Thermodynamics}}
 
-	The overall idea is to construct a Markov chain of progressively less noisy samples. Each transition denoises a noisy sample. Diffusion models consist of two Markov chains:
-	\begin{enumerate}
-		\item Forward: A Markov chain of diffusion steps to \textbf{slowly add random noise} to data. 
-			$$\underbrace{\rvx_0}_{\text{data}}\to \rvx_1\cdots\to \underbrace{\rvx_T}_{\text{noise}}$$
-			\begin{itemize}
-				\item $\mathcal{D}_{data}\to \mathcal{N}$.
-			\end{itemize}
-		\item Backward (Reverse): Learn to \textbf{reverse the diffusion process} to construct desired data samples from the noise. 
-			$$\underbrace{\rvx_T}_{\text{noise}}\to \rvx_{T-1}\cdots\to \underbrace{\rvx_0}_{\text{data}}$$
+The overall idea is to construct a Markov chain of progressively less noisy samples. Each transition denoises a noisy sample. Diffusion models consist of two Markov chains:
+\begin{enumerate}
+	\item Forward: A Markov chain of diffusion steps to \textbf{slowly add random noise} to data. 
+		$$\underbrace{\rvx_0}_{\text{data}}\to \rvx_1\cdots\to \underbrace{\rvx_T}_{\text{noise}}$$
+		\begin{itemize}
+			\item $\mathcal{D}_{data}\to \mathcal{N}$.
+		\end{itemize}
+	\item Backward (Reverse): Learn to \textbf{reverse the diffusion process} to construct desired data samples from the noise. 
+		$$\underbrace{\rvx_T}_{\text{noise}}\to \rvx_{T-1}\cdots\to \underbrace{\rvx_0}_{\text{data}}$$
 
-			\begin{itemize}
-				\item $\mathcal{N}\to \mathcal{D}_{data}$.
-			\end{itemize}
-	\end{enumerate}
-	\begin{figure}[t]
-		\centering
-		\includegraphics[scale=0.28]{./images/diffusion/diffusion_model.png}
-	\end{figure}
+		\begin{itemize}
+			\item $\mathcal{N}\to \mathcal{D}_{data}$.
+		\end{itemize}
+\end{enumerate}
+Breaking the overall process into smaller steps allows us to use simple distributions at each step. As will be discussed in the following subsections, we can use Gaussian distributions for the transitions. Thanks to the properties of a Gaussian, the posterior will remain a Gaussian if the likelihood and the prior are both Gaussians. Therefore, if each transitional distribution above is a Gaussian, the joint distribution is also a Gaussian. Since a Gaussian is fully characterized by the first two moments (mean and variance), the computation is highly tractable. 
+
+This particular structure is called the \textit{variational diffusion model}.
+\begin{figure}[t]
+	\centering
+	\includegraphics[scale=0.28]{./images/diffusion/diffusion_model.png}
+\end{figure}
 	% \href{https://cvpr2022-tutorial-diffusion-models.github.io/}{\tiny \blue{CVRP 2022 Tutorial: Denoising Diffusion-based Generative Modeling: Foundations and Applications}}
 
 \textbf{Some properties of diffusion models}:
-	\begin{enumerate}
-		%$$q(\rvx_t|\rvx_{t-1}) = \mathcal{T}(\rvx_t|\rvx_{t-1})$$
-		\item Diffusion model has a pre-defined sampling equation.
-			\begin{itemize}
-				\item The equation relies on a random noise.
-				\item Noise is all we need $\to$ Predict noise at a time step $t$.
-			\end{itemize}
-		\item Fit a model via forward and backward processes.
-		\item \textbf{Iterative transform} of one distribution into another via \textbf{Makov Chain}.
-			\begin{itemize}
-				\item Diffusion model$\approx$Generative Markov Chain.
-			\end{itemize}
-		\item We want to learn a transition model:
-			$$p_\theta(\mathbf{x}_{t-1}|\rvx_t) = \mathcal{N}(\mathbf{x}_{t-1}|\boldsymbol{\mu}_{\theta}(\mathbf{x}_{t}, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t,t)).$$
-		\item Base case: $p(\mathbf{x}_T) = \mathcal{N}(0,I)$ 
-		\item Marginal distribution over $\mathbf{x}_0$ can be expressed as follows:
-			$$p_\theta(\mathbf{x}_0) = \int p_\theta(\rvx_0,\dots,\mathbf{x}_T)d\rvx_1,\dots,\rvx_T$$
-		\item The goal is to learn the parameters so that
-			$$p(\rvx_0)\approx p_\theta(\rvx_0)$$
-
-	\end{enumerate}
+\begin{enumerate}
+	%$$q(\rvx_t|\rvx_{t-1}) = \mathcal{T}(\rvx_t|\rvx_{t-1})$$
+	\item Diffusion model has a pre-defined sampling equation.
+		\begin{itemize}
+			\item The equation relies on a random noise.
+			\item Noise is all we need $\to$ Predict noise at a time step $t$.
+		\end{itemize}
+	\item Fit a model via forward and backward processes.
+	\item \textbf{Iterative transform} of one distribution into another via \textbf{Makov Chain}.
+		\begin{itemize}
+			\item Diffusion model$\approx$Generative Markov Chain.
+		\end{itemize}
+	\item We want to learn a transition model:
+		$$p_\theta(\mathbf{x}_{t-1}|\rvx_t) = \mathcal{N}(\mathbf{x}_{t-1}|\boldsymbol{\mu}_{\theta}(\mathbf{x}_{t}, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t,t)).$$
+	\item Base case: $p(\mathbf{x}_T) = \mathcal{N}(0,I)$ 
+	\item Marginal distribution over $\mathbf{x}_0$ can be expressed as follows:
+		$$p_\theta(\mathbf{x}_0) = \int p_\theta(\rvx_0,\dots,\mathbf{x}_T)d\rvx_1,\dots,\rvx_T$$
+		\begin{itemize}
+			\item Similar to the VAE, the $\rvx_1,\dots, \rvx_T$ can be considered as latent variables, since we don't know. 
+		\end{itemize}
+	\item The goal is to learn the parameters so that
+		$$p(\rvx_0)\approx p_\theta(\rvx_0)$$
+\end{enumerate}
 
 \section{Forward Diffusion}
 Let's first model a forward trajectory by using the \textit{Markov property}: 
