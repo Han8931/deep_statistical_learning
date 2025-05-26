@@ -17,7 +17,7 @@ where:
    \item $e_i$ are the error variables. 
 \begin{align*}
 	\sum_{i=1}^N e_i^2 &= \sum_{i=1}^N \left(1-y_i (w^T \phi(x_i) + b)\right)^2\\
-					   &= \sum_{i=1}^N \left(y_i^2-y_i (w^T \phi(x_i) + b)\right)^2\\
+					   &= \sum_{i=1}^N \left(y_i^2-y_i (w^T \phi(x_i) + b)\right)^2 \quad \text{, since } y_i = \pm 1, \, y_i^2 = 1\\
 					   &= \sum_{i=1}^N y_i^2\left(y_i-(w^T \phi(x_i) + b)\right)^2\\
 					   &= \sum_{i=1}^N \left(y_i-(w^T \phi(x_i) + b)\right)^2
 \end{align*}
@@ -57,9 +57,10 @@ Let's substitute $w$ and $e$:
 \begin{itemize}
 	% \item $\mathbf{Y}$
 	\item $K$: kernel matrix
-	\item $\alpha = [\alpha_1, \alpha_2, \ldots, \alpha_n]^T$: $N\times 1$
+	\item $\alpha = [\alpha_1, \alpha_2, \ldots, \alpha_n]^T$
 	\item $y = [y_1, y_2, \ldots, y_n]^T$.
-	\item $\Omega = YKY^T$, where $\Omega_{kl}= y_ky_l\phi(x_k)^T\phi(x_l)$
+	\item $\Omega = YKY$, where $\Omega_{kl}= y_ky_l\phi(x_k)^T\phi(x_l)$
+	\item $Y = \text{diag}(y)$.
 	\item $b$: $1\times 1$
 \end{itemize}
 
@@ -72,17 +73,17 @@ Then, we can express it compactly
 By using the expression of $\alpha$ and $b$, we get
 \begin{align*}
 	\begin{bmatrix}
-	0 & y^T \\
-	y & \Omega + \frac{1}{\gamma} I
+		0 & y^T \\
+		y & \Omega + \frac{1}{\gamma} I
 	\end{bmatrix}
 	\begin{bmatrix}
-	b \\
-	\alpha
+		b \\
+		\alpha
 	\end{bmatrix}
 	=
 	\begin{bmatrix}
-	0 \\
-	1_n
+		0 \\
+	\mathbf{1}
 	\end{bmatrix}
 \end{align*}
 Note that the dimension of the matrix on the left-hand side is $(N+1)\times (N+1)$. Once we have $b$ and $\alpha$ by solving the linear system, the decision function for \textbf{a new input} $x$ can be obtained by:
@@ -107,7 +108,7 @@ The dual form is:
 	=
 	\begin{bmatrix}
 	0 \\
-	e
+	\mathbf{1}	
 	\end{bmatrix}
 \end{align*}
 

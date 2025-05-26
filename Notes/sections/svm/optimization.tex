@@ -121,4 +121,40 @@ The KKT conditions are a set of first-order necessary conditions that must be sa
 
 In the context of SVMs, the optimization problem is convex, meaning that the KKT conditions are not only necessary but also sufficient for optimality. This implies that if a solution satisfies the KKT conditions, it is guaranteed to be the optimal solution for both the primal and dual problems. Moreover, in this case, there is no duality gap, meaning the optimal values of the primal and dual problems are equal.
 
+\section{Prediction}
 
+Firstly, for a Linear SVM with no kernel, the primal weight vector is given by
+$$ w=\sum_{i\in \mathcal S}\alpha_i\,y_i\,x_i $$
+
+Then, the decision function is
+$$ f(x)=w^{\!\top}x + b $$
+
+Since the feature map $\phi(\,\cdot\,)$ may live in a huge or even infinite-dimensional space, we never form $w$ explicitly. Instead we keep the **kernel trick** inside the decision function:
+$$ f(x)=\sum_{i\in\mathcal S}\alpha_i\,y_i\,K(x_i,\,x)+b $$
+
+where $K(x_i,x)=\langle\phi(x_i),\phi(x)\rangle$.
+Typical kernels are the RBF $K(u,v)=\exp\!\bigl(-\frac{\|u-v\|^2}{2\sigma^2}\bigr)$ or the polynomial $K(u,v)=(u^{\!\top}v+c)^p$.
+
+Finally, we need to turn the decision value into a class label. For binary classification the prediction is simply the sign of the decision function:
+
+$$
+\hat y = \operatorname{sign}\bigl(f(x)\bigr) = 
+\begin{cases}
++1 &\text{if }f(x)\gt 0,\\[4pt]
+-1 &\text{if }f(x)\lt 0.
+\end{cases}
+$$
+
+In sum,
+$$
+\textbf{Predict}(x):
+\quad f(x)=\sum_{i\in\mathcal S}\alpha_i\,y_i\,K(x_i,x)+b,\;
+\hat y=\operatorname{sign}\bigl(f(x)\bigr)
+$$
+
+
+% $$
+% \boxed{\textbf{Predict}(x):
+% \quad f(x)=\sum_{i\in\mathcal S}\alpha_i\,y_i\,K(x_i,x)+b,\;
+% \hat y=\operatorname{sign}\bigl(f(x)\bigr)}
+% $$

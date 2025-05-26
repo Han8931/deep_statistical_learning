@@ -29,7 +29,6 @@ We first define a generalized kernel trick for an inner product of two mappings 
 where $\phi_s: \mathbb{R}^{d_s}\to \mathbb{R}^{p}$, $\phi_t: \mathbb{R}^{d_t}\to \mathbb{R}^{p}$, and $\mathbb{R}^p$ is a high-dimensional or even an infinite-dimensional space. Note that $d_s$ and $d_t$ can be different. 
 
 The primal problem for AsK-LS is formulated to handle these asymmetric relationships. The goal is to find the weight vectors \( \omega \) and \( \nu \), and bias terms \( b_1 \) and \( b_2 \), that minimize the following objective function:
-
 \begin{align*}
 	\min_{\omega, \nu, b_1, b_2, e, h} \frac{1}{2} \omega^T \nu + \frac{\gamma}{2} \sum_{i=1}^m e_i^2 + \frac{\gamma}{2} \sum_{i=1}^m h_i^2, 
 \end{align*}
@@ -94,8 +93,8 @@ AsK-LS uses two different feature mappings \( \phi_s \) and \( \phi_t \) for the
 
 The decision functions for classification from the source and target perspectives are given by
 \begin{align*}
-	f_s(x) &= \sum\_{i=1}^m \beta_i y_i K(x, x_i) + b_1\\
-	f_t(x) &= \sum\_{i=1}^m \alpha_i y_i K(x_i, x) + b_2
+	f_t(x) &= \sum_{i=1}^m \alpha_i y_i K(x_i, x) + b_1\\
+	f_s(x) &= \sum_{i=1}^m \beta_i y_i K(x, x_i) + b_2
 \end{align*}
 These functions utilize the learned asymmetric relationships in the data.
 
