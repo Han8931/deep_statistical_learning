@@ -1,4 +1,4 @@
-\section{Asymmetric Kernels}
+\section{LS-SVM with Asymmetric Kernels}
 \label{sec:asymmetric_kernels}
 
 Recall that the dual form of LS-SVM is given by
@@ -14,8 +14,7 @@ Recall that the dual form of LS-SVM is given by
 	=
 	\begin{bmatrix}
 	0 \\
-	e
-	\end{bmatrix}
+	e \end{bmatrix}
 \end{align*}
 An interesting point here is that using an asymmetric kernel in LS-SVM will not reduce to its symmetrization and asymmetric information can be learned. Then we can develop asymmetric kernels in the LS-SVM framework in a straightforward way.
 
@@ -98,5 +97,12 @@ The decision functions for classification from the source and target perspective
 \end{align*}
 These functions utilize the learned asymmetric relationships in the data.
 
+
+\subsection{Asymmetric Kernels}
+We can consider asymmetric kernels like these:
+\begin{align*}
+	K_{SNE}(\rvx, \rvy) &= \frac{\exp(-\|\rvx-\rvy\|_2^2)/\sigma^2}{\sum_{\rvz\in\mathbf{X}_{train}}\exp(-\|\rvx-\rvz\|_2^2)/\sigma^2}\\
+	K_{T}(\rvx, \rvy) &= \frac{(1+\|\rvx-\rvy\|_2^2)^{-1}}{\sum_{\rvz\in\mathbf{X}_{train}}(1+\|\rvx-\rvz\|_2^2)^{-1}}
+\end{align*}
 
 
