@@ -61,6 +61,14 @@ Take for example a random variable $X\sim \mathcal{N}(\mu, \sigma)$ and set $Y=\
 	\includegraphics[scale=0.23]{./images/generative/flows/change_of_vars.pdf}
 \end{figure}
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.7]{./images/generative/flows/change_intuition.pdf}
+    \caption{Area would be approximately $p(z)dz = q(z)dx$. Thus, $q(x) = p(z)\Big|\frac{dz}{dx}\Big|$}
+    \label{fig:change_intuition}
+\end{figure}
+
+
 % \begin{figure}[ht]
 %     \centering
 %     \begin{minipage}[b]{0.45\textwidth}
@@ -103,3 +111,106 @@ $Z$ and $X$ be random variables which are related by a mapping $f:\mathbb{R}^n\t
 	p_X(\mathbf{x}) = p_Z(f^{-1}(\mathbf{x})) \left\vert \text{det}\left(\frac{\partial f^{-1}(\mathbf{x})}{\partial \mathbf{x}}\right) \right\vert
 \end{align*}
 
+Note that for any invertible square matrix $A$ over a field (\eg real or complex numbers),
+\begin{align*}
+	\det\bigl(A^{-1}\bigr)=\frac{1}{\det(A)}.
+\end{align*}
+
+Let
+$$
+A=\begin{bmatrix}
+2 & 1\\[2pt]
+3 & 4
+\end{bmatrix}.
+$$
+
+Then, determinant of $A$ is given by
+$$
+\det(A)=2\cdot4-3\cdot1 = 8-3 = 5.
+$$
+
+The inverse of $A$ is 
+$$
+A^{-1}= \frac{1}{5}\begin{bmatrix}
+4 & -1\\[2pt] -3 & 2
+\end{bmatrix}.
+$$
+
+Then, the determinant of $A^{-1}$ is
+$$
+\det(A^{-1}) = \frac{1}{5^2}\bigl(4\cdot2-(-3)(-1)\bigr)
+=\frac{1}{25}(8-3)=\frac{5}{25}=\frac{1}{5}.
+$$
+
+You can confirm the property:
+
+$$
+\det(A^{-1})=\frac{1}{5}=\frac{1}{\det(A)}.
+$$
+
+
+For example, we can transform $(x_1,x_2)$ to $(r,\theta)$ via $x_1=r\cos\theta$ and $x_2=r\sin\theta$.
+
+Then
+\[
+J_{y\to x}=
+\begin{pmatrix}
+\dfrac{\partial x_1}{\partial r} & \dfrac{\partial x_1}{\partial\theta}\\[6pt]
+\dfrac{\partial x_2}{\partial r} & \dfrac{\partial x_2}{\partial\theta}
+\end{pmatrix}
+=
+\begin{pmatrix}
+\cos\theta & -r\sin\theta\\
+\sin\theta & \phantom{-}r\cos\theta
+\end{pmatrix},
+\tag{3}
+\]
+so
+\[
+\bigl|\det J_{y\to x}\bigr|
+ = \bigl|\,r\cos^{2}\theta + r\sin^{2}\theta\,\bigr|
+ = |r|.
+\tag{4}
+\]
+
+Hence
+\[
+p_{\mathbf{y}}(\mathbf{y}) = p_{\mathbf{x}}(\mathbf{x})\,|J_{y\to x}|
+\quad\Longrightarrow\quad
+p_{R,\Theta}(r,\theta) = p_{X_1,X_2}(x_1,x_2)\,r.
+\tag{5--6}
+\]
+
+Since, 
+\begin{align*}
+	\text{Probability Mass} = \int p_{X,Y}(x,y)dxdy.
+\end{align*}
+Then, geometrically,
+\[
+P\!\bigl(r\le R\le r+dr,\;
+        \theta\le\Theta\le\theta+d\theta\bigr)
+  = p_{R,\Theta}(r,\theta)\,dr\,d\theta,
+\tag{7}
+\]
+Note that the length of arc is $r\times d\theta$. Thus, the area $r\,dr\,d\theta$ of the shaded patch in Fig.~\ref{fig:polarPatch} times the density at its centre.  Therefore
+\[
+P\!\bigl(r\le R\le r+dr,\;
+        \theta\le\Theta\le\theta+d\theta\bigr)
+  = p_{X,Y}(r\cos\theta, r\sin\theta)\,r\,dr\,d\theta,
+\tag{8--9}
+\]
+so that finally
+\[
+p_{R,\Theta}(r,\theta)
+  = p_{X,Y}(r\cos\theta, r\sin\theta)\,r.
+\tag{10}
+\]
+
+% \begin{figure}[h]
+%   \centering
+%   % Replace the filename with the actual graphic if you have it.
+%   \includegraphics[width=.55\linewidth]{polar_patch}
+%   \caption{Change of variables from polar to Cartesian.
+%            The area of the shaded patch is $r\,dr\,d\theta$.}
+%   \label{fig:polarPatch}
+% \end{figure}
