@@ -1,10 +1,5 @@
 \section{Normalizing Flows}
 
-\begin{figure}[t]
-	\centering
-	\includegraphics[scale=0.13]{./images/generative/flows/generative_models.png}
-	\caption{An overview of generative models.}
-\end{figure}
 
 For a \textbf{univariate} case, 
 \begin{itemize}
@@ -42,7 +37,7 @@ Our goal is to estimate the dataset $\mathcal{D} = \{\mathbf{x}_1, ..., \mathbf{
 
 \begin{itemize}
     \item Choose a simple density $p(z)$
-    \item MLE:
+	\item We want to estimate $q(\mathbf{x})$ by using MLE:
     \begin{align*}
         \prod_{i=1}^{n}q(\mathbf{x}_i) &= \prod_{i=1}^{n}p(\mathbf{z}_i)|\det \nabla_{\mathbf{z}}\mathbf{T}(\mathbf{z})|^{-1} \quad \textrm{by change of variable}\\
         \hat{\mathbf{T}} &:= \argmax_{\mathbf{T}}\prod_{i=1}^{n} p(\mathbf{z}_i)|\det \nabla_{\mathbf{z}}\mathbf{T}(\mathbf{z})|^{-1}\\

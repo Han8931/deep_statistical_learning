@@ -1,3 +1,18 @@
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.53]{./images/generative/flows/generative_models.png}
+	\caption{An overview of generative models.}
+\end{figure}
+
+\begin{itemize}
+	\item Flow-models get an exact estimate of the likelihood of your sample, as well as in the reverse direction. 
+	\item VAEs optimize a lower bound on the (log) likelihood 
+	\item GANs minimize a discrepancy between your input and transformed noise distributions. 
+\end{itemize}
+
+
+
 \section{The Method of Transformations of Random Variables}
 
 If we are interested in finding the PDF of $Y=g(X)$, where $g(\cdot)$ is some deterministic transformation of $X$, and the function $g$ satisfies following properties, we can utilize a method called the method of transformations.
@@ -104,8 +119,6 @@ Note that the absolute is determined by the function $h$. This is the so-called 
 
 \subsection{Vector to Vector}
 
-https://deepgenerativemodels.github.io/notes/flow/
-
 $Z$ and $X$ be random variables which are related by a mapping $f:\mathbb{R}^n\to \mathbb{R}^n$ such that $X=f(Z)$ and $Z=f^{-1}(X)$. Then
 \begin{align*}
 	p_X(\mathbf{x}) = p_Z(f^{-1}(\mathbf{x})) \left\vert \text{det}\left(\frac{\partial f^{-1}(\mathbf{x})}{\partial \mathbf{x}}\right) \right\vert
@@ -185,14 +198,19 @@ For a two dimensional random vector $(X,Y)$ with density $p_{X,Y}$,
 \begin{align*}
 	Pr((X,Y)\in A) = \int\int_A p_{X,Y}(x,y)dxdy.
 \end{align*}
-Then, geometrically,
+For a infinitesimally small region, we can approximate as follows:
+\begin{align*}
+	\int_x^{x+dx} p_{X}(x)dx \approx  p_{X}(x)dx.
+\end{align*}
+
+Similarly, we can get the probability as follows:
 \[
 P\!\bigl(r\le R\le r+dr,\;
         \theta\le\Theta\le\theta+d\theta\bigr)
-  = p_{R,\Theta}(r,\theta)\,dr\,d\theta,
+  = p_{R,\Theta}(r,\theta)\,dr\,d\theta.
 \tag{7}
 \]
-Note that the length of arc is $r\times d\theta$. Thus, the area $r\,dr\,d\theta$ of the shaded patch in Fig.~\ref{fig:polarPatch} times the density at its centre.  Therefore
+Note that the length of arc is $r\times d\theta$. Thus, the area $r\,dr\,d\theta$ or probability is given by
 \[
 P\!\bigl(r\le R\le r+dr,\;
         \theta\le\Theta\le\theta+d\theta\bigr)
