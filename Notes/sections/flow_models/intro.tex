@@ -21,52 +21,6 @@ If we are interested in finding the PDF of $Y=g(X)$, where $g(\cdot)$ is some de
 	\item $g(x)$ is a strictly (or monotonically) increasing function, that is, if $x_1<x_2$, then $g(x_1)<g(x_2)$.
 \end{itemize}
 
-% Now, let $X$ be a continuous random variable and $Y=g(X)$. We will show that you can directly find the PDF of $Y$ using the following formula.
-% \begin{equation*}
-% 	f_Y(y) = 
-% 	\begin{cases}
-% 	\frac{f_X(x_1)}{g'(x_1)}=f_X(x_1). \frac{dx_1}{dy} & \quad \textrm{where } g(x_1)=y\\
-% 	0 & \quad \textrm{if }g(x)=y \textrm{ does not have a solution}
-% 	\end{cases} 
-% \end{equation*}
-
-% Note that the derivative $\frac{dx}{dy}$ or $\frac{d}{dy}(g^{-1}(y))$ \textbf{measures how $X$ changes with respect to $Y$}.
-% % Note that start with the function $y=f^{-1}(x)$. Write this as $x=f(y)$ and differentiate both sides implicitly with respect to$x$ using the Chain Rule:
-% % \begin{align*}
-% % 	1 &= f'(y)\frac{dy}{dx}\\
-% % 	\frac{dy}{dx} &= \frac{1}{f'(y)}\\
-% % 	y &= f^{-1}(x)\\
-% % 	[f^{-1}]'(x) &= \frac{1}{f'(f^{-1}(x))}
-% % \end{align*}
-% Since $g$ is strictly increasing, its inverse function $g^{-1}$ is well defined. You can imagine a simple function like a linear function, \eg $Y=3X+1$. Then, for each $y\in R_Y$, there exists a \textbf{unique} $x_1$ such that $g(x_1)=y$. We can write $x_1=g^{-1}(y)$. Then,
-% \begin{align*}
-% 	\{Y\leq y\} = \{g(X)\leq y\} = \{X \leq g^{-1}(x)\}.
-% \end{align*}
-% Thus, 
-% \begin{align*}
-% 	F_Y(y) &= P(Y\leq y)\\
-% 		   &= P(g(X)\leq y)\\
-% 		   &= P(X\leq g^{-1}(y))\quad \text{, since }g \text{ is strictly increasing.}\\
-% 		   &= F_X(g^{-1}(y)).
-% \end{align*}
-% To find the PDF of $Y$, we differentiate $F_Y(y)$ as follows:
-% \begin{align*}
-% 	f_Y(y) &= \frac{d}{dy}F_X(x_1)\quad \text{by } g(x_1)=y\\
-% 		   &=\frac{dx_1}{dy}\cdot \underbrace{\frac{d}{dx_1}F_X(x_1)}_{=F'_X(x_1)}\\
-% 		   &=\frac{dx_1}{dy}f_X(x_1)\\
-% 		   &=f_X(g^{-1}(y))\left|\frac{d}{dy}(g^{-1}(y))\right|
-% 		   % &= \frac{f_X(x_1)}{g'(x_1)} \quad \text{, since } \frac{dx}{dy}=\frac{1}{\frac{dy}{dx}}.
-% \end{align*}
-% We can repeat the same argument for the case where $g$ is \textbf{strictly decreasing}. In that case, $g'(x_1)$ will be \textbf{negative}, so we need to use $|g'(x_1)|$ . Thus, we can state the following theorem for a \textit{strictly monotonic function}. (A function $g:R\to R$ is called strictly monotonic if it is strictly increasing or strictly decreasing.)
-
-% Actually, we assumed that $g$ was one-to-one out of convenience: the condition that $g$ is one-to-one is not necessary for change of variables to work: Consider a continuous random variable $X$ with domain $R_X$, and let $Y=g(X)$. Suppose that we can partition $R_X$ into a finite number of intervals such that $g(x)$ is strictly monotone and differentiable on each partition. Then the PDF of $Y$ is given by 
-% \begin{align*}
-% 	f_Y(y)= \sum_{i=1}^{n} \frac{f_X(x_i)}{|g'(x_i)|}= \sum_{i=1}^{n} f_X(x_i).
-% 	\left|\frac{dx_i}{dy}\right|,
-% \end{align*}
-% where $x_1,\dots,x_n$ are real solutions to $g(x)=y$.
-
-% \subsection{Intuitive Explanation}
 How to derive the PDF of the random variable $Y=g(X)$ when one knows the PDF of the random variable $X$? If $X$ is discrete, we can derive the pmf for $Y$ by simply summing up the probability mass for all the $x$'s such that $f(x)=y$. For a general function $g$, there is no direct formula to get the PDF of the random variable $Y=g(X)$ knowing $p(X)$. There is a formula in case when $h$ is a differentiable one-to-one mapping from the range (\ie the support) of $X$ to the range of $Y$.
 
 Take for example a random variable $X\sim \mathcal{N}(\mu, \sigma)$ and set $Y=\exp(X)$. The figure below shows some simulations of $X$ and the corresponding values of $Y$. The density of $X$ is shown in blue and the one of $Y$ is shown in orange in the vertical direction.
@@ -119,9 +73,7 @@ Then,
 \end{align*}
 Finally, we can get 
 $$f_Y(y) = f_X(g^{-1}(y))|(g^{-1})'(y)|$$
-Note that the absolute is determined by the function $h$. This is the so-called \textit{change of variables formula}.
-
-
+Note that the absolute is determined by the function $h$. It is a scaling factor tells us how a tiny volume element (like a little square or cube) is stretched or compressed under the transformation. 
 
 \subsection{Vector to Vector}
 
