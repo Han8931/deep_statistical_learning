@@ -110,7 +110,13 @@ With $y=g(x)$ we can get
 	& = f_X(g^{-1}(y))|dy|(g^{-1})'(y)
 \end{align*}
 The last line is by the derivative of inverse function which is 
-$$\frac{d}{dx}f^{-1}(x) = \frac{1}{f'(f^{-1}(x))}$$
+\begin{align*}
+	\frac{d}{dx}f^{-1}(x) = \frac{1}{f'(f^{-1}(x))}
+\end{align*}
+Then, 
+\begin{align*}
+	P(Y\in dy)\approx f_Y(y)|dy| = f_X(g^{-1}(y))|(g^{-1})'(y)|\cdot |dy|
+\end{align*}
 Finally, we can get 
 $$f_Y(y) = f_X(g^{-1}(y))|(g^{-1})'(y)|$$
 Note that the absolute is determined by the function $h$. This is the so-called \textit{change of variables formula}.
