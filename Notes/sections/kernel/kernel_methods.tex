@@ -3,7 +3,7 @@
 In machine learning a \textit{kernel} is a function that measures similarity between two objects and, at the same time, implicitly maps those objects into (possibly very-high-dimensional) feature space without ever computing the coordinates of that space directly.
 
 
-\section{Kernels}
+\section{Kernel Regression}
 \begin{align*}
 	\hat{\boldsymbol{\theta}} = \mathbf{X}^T(\mathbf{X}\mathbf{X}^T+\lambda\mathbf{I})^{-1}\rvy.
 \end{align*}
@@ -46,14 +46,14 @@ where
 Kernel methods corresponding to infinite-dimensional $\phi(\rvx)$ can usually be considered as \textbf{non-parametric}.
 For instance, 1-D case can be considered as a joining the dots by interpolation. 
 
-\subsection{Bayesian Posterior Derivation}
+% \subsection{Bayesian Posterior Derivation}
 
-Both $v(\rvx) = \langle \boldsymbol{\theta}, \rvx \rangle$ and $v(\rvx') = \langle \boldsymbol{\theta}, \rvx' \rangle$ have mean zero, so their covariance is 
-\begin{align*}
-	Cov[v(\rvx), v(\rvx')] &= \mathbb{E}[(\rvx^T\boldsymbol{\theta})(\rvx')^T\boldsymbol{\theta}] = \mathbb{E}[(\rvx^T\boldsymbol{\theta})(\boldsymbol{\theta}^T\rvx')]\\
-						   &= \rvx^T\mathbb{E}[\boldsymbol{\theta}\boldsymbol{\theta}^T]\rvx' = \langle \boldsymbol{\theta}, \rvx \rangle
-\end{align*}
-since $\mathbb{E}[\boldsymbol{\theta}\boldsymbol{\theta}^T] = \mathbf{I}$ for $\boldsymbol{\theta}\sim \mathcal{N}(\mathbf{0}, \mathbf{I})$. 
+% Both $v(\rvx) = \langle \boldsymbol{\theta}, \rvx \rangle$ and $v(\rvx') = \langle \boldsymbol{\theta}, \rvx' \rangle$ have mean zero, so their covariance is 
+% \begin{align*}
+% 	Cov[v(\rvx), v(\rvx')] &= \mathbb{E}[(\rvx^T\boldsymbol{\theta})(\rvx')^T\boldsymbol{\theta}] = \mathbb{E}[(\rvx^T\boldsymbol{\theta})(\boldsymbol{\theta}^T\rvx')]\\
+% 						   &= \rvx^T\mathbb{E}[\boldsymbol{\theta}\boldsymbol{\theta}^T]\rvx' = \langle \boldsymbol{\theta}, \rvx \rangle
+% \end{align*}
+% since $\mathbb{E}[\boldsymbol{\theta}\boldsymbol{\theta}^T] = \mathbf{I}$ for $\boldsymbol{\theta}\sim \mathcal{N}(\mathbf{0}, \mathbf{I})$. 
 
 
 
