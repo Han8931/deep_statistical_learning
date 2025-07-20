@@ -1,6 +1,174 @@
 \chapter{Introduction to Kernel Methods}
 
+\section{Introduction}
+
 In machine learning a \textit{kernel} is a function that measures similarity between two objects and, at the same time, implicitly maps those objects into (possibly very-high-dimensional) feature space without ever computing the coordinates of that space directly.
+
+Any kernel methods solution comprises two parts: a module that performs the mapping into the embedding or feature space and a learning algorithm designed to discover linear patterns in that space. There are two main reasons why this approach should work. First of all, detecting linear relations has been the focus of much research in statistics and machine learning for decades, and the resulting algorithms are both well understood and efficient. Secondly, we will see that there is a computational shortcut which makes it possible to represent linear patterns efficiently in high-dimensional spaces to ensure adequate representational power. The shortcut is what we call a kernel function.
+
+\begin{itemize}
+	\item Data items are embedded into a vector space called the feature space. 
+	\item Linear relations are sought among the images of the data items in the feature space.
+	\item The algorithms are implemented in such a way that the coordinates of the embedded points are not needed, only their pairwise inner products. 
+	\item The pairwise inner products can be computed efficiently directly from the original data items using a kernel function.
+\end{itemize}
+These four observations will imply that, despite restricting ourselves to algorithms that optimise linear functions, our approach will enable the development of a rich toolbox of efficient and well-founded methods for discovering nonlinear relations in data through the use of nonlinear embedding mappings.
+
+When people say that \emph{kernels are more efficient}, they are comparing two strategies for working with a nonlinear feature map~$\varphi$:
+
+\begin{center}
+\begin{tabular}{|l|p{5.6cm}|l|}
+\hline
+\textbf{Approach} & \textbf{What we actually compute} & \textbf{Cost per evaluation}\\
+\hline
+Explicit map & build $\varphi(x)\in\mathbb{R}^{D}$ then take $\langle\varphi(x),\varphi(z)\rangle$ & $\mathcal{O}(D)$ (often gigantic)\\
+Kernel trick & evaluate $K(x,z)=\langle\varphi(x),\varphi(z)\rangle$ directly & $\mathcal{O}(d)$ or $\mathcal{O}(d\,p)$, usually $d\ll D$\\
+\hline
+\end{tabular}
+\end{center}
+
+Most algorithms (SVMs, kernel PCA, Gaussian processes, \dots) depend \emph{only} on inner products, so they never need the coordinates of $\varphi(x)$ themselves.  Replacing those inner products by a kernel sidesteps the high‐dimensional features.
+
+\begin{itemize}
+  \item \textbf{Dimensionality explosion.}  
+        A degree–$p$ polynomial map of a $d$–dimensional vector has
+        \[
+            D \;=\; \binom{d+p}{p}
+        \]
+        coordinates.  For $d=1000$ and $p=3$, that is $\sim1.7\times10^{8}$ numbers \emph{per sample}.  
+        The same inner product via the kernel $(1+x^{\top}z)^{3}$ costs only $\mathcal{O}(d)=1000$ multiplications.
+  \item \textbf{Infinite feature spaces.}  
+        The Gaussian RBF kernel corresponds to an \emph{infinite}‐dimensional $\varphi$, yet
+        \[
+            K(x,z)=\exp\!\bigl(-\|x-z\|^{2}/2\sigma^{2}\bigr)
+        \]
+        is a single distance and exponential.
+  \item \textbf{Memory.}  
+        Storing $n$ explicit feature vectors costs $\mathcal{O}(nD)$, while an $n\times n$ Gram matrix costs $\mathcal{O}(n^{2})$.  
+        Whenever $D\gg n$, the kernel representation is lighter.
+  \item \textbf{Algorithmic simplifications.}  
+        Many solvers work entirely on the Gram matrix, letting you leverage highly–optimised linear algebra without feature‐wise loops.
+\end{itemize}
+
+
+\section{Hilbert Spaces}
+
+First we recall what is meant by a linear function. Given a vector space $X$ over the reals, a function
+\begin{align*}
+	f: X\longrightarrow \mathbb{R}
+\end{align*}
+is linear if $f(\alpha\rvx) = \alpha f(\rvx)$ and $f(\rvx+\rvz) = f(\rvx)+ f(\rvz), \forall \rvx,\rvz \in X, \alpha\in \mathbb{R}$. 
+
+\paragraph{Inner product space} A vector space $X$ over the reals \mathbb{R} is an \textit{inner product space} if there exists a real-valued symmetric bilinear map $\left<\cdot, \cdot\right>$, that satisfies
+\begin{align*}
+	\left<\rvx,\rvx\right>\geq 0.
+\end{align*}
+The bilinear map is known as the inner, dot or scalar product. Furthermore we will say the inner product is strict if 
+\begin{align*}
+	\left<\rvx, \rvx\right>=0 \iff \rvx=\mathbf{0}.
+\end{align*}
+
+Given a strict inner product space, we can define a norm on the space $X$ by 
+\begin{align*}
+	\left|\rvx\right|_2=\sqrt{\left<\rvx, \rvx\right>}.
+\end{align*}
+The associated metric or distance between two vectors is defined as $d(\rvx, \rvz) = \left|\rvx-\rvz\right|_2$. For the vector space $\mathbb{R}^n$ the standard inner product is given by 
+\begin{align*}
+	\left<\rvx, \rvz\right> = \sum_{i=1}^n x_i,z_i.
+\end{align*}
+An inner product space is sometimes referred to as a \textit{Hilbert space}, though most researchers require the additional properties of completeness and separability, as well as sometimes requiring that the dimension be infinite. We give a formal definition.
+
+\begin{Definition}{Hilbert Space}
+	A Hilbert Space $\mathcal{F}$ is an inner product space with the additional properties that it is \textit{separable} and \textit{complete}. Completeness refers to the property that every Cauchy sequence $\left\{h_n\right\}_{n\geq 1}$ of elements of $\mathcal{F}$ converges to an element $h\in \mathcal{F}$, where a Cauchy sequence is one satisfying the property that 
+	\begin{align*}
+		\sup_{m>n}\left|h_n-h_m\right|\to 0, \text{ as } n\to \infty.
+	\end{align*}
+	A space$\mathcal{F}$ is separable if for any $\epsilon>0$ there is a finite set of elements $h_1,\dots, h_N$ of $\mathcal{F}$ such taht for all $h\in \mathcal{F}$
+	\begin{align*}
+		\min_i \left|h_i-h\right|<\epsilon.
+	\end{align*}
+\end{Definition}
+
+For instance, Let $X$ be the set of all countable sequences of real numbers $\rvx = (x_1,\dots, x_n, \dots)$, such that the sum 
+\begin{align*}
+	\sum_{i=1}^{\infty} x_i^2<\infty,
+\end{align*}
+with the inner product between two sequences $\rvx$ and $\rvy$ defined by
+\begin{align*}
+	\left<\rvx, \rvy\right> = \sum_{i=1}^{\infty} x_iy_i.
+\end{align*}
+This is the space known as $L_2$.
+
+\begin{itemize}
+	\item A vector space is just a collection of objects you can add and scale (\eg $\mathbf v + \mathbf w$, $3\mathbf v$) and all the usual algebra rules hold.
+	\item An inner product $\langle,\cdot,\cdot\rangle$ on a vector space is a generalisation of the dot product. It must satisfy
+		\begin{itemize}
+			\item Bilinearity $\langle a\mathbf v + b\mathbf w,\mathbf z\rangle = a\langle\mathbf v,\mathbf z\rangle + b\langle\mathbf w,\mathbf z\rangle$ (and similarly in the second slot).
+			\item Symmetry $\langle\mathbf v,\mathbf w\rangle = \langle\mathbf w,\mathbf v\rangle$.
+			\item Positive‑definiteness $\langle\mathbf v,\mathbf v\rangle \ge 0$ with equality only when $\mathbf v=0$.
+		\end{itemize}
+	\item A metric space is \textit{complete} when every Cauchy sequence actually converges to a limit inside the space. 
+		\begin{itemize}
+			\item Analogy : rational numbers $\mathbb Q$ are not complete as Cauchy sequences like $3, 3.1, 3.14, 3.141,\dots$ hover toward $\pi$, which is missing from $\mathbb Q$. The reals $\mathbb R$ are complete. 
+			\item Completeness is crucial for analysis: it guarantees limits, projections, series expansions (\eg Fourier), and many theorems work internally without you stepping outside the space.
+		\end{itemize}
+\end{itemize}
+
+
+
+
+
+\section{Properties}
+
+Given a finite subset $\mathcal{S} = \{\rvx_1, \dots, \rvx_{l}\}$ of an input space $\mathbf{X}$, a kernel $\kappa (\rvx, \rvz)$ and a feature map $\boldface{\phi}$ into a feature space $F$ satisfying
+\begin{align*}
+	\kappa \left<\boldface{\phi}(\rvx), \boldface{\phi}(\rvz)\right>,
+\end{align*}
+let $\boldface{\phi}(S) = \{\boldface{\phi}(\rvx_1), \dots, \boldface{\phi}(\rvx_l)\}$ be the image of $S$ under the map $\boldface{\phi}$. Hence $\boldface{\phi}(S)$ is a subset of the inner product of space $F$. Then the kernel matrix $\mathbf{K}$ of kernel evaluations between all pairs of elements of $S$ is given by
+\begin{align*}
+	\mathbf{K}_{ij} =\kappa \left<\boldface{\phi}(\rvx_i), \boldface{\phi}(\rvx_j)\right>, \quad i,j=1,\dots,l
+\end{align*}
+Working in a kernel-defined feature space means that we are not able to explicitly represent points. For example the image of an input point $\rvx$ is $\boldface{\phi}(\rvx)$, but we do not have access to the components of this vector, only to the evaluation of inner products between this point and the images of other points. Despite this handicap there is a surprising amount of useful information that can be gleaned about $\boldface{\phi}(\mathbf{S})$.
+
+For two data points the transformed kernel $\hat{\kappa}$ is given by
+\begin{align*}
+\kappa(\rvx, \rvz) &= \left<\hat{\boldface{\phi}}(\rvx), \hat{\boldface{\phi}}(\rvz)\right> = \left<\frac{\boldface{\phi}(\rvx)}{\|\boldface{\phi}(\rvx)\|}, \frac{\boldface{\phi}(\rvz)}{\|\boldface{\phi}(\rvz)\|}\right> = \frac{\boldface{\phi}(\rvx)\boldface{\phi}(\rvz)}{\|\boldface{\phi}(\rvx)\|\|\boldface{\phi}(\rvz)\|}\\
+				   &= \frac{\kappa(\rvx, \rvz)}{\sqrt{\kappa(\rvx, \rvx)\kappa(\rvz, \rvz)}}
+\end{align*}
+
+\begin{lstlisting}[language=Python]
+% original kernel matrix stored in variable K
+% output uses the same variable K
+% D is a diagonal matrix storing the inverse of the norms
+import numpy as np
+
+# Example kernel matrix (must be symmetric with non‑negative diagonal entries)
+K = np.array([[4.0, 2.0, 2.0],
+              [2.0, 3.0, 0.5],
+              [2.0, 0.5, 1.0]])
+
+D = np.diag(1.0 / np.sqrt(np.diag(K)))
+
+# Normalize the kernel
+K = D @ K @ D            # same variable name as in MATLAB code
+\end{lstlisting}
+
+We can also evaluate the norms of linear combinations of images in the feature space. For example, we have 
+\begin{align*}
+	\left\|\sum_{i=1}^l\alpha_i\boldface{\phi}(\rvx_i)\right\|^2 &= \left<\sum_{i=1}^l\alpha_i\boldface{\phi}(\rvx_i), \sum_{i=j}^l\alpha_j\boldface{\phi}(\rvx_j)\right>\\
+																 &=\sum_{i=1}^l\alpha_i\sum_{i=j}^l\alpha_j \left<\boldface{\phi}(\rvx), \boldface{\phi}(\rvz)\right>\\
+																 &= \sum_{i,j=1}^l \alpha_i\alpha_j \kappa(\rvx, \rvz). 
+\end{align*}
+
+A special case of the norm is the length of the line joining two images $\boldface{\phi}(\rvx)$ and \boldface{\phi}(\rvz), which can be computed as
+\begin{align*}
+	\left|\boldface{\phi}(\rvx)-\boldface{\phi}(\rvz)\right|^2 &= \left<\boldface{\phi}(\rvx)-\boldface{\phi}(\rvz), \boldface{\phi}(\rvx)-\boldface{\phi}(\rvz)\right>\\
+															   &= 
+\end{align*}
+
+
+
+
 
 
 \section{Kernel Regression}

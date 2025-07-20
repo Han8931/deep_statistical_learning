@@ -1,0 +1,142 @@
+\section{Linear Discriminant Analysis}
+
+\begin{itemize}
+  \item Data matrix $\mathbf X=\bigl[\mathbf x_1,\dots,\mathbf x_n\bigr]^\top\in\mathbb R^{n\times d}$ with row‑vectors $\mathbf x_i$.
+  \item Class labels $y_i\in\{1,\dots,K\}$; let $n_k=\#\{i:y_i=k\}$ and $n=\sum_{k=1}^K n_k$.
+  \item Class means $\displaystyle \boldsymbol\mu_k=\frac1{n_k}\sum_{i:y_i=k}\mathbf x_i$,  
+        global mean $\displaystyle \boldsymbol\mu=\frac1n\sum_{i=1}^n\mathbf x_i$.
+\end{itemize}
+
+\section{Scatter matrices}
+
+\begin{align*}
+S_W &=\sum_{k=1}^{K}\sum_{i:y_i=k}\bigl(\mathbf x_i-\boldsymbol\mu_k\bigr)
+                            \bigl(\mathbf x_i-\boldsymbol\mu_k\bigr)^{\!\top}
+      &&\text{(within‑class)}\\[4pt]
+S_B &=\sum_{k=1}^{K}n_k\bigl(\boldsymbol\mu_k-\boldsymbol\mu\bigr)
+                       \bigl(\boldsymbol\mu_k-\boldsymbol\mu\bigr)^{\!\top}
+      &&\text{(between‑class)}
+\end{align*}
+
+\section{Fisher criterion}
+
+For a projection vector $\mathbf w\in\mathbb R^{d}$ (with $\mathbf w\neq\mathbf 0$) define the
+\emph{Fisher ratio}
+\[
+J(\mathbf w)\;=\;
+\frac{\mathbf w^{\top}S_B\mathbf w}{\mathbf w^{\top}S_W\mathbf w}.
+\]
+The goal is to maximise $J(\mathbf w)$: \emph{large} class‑centroid separation relative to
+intra‑class spread.
+
+\section{Optimisation details}
+
+\subsection*{1.\; Generalised eigenvalue derivation (binary and multi‐class)}
+
+\begin{enumerate}
+\item \textbf{Scale fixing.}\; Because $J(\mathbf w)$ is homogeneous of degree 0, set 
+      $\mathbf w^{\top}S_W\mathbf w=1$ to remove the scale ambiguity.
+
+\item \textbf{Lagrangian.}\; 
+      \[
+      \mathcal L(\mathbf w,\lambda)=\mathbf w^{\top}S_B\mathbf w-\lambda(\mathbf w^{\top}S_W\mathbf w-1).
+      \]
+      Stationarity $\partial\mathcal L/\partial\mathbf w=\mathbf 0$ gives
+      \[
+      S_B\mathbf w=\lambda S_W\mathbf w.
+      \]
+      Non‑trivial solutions exist only for $\lambda$ that satisfy 
+      $\det(S_B-\lambda S_W)=0$.  These are the \emph{generalised eigenvalues};
+      the corresponding $\mathbf w$ are the generalised eigenvectors.
+
+\item \textbf{Rayleigh quotient view.}\; $J(\mathbf w)$ is a generalised Rayleigh 
+      quotient.  The Courant–Fischer theorem asserts that its maximum is the largest
+      generalised eigenvalue $\lambda_{\max}$ and the maximiser is the associated
+      eigenvector.
+\end{enumerate}
+
+\subsection*{2.\; Closed‑form for $K=2$}
+
+For two classes $S_B$ has rank 1, so $S_B=\mathbf m\mathbf m^{\top}$ with
+$\mathbf m=\boldsymbol\mu_1-\boldsymbol\mu_0$.  
+The eigenproblem reduces to $S_W^{-1}\mathbf m=\lambda \mathbf w$, hence
+\[
+\boxed{\;\mathbf w^\star \propto S_W^{-1}\mathbf m.\;}
+\]
+
+\subsection*{3.\; Multiple discriminant directions ($r\le K-1$)}
+
+\begin{itemize}
+\item Solve $S_B\mathbf w=\lambda S_W\mathbf w$ for \emph{all} eigenpairs.
+\item Sort eigenvalues $\lambda_1\ge\cdots\ge\lambda_{K-1}>0$.
+\item Form $\mathbf W=[\,\mathbf w_1,\dots,\mathbf w_r\,]$ with the first $r$ eigenvectors.
+      Orthogonality is defined w.r.t.\ $S_W$: 
+      $\mathbf W^\top S_W \mathbf W = I_r$.
+\item The projected data are $\mathbf Z=\mathbf X\mathbf W\in\mathbb R^{n\times r}$.
+\end{itemize}
+
+\subsection*{4.\; Numerical algorithms}
+
+\begin{enumerate}
+\item \textbf{Eigen‑decomposition via whitening.}  
+      Compute the Cholesky (or symmetric square‑root) $S_W=\mathbf L\mathbf L^\top$  
+      (or add a ridge $S_W+\gamma I$ if singular).  
+      Define $\tilde{S}_B=\mathbf L^{-1}S_B\mathbf L^{-\top}$ and diagonalise it:  
+      $\tilde{S}_B=\mathbf Q\Lambda\mathbf Q^\top$.  Then
+      $\mathbf W=\mathbf L^{-\top}\mathbf Q$.
+
+\item \textbf{SVD shortcut (high‑dim, low‑sample).}  
+      When $d\gg n$, compute $S_W$ and $S_B$ through the \emph{thin} SVD of
+      centred data to avoid forming huge $d\times d$ matrices.
+      This yields the same $\Lambda$ and $\mathbf W$ at $\mathcal O(nd^2)$
+      memory converted to $\mathcal O(nd)$.
+
+\item \textbf{Regularisation.}  
+      If $S_W$ is ill‑conditioned:
+      \(
+        S_W \leftarrow S_W + \gamma I,
+        \; \gamma>0
+      \)
+      (``shrinkage LDA'').  Equivalent to adding a ridge penalty
+      $\gamma\|\mathbf w\|_2^2$ to the denominator of $J(\mathbf w)$.
+
+\item \textbf{Complexity.}  
+      \begin{itemize}
+        \item Forming $S_W$ and $S_B$: $\mathcal O(nd^2)$ (naïve) or
+              $\mathcal O(nd)$ with incremental updates/SVD.
+        \item Eigen‑solve for $(K-1)$ vectors in $d$ dimensions:  
+              $\mathcal O(d^3)$ with QR, but only $\mathcal O(d^2(K-1))$
+              if using Arnoldi/Lanczos.
+      \end{itemize}
+\end{enumerate}
+
+\section{Algorithm (practical steps)}
+
+\begin{enumerate}
+  \item Compute $\boldsymbol\mu_k$ and $\boldsymbol\mu$.
+  \item Form $S_W$ and $S_B$.
+  \item Solve $S_B\mathbf w=\lambda S_W\mathbf w$; sort eigenpairs by $\lambda$.
+  \item Choose $r\le K-1$; set $\mathbf W$ to the leading $r$ eigenvectors.
+  \item Project: $\mathbf z_i=\mathbf W^{\top}\mathbf x_i$.
+\end{enumerate}
+
+\paragraph{Numerical note.}
+If $S_W$ is singular (common when $d\gg n$), first apply PCA or add a ridge term:
+$S_W\leftarrow S_W+\gamma I$.
+
+\section{Connection to probabilistic LDA}
+
+Under Gaussian class‑conditional densities with common covariance
+$\boldsymbol\Sigma$, the Bayes‑optimal \emph{linear} classifier uses weight vectors
+$\boldsymbol\Sigma^{-1}\boldsymbol\mu_k$, which coincide with the Fisher
+solutions above.  Hence Fisher projection plus a simple threshold or nearest‑centroid rule
+implements the maximum‑likelihood LDA classifier.
+
+\section{Key properties}
+
+\begin{itemize}
+  \item \textbf{Label‑aware:} unlike PCA, uses $y_i$.
+  \item \textbf{Dimensionality limit:} at most $K-1$ axes carry discrimination power.
+  \item \textbf{Optimality:} Bayes‑optimal if the Gaussian/shared‑covariance assumption holds.
+  \item \textbf{High‑dim remedy:} PCA\,$\rightarrow$\,LDA cascade (``eigenfaces $\rightarrow$ fisherfaces'').
+\end{itemize}
