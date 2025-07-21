@@ -3,6 +3,8 @@
 
 When deriving PCA, we seek a vector \( \mathbf{w} \) (the weight vector or loading vector) such that the projection of the data onto this vector maximizes the variance. Maximizing the variance is equivalent to projecting the data onto a lower-dimensional linear subspace in such a way that the distance between a vector and its projection is not too large. For a given data matrix \( \mathbf{X} \) with mean zero (mean-centered data), the projection of the data onto \( \mathbf{w} \) is given by \( \mathbf{X}\mathbf{w} \).
 
+In other words, PCA aims to find the most accurate data representation in a lower dimensional space spanned by the maximum-variance directions.
+
 The variance of the projected data can be expressed as:
 
 \[

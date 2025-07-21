@@ -1,11 +1,47 @@
 \section{Linear Discriminant Analysis}
 
+We seek to obtain a transformation of $X$ to $Y$ through projecting the samples in X onto a hyperplane.
 \begin{itemize}
-  \item Data matrix $\mathbf X=\bigl[\mathbf x_1,\dots,\mathbf x_n\bigr]^\top\in\mathbb R^{n\times d}$ with row‑vectors $\mathbf x_i$.
-  \item Class labels $y_i\in\{1,\dots,K\}$; let $n_k=\#\{i:y_i=k\}$ and $n=\sum_{k=1}^K n_k$.
-  \item Class means $\displaystyle \boldsymbol\mu_k=\frac1{n_k}\sum_{i:y_i=k}\mathbf x_i$,  
-        global mean $\displaystyle \boldsymbol\mu=\frac1n\sum_{i=1}^n\mathbf x_i$.
+  \item Data matrix $\mathbf X=\bigl[\mathbf x_1,\dots,\mathbf x_N\bigr]^\top\in\mathbb R^{N\times m}$ with row‑vectors $\mathbf x_i$.
+  \item Class labels $i\in\{1,\dots,C\}$, and each class has $N_i$ samples. 
+  \item Each sample is belong to class $\omega_i$.
 \end{itemize}
+Of all the possible lines we would like to select the one that maximizes the separability. In order to find a good projection vector, we need to define a measure of separation between the projections.
+
+The mean vector of each class in $\rvx$ and $\rvy$ is given by
+\begin{align*}
+	\mu_i &= \frac{1}{N}\sum_{\rvx\in \omega_i} \rvx\\
+	\tilde{\mu}_i &= \frac{1}{N}\sum_{\rvy\in \omega_i} \rvy = \frac{1}{N}\sum_{\rvy\in \omega_i} \rvw^T\rvx = \rvw^T\frac{1}{N}\sum_{\rvy\in \omega_i} \rvx = \rvw^T\mu_i
+\end{align*}
+This indicates that projecting leads to projecting the mean of $\rvx$ to the mean of $\rvy$. Then, we could set the distance between the projected means as our objective function as follows:
+
+\begin{align*}
+	J(\rvw) = |\tilde{\mu}_1 - \tilde{\mu}_2| = |\rvw^T(\mu_1 - \mu_2)|.
+\end{align*}
+However, maximizing the distance between the projected means is not enough to yield better class separability. Thus, we will introduce the within-class variability, so-called \textit{scatter}:
+\begin{align*}
+	s = 
+\end{align*}
+
+
+
+The LDA aims to find a most discriminative line
+\begin{align*}
+	\rvx(t) = t\rvv + \rvb, \, t\in \mathbb{R}, 
+\end{align*}
+where $\rvv, \rvb \in \mathbb{R}^d$ and $\|v\|=1$. We are going to focus on lines that pass through the origin, which means $\rvb=0$:
+\begin{align*}
+	\rvx(t) = t\rvv, \, t\in \mathbb{R}, 
+\end{align*}
+where $\rvv \in \mathbb{R}^d$ is a unit vector. 
+
+\begin{align*}
+	\mu &= \frac{1}{N}\sum_i x_i\\
+	m &= w^T\frac{1}{N}\sum_i x_i = w^T\mu
+\end{align*}
+
+
+
 
 \section{Scatter matrices}
 
