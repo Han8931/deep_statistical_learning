@@ -18,161 +18,65 @@ This indicates that projecting leads to projecting the mean of $\rvx$ to the mea
 \begin{align*}
 	J(\rvw) = |\tilde{\mu}_1 - \tilde{\mu}_2| = |\rvw^T(\mu_1 - \mu_2)|.
 \end{align*}
-However, maximizing the distance between the projected means is not enough to yield better class separability. Thus, we will introduce the within-class variability, so-called \textit{scatter}:
+However, maximizing the distance between the projected means is not enough to yield better class separability. Thus, we will introduce the within-class variability, so-called \textit{scatter} matrix:
 \begin{align*}
-	s = 
+	S_i &= \sum_{\rvx\in \omega_i} (\rvx-\mu_i)(\rvx-\mu_i)^T\\
+	S_W &= S_1+S_2
 \end{align*}
+Where $S_i$ is the covariance matrix of class $\omega_i$, and $S_\omega$ is called the \textit{within-class scatter matrix}.
 
-
-
-The LDA aims to find a most discriminative line
+Now the scatter of the projection $\rvy$ can then be expressed as a function of the scatter matrix in feature space $\rvx$.
 \begin{align*}
-	\rvx(t) = t\rvv + \rvb, \, t\in \mathbb{R}, 
+	\tilde{s}_i^2 = \sum_{y\in \omega_i}(y-\mu_i)^2 &= \sum_{\rvx\in\omega_i}(w^T\rvx - w^T\mu_i)^2\\
+													&= \sum_{\rvx\in\omega_i}\left(w^T(\rvx - \mu_i)\right)^2\\
+													&= \sum_{\rvx\in\omega_i}\underbrace{\left(w^T(\rvx - \mu_i)\right)}_{\text scalar}\underbrace{\left(w^T(\rvx - \mu_i)\right)}_{\text scalar^T=scalar}\\
+													&= \sum_{\rvx\in\omega_i}w^T(\rvx - \mu_i)(\rvx - \mu_i)^Tw\\
+													&= w^TS_iw.
 \end{align*}
-where $\rvv, \rvb \in \mathbb{R}^d$ and $\|v\|=1$. We are going to focus on lines that pass through the origin, which means $\rvb=0$:
+Thus, 
 \begin{align*}
-	\rvx(t) = t\rvv, \, t\in \mathbb{R}, 
+	\tilde{s}_1^2+\tilde{s}_2^2 = w^TS_1w+w^TS_2w = w^T(S_1+S_2)w = w^TS_Ww = \tilde{S}_W.
 \end{align*}
-where $\rvv \in \mathbb{R}^d$ is a unit vector. 
-
+Similarly, the difference between the projected means can be expressed as follows:
 \begin{align*}
-	\mu &= \frac{1}{N}\sum_i x_i\\
-	m &= w^T\frac{1}{N}\sum_i x_i = w^T\mu
+	(\tilde{\mu}_1-\tilde{\mu}_2)^2 &= (w^T\mu_1-w^T\mu_2)\\
+									&= w^T(\mu_1-\mu_2)(\mu_1-\mu_2)^Tw\\
+									&= w^TS_Bw = \tilde{S}_B
 \end{align*}
-
-
-
-
-\section{Scatter matrices}
-
-\begin{align*}
-S_W &=\sum_{k=1}^{K}\sum_{i:y_i=k}\bigl(\mathbf x_i-\boldsymbol\mu_k\bigr)
-                            \bigl(\mathbf x_i-\boldsymbol\mu_k\bigr)^{\!\top}
-      &&\text{(within‑class)}\\[4pt]
-S_B &=\sum_{k=1}^{K}n_k\bigl(\boldsymbol\mu_k-\boldsymbol\mu\bigr)
-                       \bigl(\boldsymbol\mu_k-\boldsymbol\mu\bigr)^{\!\top}
-      &&\text{(between‑class)}
-\end{align*}
-
-\section{Fisher criterion}
+This matrix is called the \textit{between-class scatter}. Since $S_B$ is the outer product of two vectors, its rank is at most one.
 
 For a projection vector $\mathbf w\in\mathbb R^{d}$ (with $\mathbf w\neq\mathbf 0$) define the
 \emph{Fisher ratio}
 \[
-J(\mathbf w)\;=\;
-\frac{\mathbf w^{\top}S_B\mathbf w}{\mathbf w^{\top}S_W\mathbf w}.
+	J(\mathbf w) = \frac{|\tilde{\mu}_1-\tilde{\mu}_2|^2}{\tilde{s}_1^2+\tilde{s}_2^2} = \frac{\mathbf w^{\top}S_B\mathbf w}{\mathbf w^{\top}S_W\mathbf w}.
 \]
-The goal is to maximise $J(\mathbf w)$: \emph{large} class‑centroid separation relative to
-intra‑class spread.
+The optimal $w$ satisfies that $|\tilde{\mu}_1-\tilde{\mu}_2|$ (inter-class spread) is big and $\tilde{s}_1^2+\tilde{s}_2^2$ (intra-class spread) is small. Note that this objective function is called \textit{Rayleigh quotient}.
 
-\section{Optimisation details}
-
-\subsection*{1.\; Generalised eigenvalue derivation (binary and multi‐class)}
-
-\begin{enumerate}
-\item \textbf{Scale fixing.}\; Because $J(\mathbf w)$ is homogeneous of degree 0, set 
-      $\mathbf w^{\top}S_W\mathbf w=1$ to remove the scale ambiguity.
-
-\item \textbf{Lagrangian.}\; 
-      \[
-      \mathcal L(\mathbf w,\lambda)=\mathbf w^{\top}S_B\mathbf w-\lambda(\mathbf w^{\top}S_W\mathbf w-1).
-      \]
-      Stationarity $\partial\mathcal L/\partial\mathbf w=\mathbf 0$ gives
-      \[
-      S_B\mathbf w=\lambda S_W\mathbf w.
-      \]
-      Non‑trivial solutions exist only for $\lambda$ that satisfy 
-      $\det(S_B-\lambda S_W)=0$.  These are the \emph{generalised eigenvalues};
-      the corresponding $\mathbf w$ are the generalised eigenvectors.
-
-\item \textbf{Rayleigh quotient view.}\; $J(\mathbf w)$ is a generalised Rayleigh 
-      quotient.  The Courant–Fischer theorem asserts that its maximum is the largest
-      generalised eigenvalue $\lambda_{\max}$ and the maximiser is the associated
-      eigenvector.
-\end{enumerate}
-
-\subsection*{2.\; Closed‑form for $K=2$}
-
-For two classes $S_B$ has rank 1, so $S_B=\mathbf m\mathbf m^{\top}$ with
-$\mathbf m=\boldsymbol\mu_1-\boldsymbol\mu_0$.  
-The eigenproblem reduces to $S_W^{-1}\mathbf m=\lambda \mathbf w$, hence
-\[
-\boxed{\;\mathbf w^\star \propto S_W^{-1}\mathbf m.\;}
-\]
-
-\subsection*{3.\; Multiple discriminant directions ($r\le K-1$)}
-
+Maximising the objective $J$ with respect to $\rvw$ is equivalent to maximising the numerator while holding the denominator constant as both the numerator and denominator have the same order of $\|\rvw\|$ and thus $J$ is invariant to scale changes in $\|\rvw\|$. Further, as we are only interested in the direction of $\rvw$, we can hold the denominator constant to 1. This results in a Lagrangian:
+\begin{align*}
+	\mathcal L(\mathbf w,\lambda)=\mathbf w^{\top}S_B\mathbf w-\lambda(\mathbf w^{\top}S_W\mathbf w-1).
+\end{align*}
 \begin{itemize}
-\item Solve $S_B\mathbf w=\lambda S_W\mathbf w$ for \emph{all} eigenpairs.
-\item Sort eigenvalues $\lambda_1\ge\cdots\ge\lambda_{K-1}>0$.
-\item Form $\mathbf W=[\,\mathbf w_1,\dots,\mathbf w_r\,]$ with the first $r$ eigenvectors.
-      Orthogonality is defined w.r.t.\ $S_W$: 
-      $\mathbf W^\top S_W \mathbf W = I_r$.
-\item The projected data are $\mathbf Z=\mathbf X\mathbf W\in\mathbb R^{n\times r}$.
+	\item If you scale $\mathbf w$ by any nonzero scalar $c$, then numerator: $(c\mathbf w)^\top S_B (c\mathbf w)=c^2\,\mathbf w^\top S_B \mathbf w$ denominator: $(c\mathbf w)^\top S_W (c\mathbf w)=c^2\,\mathbf w^\top S_W \mathbf w$. The factor $c^2$ cancels in the ratio, so $J(c\mathbf w)=J(\mathbf w)$. Therefore, only the direction of $\mathbf w$ matters, not its length. That's what invariant to scale changes in $\|\mathbf w\|$ means.
+	\item Because the ratio is scale-invariant, we can arbitrarily fix the scale of $\rvw$. The common choice is: $\mathbf w^{\top}S_W\mathbf w-1$.
 \end{itemize}
 
-\subsection*{4.\; Numerical algorithms}
+Then, $\partial\mathcal L/\partial\mathbf w=\mathbf 0$ gives
+\begin{align*}
+	S_B\mathbf w&=\lambda S_W\mathbf w.\\
+	S_W^{-1}S_B\mathbf w&=\lambda \mathbf w.
+\end{align*}
+By using the definition of $S_B$, 
+\begin{align*}
+	S_W^{-1}S_B\rvw = S_W^{-1}(\tilde{\mu}_1-\tilde{\mu}_2)(\tilde{\mu}_1-\tilde{\mu}_2)^T\rvw = \lambda \rvw.
+\end{align*}
+Let's set $(\tilde{\mu}_1-\tilde{\mu}_2)^T\rvw = \alpha$ and $\alpha$ is a scalar. Then, we get
+\begin{align*}
+	S_W^{-1}(\tilde{\mu}_1-\tilde{\mu}_2) = \frac{\lambda \rvw}{\alpha}
+\end{align*}
+Since we are only interested in the direction of $\rvw$, we can discard the scalar term, then
+\begin{align*}
+	\rvw^* = S_W^{-1}(\tilde{\mu}_1-\tilde{\mu}_2).
+\end{align*}
 
-\begin{enumerate}
-\item \textbf{Eigen‑decomposition via whitening.}  
-      Compute the Cholesky (or symmetric square‑root) $S_W=\mathbf L\mathbf L^\top$  
-      (or add a ridge $S_W+\gamma I$ if singular).  
-      Define $\tilde{S}_B=\mathbf L^{-1}S_B\mathbf L^{-\top}$ and diagonalise it:  
-      $\tilde{S}_B=\mathbf Q\Lambda\mathbf Q^\top$.  Then
-      $\mathbf W=\mathbf L^{-\top}\mathbf Q$.
 
-\item \textbf{SVD shortcut (high‑dim, low‑sample).}  
-      When $d\gg n$, compute $S_W$ and $S_B$ through the \emph{thin} SVD of
-      centred data to avoid forming huge $d\times d$ matrices.
-      This yields the same $\Lambda$ and $\mathbf W$ at $\mathcal O(nd^2)$
-      memory converted to $\mathcal O(nd)$.
-
-\item \textbf{Regularisation.}  
-      If $S_W$ is ill‑conditioned:
-      \(
-        S_W \leftarrow S_W + \gamma I,
-        \; \gamma>0
-      \)
-      (``shrinkage LDA'').  Equivalent to adding a ridge penalty
-      $\gamma\|\mathbf w\|_2^2$ to the denominator of $J(\mathbf w)$.
-
-\item \textbf{Complexity.}  
-      \begin{itemize}
-        \item Forming $S_W$ and $S_B$: $\mathcal O(nd^2)$ (naïve) or
-              $\mathcal O(nd)$ with incremental updates/SVD.
-        \item Eigen‑solve for $(K-1)$ vectors in $d$ dimensions:  
-              $\mathcal O(d^3)$ with QR, but only $\mathcal O(d^2(K-1))$
-              if using Arnoldi/Lanczos.
-      \end{itemize}
-\end{enumerate}
-
-\section{Algorithm (practical steps)}
-
-\begin{enumerate}
-  \item Compute $\boldsymbol\mu_k$ and $\boldsymbol\mu$.
-  \item Form $S_W$ and $S_B$.
-  \item Solve $S_B\mathbf w=\lambda S_W\mathbf w$; sort eigenpairs by $\lambda$.
-  \item Choose $r\le K-1$; set $\mathbf W$ to the leading $r$ eigenvectors.
-  \item Project: $\mathbf z_i=\mathbf W^{\top}\mathbf x_i$.
-\end{enumerate}
-
-\paragraph{Numerical note.}
-If $S_W$ is singular (common when $d\gg n$), first apply PCA or add a ridge term:
-$S_W\leftarrow S_W+\gamma I$.
-
-\section{Connection to probabilistic LDA}
-
-Under Gaussian class‑conditional densities with common covariance
-$\boldsymbol\Sigma$, the Bayes‑optimal \emph{linear} classifier uses weight vectors
-$\boldsymbol\Sigma^{-1}\boldsymbol\mu_k$, which coincide with the Fisher
-solutions above.  Hence Fisher projection plus a simple threshold or nearest‑centroid rule
-implements the maximum‑likelihood LDA classifier.
-
-\section{Key properties}
-
-\begin{itemize}
-  \item \textbf{Label‑aware:} unlike PCA, uses $y_i$.
-  \item \textbf{Dimensionality limit:} at most $K-1$ axes carry discrimination power.
-  \item \textbf{Optimality:} Bayes‑optimal if the Gaussian/shared‑covariance assumption holds.
-  \item \textbf{High‑dim remedy:} PCA\,$\rightarrow$\,LDA cascade (``eigenfaces $\rightarrow$ fisherfaces'').
-\end{itemize}
