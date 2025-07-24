@@ -44,4 +44,19 @@ Capturing the Most Information:
 	\item High variance indicates that the data points are spread out and less likely to be redundant. Conversely, low variance implies that data points are clustered close together, often making the information less significant.
 \end{itemize}
 
+Sort eigenvectors $v_1, v_2, \dots, v_d$ in descending order of their corresponding eigenvalues $\lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_d$.
+
+Then, select the first $k$ eigenvectors to form a projection matrix:
+
+$$
+W_k = [v_1, v_2, \dots, v_k] \in \mathbb{R}^{d \times k}
+$$
+
+Now project the centered data onto this new basis:
+
+$$
+Z = X_{\text{centered}} W_k \in \mathbb{R}^{n \times k}
+$$
+
+This gives the data in the lower-dimensional space.
 
