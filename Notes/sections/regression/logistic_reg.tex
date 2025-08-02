@@ -20,7 +20,6 @@ The class probabilities are
   \qquad
   P\!\{Y=0\!\mid\!X\} = 1 - \sigma(z).
 \]
-
 We are going to use the Maximum Likelihood Estimation (MLE) to find the best parameter. The MLE is a method used in statistics to estimate the parameters of a probability distribution by maximizing a likelihood function. Essentially, MLE finds the parameter values that make the observed data most probable.
 
 Let's first define the Likelihood Function: Based on the probability distribution of the data, write down the likelihood function. For a set of observations \(X = \{x_1, x_2, \ldots, x_n\}\), and a parameter \(\beta\), the likelihood function \(L(\beta; X)\) represents the probability of observing the given data under the parameter \(\beta\).
@@ -46,7 +45,7 @@ L(\beta; X, Y) = \prod_{i=1}^{n} \left[\frac{1}{1 + \exp(-X_i \beta)}\right]^{Y_
 \]
 The negative log-likelihood for logistic regression is then given by
 \begin{align*}
-	\textrm{NLL}(\beta) = -\sum_{i=1}^N y_i\ln\sigma(\beta^T\rvx)+\ln(1-y_i)(1-\sigma(\beta^T\rvx)).
+	\textrm{NLL}(\beta) = -\sum_{i=1}^N y_i\ln\sigma(\beta^T\rvx)+(1-y_i)\ln(1-\sigma(\beta^T\rvx)).
 							 % &= -\sum_{i=1}^{N}\textrm{log}[\mu_i^{\mathds{I}(y_i=1)}\times (1-\mu_i)^{\mathds{I}(y_i=0)}]\\
 	% &=-\sum_{i=1}^{N}[y_i\textrm{log}\mu_i + (1-y_i) \textrm{log}(1-\mu_i)], \textrm{ }
 \end{align*}
