@@ -4,51 +4,44 @@
 
 In machine learning a \textit{kernel} is a function that measures similarity between two objects and, at the same time, implicitly maps those objects into (possibly very-high-dimensional) feature space without ever computing the coordinates of that space directly.
 
-Any kernel methods solution comprises two parts: a module that performs the mapping into the embedding or feature space and a learning algorithm designed to discover linear patterns in that space. There are two main reasons why this approach should work. First of all, detecting linear relations has been the focus of much research in statistics and machine learning for decades, and the resulting algorithms are both well understood and efficient. Secondly, we will see that there is a computational shortcut which makes it possible to represent linear patterns efficiently in high-dimensional spaces to ensure adequate representational power. The shortcut is what we call a kernel function.
+A basic idea of kernel machine learning algorithms is that we can make ML models non-linear by applying basis function (feature) transformations on the input space. For an input vector $\rvx\in \mathbb{R}^d$, do transformation $\rvx \to \phi(\rvx)\in \mathbb{R}^D$, where $D>>d$.
 
-\begin{itemize}
-	\item Data items are embedded into a vector space called the feature space. 
-	\item Linear relations are sought among the images of the data items in the feature space.
-	\item The algorithms are implemented in such a way that the coordinates of the embedded points are not needed, only their pairwise inner products. 
-	\item The pairwise inner products can be computed efficiently directly from the original data items using a kernel function.
-\end{itemize}
-These four observations will imply that, despite restricting ourselves to algorithms that optimise linear functions, our approach will enable the development of a rich toolbox of efficient and well-founded methods for discovering nonlinear relations in data through the use of nonlinear embedding mappings.
+\section{Kernel Trick}
+Kernel trick aims to avoid computing explicit feature transformations $\phi(\rvx)$ by changing the entire ML algorithm to use only \textit{inner products} of feature transformations $\langle \phi(\rvx), \phi(\rvx')\rangle$ which are computed directly using a \textit{kernel} (rather than the feature transformations themselves.). Note that even the RBF kernel can be expressed as an inner product. 
 
-When people say that \emph{kernels are more efficient}, they are comparing two strategies for working with a nonlinear feature map~$\varphi$:
+In other words, the terminology \textit{kernel trick} simply refers to taking any algorithm the depends on the data only through inner products and replacing each inner product $\left<\rvx, \rvx'\right>$ by a kernel value $k(\rvx, \rvx')$.
 
+\subsection{From Feature Transformations to Kernels}
+Instead of computing $\phi(\rvx_i), \forall i$ , we pre-compute $\langle \phi(\rvx_i), \phi(\rvx_j)\rangle$ for all $\rvx_i$ and $\rvx_j$. Then we store the values in an $n\times n$ matrix $K$ where $K_{ij}= \langle \phi(\rvx_i), \phi(\rvx_j)\rangle$. $K$ is called the \textit{kernel matrix} or \textit{Gram matrix}. 
+
+% Computing $\phi(\rvx_i)$ is $\mathcal{O}(2^d)\times n = \mathcal{O}(2^dn)$. On the other hand, pre-computing the inner products can be more efficient as follows:
+% \begin{align*}
+% 	\langle \phi(\rvx), \phi(\rvx')\rangle &= \phi(\rvx)^T\phi(\rvx')\\ 
+% 										   &= \prod_{k=1}^d(1+x_kx'_k).
+% \end{align*}
+% This takes $\mathcal{O}(d)$ and we can compute the entire kernel matrix $K$ in $\mathcal{O}(dn^2)$. 
+
+Pre-computing the inner produce can be more efficient:
 \begin{center}
 \begin{tabular}{|l|p{5.6cm}|l|}
 \hline
 \textbf{Approach} & \textbf{What we actually compute} & \textbf{Cost per evaluation}\\
 \hline
 Explicit map & build $\varphi(x)\in\mathbb{R}^{D}$ then take $\langle\varphi(x),\varphi(z)\rangle$ & $\mathcal{O}(D)$ (often gigantic)\\
-Kernel trick & evaluate $K(x,z)=\langle\varphi(x),\varphi(z)\rangle$ directly & $\mathcal{O}(d)$ or $\mathcal{O}(d\,p)$, usually $d\ll D$\\
+Kernel trick & evaluate $K(x,z)=\langle\varphi(x),\varphi(z)\rangle$ directly & $\mathcal{O}(d)$, usually $d\ll D$\\
 \hline
 \end{tabular}
 \end{center}
+For instance, one might map $x\to (1, x, x^2)$ for quadratic features, $x\to (1, x, x^2, x^3)$ for cubic features, and so on. 
 
-Most algorithms (SVMs, kernel PCA, Gaussian processes, \dots) depend \emph{only} on inner products, so they never need the coordinates of $\varphi(x)$ themselves.  Replacing those inner products by a kernel sidesteps the high‐dimensional features.
+Formally, we can define that the kernel is the inner product of a fixed feature space mapping $\phi(\rvx)$
+\begin{align*}
+	k(\rvx, \rvx') = \left<\phi(\rvx), \phi(\rvx')\right>.
+\end{align*}
+Hence, a kernel is a function $k(\cdot, \cdot): \mathcal{X} \times \mathcal{X} \to \mathbb{R}$.
 
-\begin{itemize}
-  \item \textbf{Dimensionality explosion.}  
-        A degree–$p$ polynomial map of a $d$–dimensional vector has
-        \[
-            D \;=\; \binom{d+p}{p}
-        \]
-        coordinates.  For $d=1000$ and $p=3$, that is $\sim1.7\times10^{8}$ numbers \emph{per sample}.  
-        The same inner product via the kernel $(1+x^{\top}z)^{3}$ costs only $\mathcal{O}(d)=1000$ multiplications.
-  \item \textbf{Infinite feature spaces.}  
-        The Gaussian RBF kernel corresponds to an \emph{infinite}‐dimensional $\varphi$, yet
-        \[
-            K(x,z)=\exp\!\bigl(-\|x-z\|^{2}/2\sigma^{2}\bigr)
-        \]
-        is a single distance and exponential.
-  \item \textbf{Memory.}  
-        Storing $n$ explicit feature vectors costs $\mathcal{O}(nD)$, while an $n\times n$ Gram matrix costs $\mathcal{O}(n^{2})$.  
-        Whenever $D\gg n$, the kernel representation is lighter.
-  \item \textbf{Algorithmic simplifications.}  
-        Many solvers work entirely on the Gram matrix, letting you leverage highly–optimised linear algebra without feature‐wise loops.
-\end{itemize}
+\section{Kernels}
+Then, we can ask can any function be a kernel? The answer is no. To be a valid or well-defined kernel, it has to be \textit{symmetric} (\ie  $k(\rvx, \rvx') = k(\rvx', \rvx)$ for all $\rvx$ and $\rvx'$) and \textit{positive semi-definite}. 
 
 
 \section{Hilbert Spaces}
@@ -172,6 +165,23 @@ A special case of the norm is the length of the line joining two images $\boldfa
 
 
 \section{Kernel Regression}
+
+Recall that 
+\begin{align*}
+	(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})\boldsymbol{\theta}	&= (\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})^{-1}\mathbf{X}^T\rvy\\
+	(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})\boldsymbol{\theta} &= \mathbf{X}^T\rvy\\ 
+	\boldsymbol{\theta} &= \lambda^{-1}\mathbf{I}(\mathbf{X}^T\rvy-\mathbf{X}^T\mathbf{X}\boldsymbol{\theta})\\
+						&= \mathbf{X}^T\underbrace{\lambda^{-1}(\rvy-\mathbf{X}\boldsymbol{\theta})}_{=\alpha}\\
+	&= \mathbf{X}^T\alpha
+\end{align*}
+This tells us that $\boldsymbol{\theta}$ is a linear combination of $\boldsymbol{X}$ with $\alpha$. Then, 
+\begin{align*}
+	\lambda\alpha &= (\rvy-\mathbf{X}\boldsymbol{\theta})\\
+	&= (\rvy-\mathbf{X}\mathbf{X}^T\alpha)\\
+	\rvy &= (\mathbf{X}\mathbf{X}^T\alpha+\lambda\alpha)\\
+	\alpha &= (\mathbf{X}\mathbf{X}^T+\lambda)^{-1}\rvy\\
+	 &= (\mathbf{G}+\lambda)^{-1}\rvy.
+\end{align*}
 \begin{align*}
 	\hat{\boldsymbol{\theta}} = \mathbf{X}^T(\mathbf{X}\mathbf{X}^T+\lambda\mathbf{I})^{-1}\rvy.
 \end{align*}
@@ -192,7 +202,7 @@ The prediction depends on the data only though inner products, since
 		\langle \rvx_n, \rvx_1 \rangle & \cdots & \langle \rvx_n, \rvx_n \rangle
 	\end{bmatrix},
 \end{align*}
-\textbf{Kernel trick} replaces the inner products by kernel evaluations, which can be represented as follows:
+The kernel trick replaces the inner products by kernel evaluations, which can be represented as follows:
 \begin{align*}
 	\hat{y}(\rvx') = k(\rvx')(K+\lambda \mathbf{I})^{-1}\rvy,
 \end{align*}
@@ -202,13 +212,18 @@ where
 		k(\rvx', \rvx_1)\\
 		\vdots\\
 		k(\rvx', \rvx_n)
-	\end{bmatrix}
+	\end{bmatrix}\quad
 	K = \begin{bmatrix}
 		k(\rvx_1, \rvx_1) & \cdots & k(\rvx_1, \rvx_n)\\
 		\vdots & \ddots & \vdots\\
 		k(\rvx_n, \rvx_1) & \cdots & k(\rvx_n, \rvx_n)
 	\end{bmatrix},
 \end{align*}
+\begin{itemize}
+	\item The estimate $\hat{y}$ is a weighted sum of the previously observed outputs, $\rvy$. The more similar $\rvx'$ is to the corresponding $\rvx_t$ (\ie the higher value of $k(\rvx, \rvx')$), the more weight is given to that $\rvy$. 
+	\item Note that we have turned the original learning problem that had $d$ parameters into one that has $n$ parameters (\ie the number of data samples). 
+\end{itemize}
+
 
 \subsection{Non-Parametric Regression}
 Kernel methods corresponding to infinite-dimensional $\phi(\rvx)$ can usually be considered as \textbf{non-parametric}.

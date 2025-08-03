@@ -114,7 +114,7 @@ The first equation gives us $\boldsymbol{\theta} = -\mathbf{X}^T\boldsymbol{\lam
 \begin{align*}
 	\boldsymbol{\theta} = \mathbf{X}^T(\mathbf{X}\mathbf{X}^T)^{-1}\rvy.
 \end{align*}
-Note that $\mathbf{X}\mathbf{X}^T$ is often called a \textit{Gram matrix}, $\mathbf{G}$ (\cf \Cref{sec:kernel:kernel_trick}). 
+Note that $\mathbf{X}\mathbf{X}^T$ is often called a \textit{Gram matrix}, $\mathbf{G}$. 
 
 \section{Overfitting}
 We examine the relationship between the number of training samples and the complexity of the model.
@@ -153,15 +153,18 @@ Note that we can change the ridge regression into a dual form:
 	(\mathbf{X}^T\mathbf{X}+\lambda\mathbf{I})\boldsymbol{\theta} &= \mathbf{X}^T\rvy\\ 
 	\boldsymbol{\theta} &= \lambda^{-1}\mathbf{I}(\mathbf{X}^T\rvy-\mathbf{X}^T\mathbf{X}\boldsymbol{\theta})\\
 						&= \mathbf{X}^T\underbrace{\lambda^{-1}(\rvy-\mathbf{X}\boldsymbol{\theta})}_{=\alpha}\\
-	&= \mathbf{X}^T\alpha\\
+	&= \mathbf{X}^T\alpha
+\end{align}
+This tells us that $\boldsymbol{\theta}$ is a linear combination of $\boldsymbol{X}$ (\ie training data points) with $\alpha$. Then, 
+\begin{align}
 	\lambda\alpha &= (\rvy-\mathbf{X}\boldsymbol{\theta})\\
 	&= (\rvy-\mathbf{X}\mathbf{X}^T\alpha)\\
 	\rvy &= (\mathbf{X}\mathbf{X}^T\alpha+\lambda\alpha)\\
 	\alpha &= (\mathbf{X}\mathbf{X}^T+\lambda)^{-1}\rvy\\
-	\alpha &= (\mathbf{G}+\lambda)^{-1}\rvy.
+	 &= (\mathbf{G}+\lambda)^{-1}\rvy.
 	\label{eq:dual_regression}
 \end{align}
-This gives us the solution of the underdetermined problems. For a new data point $\rvx_{new}$, we can make an inference by computing dot products between the new data point and each training data point:
+This gives us the solution of the \textit{underdetermined} problems. For a new data point $\rvx_{new}$, we can make an inference by computing dot products between the new data point and each training data point:
 \begin{align*}
 	y &= \boldsymbol{\theta}^T\rvx_{new}\\
 	  &= \alpha^T\mathbf{X}\rvx_{new}
