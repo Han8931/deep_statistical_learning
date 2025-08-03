@@ -34,13 +34,28 @@ Kernel trick & evaluate $K(x,z)=\langle\varphi(x),\varphi(z)\rangle$ directly & 
 \end{center}
 For instance, one might map $x\to (1, x, x^2)$ for quadratic features, $x\to (1, x, x^2, x^3)$ for cubic features, and so on. 
 
+\begin{align*}
+	y_t = \begin{cases}
+		+1& x_1^2+x_1^2\leq 1\\
+		-1&\text{otherwise}
+	\end{cases}
+\end{align*}
+For $\rvx [x_1, x_2]^T$, let $\phi(\rvx) = (x_1^2, \sqrt{2}x_1x_2, x_2^2)\in \mathbb{R}^3$:
+\begin{align*}
+	K(\rvx, \rvx') &= x_1^2x'_1^2+\sqrt{2}x_1x_2\sqrt{2}x'_1x'_2+x_2^2x'_2^2\\
+				   &= (x_1x'_1+x_2x'_2)^2\\
+				   &= \left<\rvx, \rvx'\right>^2
+\end{align*}
+
+
+
+\section{Kernels}
 Formally, we can define that the kernel is the inner product of a fixed feature space mapping $\phi(\rvx)$
 \begin{align*}
 	k(\rvx, \rvx') = \left<\phi(\rvx), \phi(\rvx')\right>.
 \end{align*}
-Hence, a kernel is a function $k(\cdot, \cdot): \mathcal{X} \times \mathcal{X} \to \mathbb{R}$.
+Hence, a kernel is a function $k(\cdot, \cdot): \mathcal{X} \times \mathcal{X} \to \mathbb{R}$. The kernel matrix is always an $n\times n$ matrix, whatever the nature of data. Also, it has a modularity between the choice of kernel function and the choice of learning algorithm. However, it tends to suffer from a poor scalability with respect to the dataset size.
 
-\section{Kernels}
 Then, we can ask can any function be a kernel? The answer is no. To be a valid or well-defined kernel, it has to be \textit{symmetric} (\ie  $k(\rvx, \rvx') = k(\rvx', \rvx)$ for all $\rvx$ and $\rvx'$) and \textit{positive semi-definite}. 
 
 
