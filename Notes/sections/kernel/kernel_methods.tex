@@ -7,7 +7,9 @@ In machine learning a \textit{kernel} is a function that measures similarity bet
 A basic idea of kernel machine learning algorithms is that we can make ML models non-linear by applying basis function (feature) transformations on the input space. For an input vector $\rvx\in \mathbb{R}^d$, do transformation $\rvx \to \phi(\rvx)\in \mathbb{R}^D$, where $D>>d$.
 
 \section{Kernel Trick}
-Kernel trick aims to avoid computing explicit feature transformations $\phi(\rvx)$ by changing the entire ML algorithm to use only \textit{inner products} of feature transformations $\langle \phi(\rvx), \phi(\rvx')\rangle$ which are computed directly using a \textit{kernel} (rather than the feature transformations themselves.). Note that even the RBF kernel can be expressed as an inner product. 
+Kernel trick aims to avoid computing explicit feature transformations $\phi(\rvx)$ by changing the entire ML algorithm to use only \textit{inner products} of feature transformations $\langle \phi(\rvx), \phi(\rvx')\rangle$ which are computed directly using a \textit{kernel} (rather than the feature transformations themselves.). Note that even the RBF kernel also can be expressed as an inner product. 
+
+This is contrast to many other ML algorithms that require explicit transformation of input data into feature vectors using a feature map, kernel methods directly compute similarity using a user-specified kernel function.
 
 In other words, the terminology \textit{kernel trick} simply refers to taking any algorithm the depends on the data only through inner products and replacing each inner product $\left<\rvx, \rvx'\right>$ by a kernel value $k(\rvx, \rvx')$.
 
@@ -54,12 +56,19 @@ Formally, we can define that the kernel is the inner product of a fixed feature 
 \begin{align*}
 	k(\rvx, \rvx') = \left<\phi(\rvx), \phi(\rvx')\right>.
 \end{align*}
-Hence, a kernel is a function $k(\cdot, \cdot): \mathcal{X} \times \mathcal{X} \to \mathbb{R}$. The kernel matrix is always an $n\times n$ matrix, whatever the nature of data. Also, it has a modularity between the choice of kernel function and the choice of learning algorithm. However, it tends to suffer from a poor scalability with respect to the dataset size.
+Hence, a kernel is a function $k(\cdot, \cdot): \mathcal{X} \times \mathcal{X} \to \mathbb{R}$. By the definition, a kernel function measures the similarity between data points. The kernel matrix is always an $n\times n$ matrix, whatever the nature of data. Also, it has a \textit{modularity} between the choice of kernel function and the choice of learning algorithm. However, it tends to suffer from a poor scalability with respect to the dataset size.
 
-Then, we can ask can any function be a kernel? The answer is no. To be a valid or well-defined kernel, it has to be \textit{symmetric} (\ie  $k(\rvx, \rvx') = k(\rvx', \rvx)$ for all $\rvx$ and $\rvx'$) and \textit{positive semi-definite}. 
+Then, we can ask can any function be a kernel? The answer is no. To be a valid or well-defined kernel, it has to be \textit{symmetric} (\ie  $k(\rvx, \rvx') = k(\rvx', \rvx)$ for all $\rvx$ and $\rvx'$) and \textit{positive semi-definite}. Also the feature map $\phi$ is a mapping from the input space to a feature space (\ie Hilbert space).
 
 
 \section{Hilbert Spaces}
+In functional analysis, $f(\cdot)$ denotes a function itself, while $f(x)$ represents the specific value that function takes at the input $x$.
+
+Consider a function $f$ that takes an input $\rvx = (x_1, x_2)$:
+\begin{align*}
+	f(x) = f_1x_1+f_2x_2+f_3x_1x_2.
+\end{align*}
+% The function $f(\cdot)$ is an element of a function space mapping R^2 to R. In this example, we can represent f() as R^3 within this function space.
 
 First we recall what is meant by a linear function. Given a vector space $X$ over the reals, a function
 \begin{align*}
