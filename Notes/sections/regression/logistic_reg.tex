@@ -1,8 +1,6 @@
 \section{Logistic Regression}
 \label{sec:logistic_regression}
 
-% Logistic regression corresponds to the following binary classification model parameterized by $\rvw$:
-% $$p(y|\mathbf{x},\mathbf{w})=\textrm{Ber}(y|\sigma(\mathbf{w}^T\mathbf{x}))$$
 
 Whereas linear regression maps inputs to $\mathbb{R}$, logistic regression
 predicts values in the bounded interval $[0,1]$, letting us interpret the
@@ -84,4 +82,17 @@ This gradient is used in gradient descent to update the weights $\boldsymbol{\th
 \boldsymbol{\theta} := \boldsymbol{\theta} - \alpha \nabla_{\boldsymbol{\theta}} J(\boldsymbol{\theta}),
 \]
 where $\alpha$ is the learning rate.
+
+\subsection{Another Interpretation}
+
+Logistic regression models \textit{logit}s (log odds) through a linear model. For binary data, the goal is to model the probability $p$ that one of two outcomes occurs. Recall that an ordinary linear regression model is not bounded. Thus, we will pass a linear model through a sigmoid function, which is also known as logistic function. 
+$$\sigma(z) = \frac{1}{1+\exp^{z}},$$
+where $z=wx+b.$
+The sigmoid function has the property
+$$\sigma(-x) = 1-\sigma(x).$$
+The $z$ is often called the logit. Note that the inverse of the sigmoid is the log of the odds ratio $\frac{p}{1-p}.$
+
+The logit function is $\textrm{log}\frac{p}{1-p}$, which varies between $-\infty$ and $+\infty$ as $p$ varies between $0$ and $1$.
+$$\textrm{log}\frac{p}{1-p} = w_0x_0 +  w_1x_1 + \dots + w_nx_n.$$
+Note that the logistic regression model assumes that the log-odds (also called the \textit{logit}) of an observation $y$ can be expressed as a linear function of the predictor variables. In this context, the logit function is referred to as the \textit{link} function because it ``links'' the probability of an event to a linear combination of the predictors. The logit provides information about the ratio of two outcomes. For example, suppose an event has a probability of occurring of 60\%. If a certain factor makes the event twice as likely to occur, the logit can be used to quantify this by comparing the probability of the event occurring to the probability of it not occurring.
 
