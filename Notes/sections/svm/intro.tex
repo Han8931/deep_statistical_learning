@@ -12,7 +12,7 @@ $$\lVert z\rVert  = \lVert x\rVert cos(\theta).$$
 Here, $\theta$ is the angle between $x$ and $y$. To connect this with the dot product, recall that:
 $$x\cdot y = \lVert x\rVert \ \lVert y\rVert  cos(\theta).$$
 This formula allows us to replace the cosine term:
-$$\lVert z\rVert  = \lVert x\rVert \frac{x\cdot y}{\lVert x\rVert \cdot\lVert y\rVert }.$$
+$$\lVert z\rVert  =  \frac{x\cdot y}{\lVert y\rVert }$$
 Simplifying further, we express the magnitude of $z$ as:
 $$\lVert z\rVert = u\cdot x,$$
 where $u$ is an unit vector of $y$. Since $z$ is in the direction of $y$, we can write:
@@ -24,7 +24,6 @@ Then,
 This gives us the final expression for the orthogonal projection of $x$ onto $y$:
 \begin{align*}
 	\textrm{Proj}_yx &= (u\cdot x)\cdot u\\ 
-					 &= \Bigg(\frac{y\cdot x}{\lVert y\rVert ^2}\Bigg)y\\
 					 &= \Bigg(\frac{y\cdot x}{\lVert y\rVert }\Bigg)\frac{y}{\lVert y\rVert }
 \end{align*}
 In this formula, the projection $\textrm{Proj}_yx$ represents the component of $x$ that lies along the direction of $y$.
