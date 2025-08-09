@@ -104,11 +104,11 @@ Note that the margin and hyperplane are scale invarianct:
 
 
 \section{Error Handling in SVM}
-In practice, it's unrealistic to expect a perfect separation of data, especially when the data is noisy or not linearly separable. To address this, we can allow for some prediction errors while still striving to find an optimal decision boundary.
+In practice, it's unrealistic to expect a perfect separation of data, especially when the data is noisy or not linearly separable. To address this, we can \textbf{allow for some prediction errors while still striving to find an optimal decision boundary}.
 
 One approach is to minimize the norm of the weight vector, while penalizing the number of errors $N_e$. The optimization problem can be formulated as follows:
 \begin{align*}
-	&\min \frac{1}{2}\lVert \mathbf{w}\rVert^2 +C\cdot N_{e},\quad \text{subject to } \\
+	&\min \frac{1}{2}\lVert \mathbf{w}\rVert^2 +C\cdot N_{e},\, \text{ subject to}\\
 	&y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\geq 1 \quad \forall i.
 \end{align*}
 Here, $C$ is a regularization parameter that controls the trade-off between minimizing the weight vector and the number of errors. The penalty approach described here is known as \textit{0-1 loss}, where all errors are treated equally. However, this approach is not commonly used. Instead, a more practical approach introduces a \textit{slack variable} with \textit{hinge loss}. The slack variable ($\xi_j$) measures the degree of misclassification or how much a point is violating the margin. This leads to the following problem:
@@ -119,9 +119,9 @@ Here, $C$ is a regularization parameter that controls the trade-off between mini
 		&\xi_j\geq 0,\ \forall j.
 	\end{cases}
 \end{align*}
-Note that $\xi_j>1$, when SVMs make errors:
+Note that $\xi_j>1$, when SVMs make prediction errors:
 \begin{align*}
-	\xi_j = (1-(\mathbf{w}\mathbf{x}_j+b)y_j)_+
+	\xi_j = \left(1-(\mathbf{w}\mathbf{x}_j+b)\cdot y_j\right)
 \end{align*}
 Let's look at the new constraint. If some data points are misclassified, then $\xi_j>1$ and $y_i(\mathbf{w}\cdot \mathbf{x}_i+b)\leq 0$. This approach is called \textbf{soft-margin SVM}. Lastly, how do we set $C$? A large value of $C$ places a higher penalty on errors, leading to a narrower margin but fewer misclassifications (\ie  the SVM will try to classify all data points correctly), whereas a smaller value of $C$ allows for a wider margin but potentially more misclassifications. The optimal value of $C$ is typically chosen through cross-validation.
 

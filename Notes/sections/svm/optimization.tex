@@ -31,7 +31,7 @@ Recall that we want to solve the following convex quadratic optimization problem
 \end{align*}
 The objective is to find the optimal hyperplane that maximizes the margin between two classes of data points. 
 
-We can reformulate this optimization problem using the method of Lagrange multipliers, which introduces a set of multipliers $\alpha_i$ (one for each constraint). The Lagrangian function for this problem is given by:
+We can reformulate this optimization problem using the method of Lagrange multipliers, which introduces a set of multipliers $\alpha_i$ (\cf one for each constraint). The Lagrangian function for this problem is given by:
 \begin{align*}
 	\mathcal{L}(\mathbf{w}, b, \alpha) = \frac{1}{2}\lVert \mathbf{w}\rVert ^2 - \sum_{i=1}^N \alpha_i \left[y_i(\mathbf{w}\cdot \mathbf{x}_i+b)-1\right]
 \end{align*}
