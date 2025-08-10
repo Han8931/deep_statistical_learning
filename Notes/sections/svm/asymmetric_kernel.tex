@@ -48,8 +48,8 @@ Note that this formulation is almost the same as the LS-SVM except that this con
 \subsection{Dual Form}
 Let's transform it into a \textit{dual} form. The dual problem involves solving a system of linear equations derived from the primal problem's Lagrangian. The Lagrangian function for the primal problem is:
 \begin{align*}
-	\mathcal{L}( \omega, \nu, b_1, b_2, e, h, \alpha, \beta) &= \frac{1}{2} \omega^T \nu + \frac{\gamma}{2} \sum_{i=1}^m e_i^2 + \frac{\gamma}{2} \sum_{i=1}^m h_i^2\\ 
-		   &+ \sum_{i=1}^m \alpha_i (1 - e_i - y_i (\omega^T \phi_s(x_i) + b_1)) + \sum_{i=1}^m \beta_i (1 - h_i - y_i (\nu^T \phi_t(x_i) + b_2))
+	&\mathcal{L}( \omega, \nu, b_1, b_2, e, h, \alpha, \beta) = \\
+	&\frac{1}{2} \omega^T \nu + \frac{\gamma}{2} \sum_{i=1}^m e_i^2 + \frac{\gamma}{2} \sum_{i=1}^m h_i^2+ \\& \sum_{i=1}^m \alpha_i (1 - e_i - y_i (\omega^T \phi_s(x_i) + b_1)) + \sum_{i=1}^m \beta_i (1 - h_i - y_i (\nu^T \phi_t(x_i) + b_2))
 \end{align*}
 The KKT conditions are derived by setting the partial derivatives of the Lagrangian with respect to \( \omega, \nu, b_1, b_2, e, \) and \( h \) to zero. The dual problem leads to the following linear system:
 

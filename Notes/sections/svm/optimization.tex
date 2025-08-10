@@ -38,9 +38,9 @@ We can reformulate this optimization problem using the method of Lagrange multip
 
 \subsection{Duality and the Lagrangian Problem}
 
-While we could attempt to solve the primal optimization problem directly, it is often more practical, especially for large datasets, to reformulate the problem using the duality principle. The dual form is advantageous because it depends only on the inner products of the data points, which allows the use of kernel methods for non-linear classification.
+While we could attempt to solve the primal optimization problem directly, it is often more practical, especially for large datasets, to reformulate the problem using the duality principle. The dual form is advantageous because it depends only on the inner products of the data points, which allows the use of \textit{kernel} methods for non-linear classification.
 
-TO find the solution to the primal problem, we solve the following problem:
+To find the solution to the primal problem, we solve the following problem:
 \begin{align*}
 	&\max_{\mathbf{w}, b}\min_\alpha \mathcal{L}(\rvw, b, \alpha)\\
 	&\textrm{subject to}\quad \alpha_i\geq 0, \forall i.
@@ -49,10 +49,10 @@ Here, we maximize the Lagrangian with respect to the multipliers $\alpha_i$, whi
 
 \subsection{Handling Inequality Constraints with KKT Conditions}
 
-You may observe that the method of Lagrange multipliers is used for equality constraints. However, it can be extended to handle inequality constraints through the use of additional conditions known as the \textbf{Karush-Kuhn-Tucker (KKT) conditions}. These conditions ensure that the solution satisfies the necessary optimality criteria for problems with inequality constraints. For more details on the KKT conditions, refer to \Cref{sec:kkt_condition}. 
+You may observe that the method of Lagrange multipliers is used for equality constraints. However, it can be extended to handle inequality constraints through the use of additional conditions known as the \textbf{Karush-Kuhn-Tucker (KKT) conditions}. These conditions ensure that the solution satisfies the necessary optimality criteria for problems with inequality constraints. For more details on the KKT conditions. 
 
 \section{The Wolfe Dual Problem}
-The Lagrangian problem for SVM optimization involves $N$ inequality constraints, where $N$ is the number of training examples. This problem is typically tacked using its \textit{dual form}. The duality principle provides a powerful framework, stating that \textbf{an optimization problem can be approached from two perspectives}: 
+The Lagrangian problem for SVM optimization involves $N$ inequality constraints, where $N$ is the number of training examples. This problem is typically tackled by using its \textit{dual form}. The duality principle provides a powerful framework, stating that \textbf{an optimization problem can be approached from two perspectives}: 
 
 \begin{enumerate}
 	\item The \textit{primal problem}, which in our context is a minimization problem.
@@ -60,7 +60,7 @@ The Lagrangian problem for SVM optimization involves $N$ inequality constraints,
 \end{enumerate}
 An important aspect of duality is that \textbf{the maximum value of the dual problem is always less than or equal to the minimum value of the primal problem.} This relationship means that the dual problem \textbf{provides a lower bound to the solution of the primal problem}.
 
-In the context of SVM optimization, we are dealing with a convex optimization problem. According to \textbf{Slater's condition}, which applies to problems with affine constraints, strong duality holds. Strong duality implies that the optimal values of the primal and dual problems are equal, meaning the maximum value of the dual problem equals the minimum value of the primal problem. This equality allows us to solve the dual problem instead of the primal problem, often leading to computational advantages.
+In the context of SVM optimization, we are dealing with a convex optimization problem. According to \textit{Slater's condition}, which applies to problems with affine constraints, strong duality holds. Strong duality implies that the optimal values of the primal and dual problems are equal, meaning the maximum value of the dual problem equals the minimum value of the primal problem. This equality allows us to solve the dual problem instead of the primal problem, often leading to computational advantages.
 
 Recall that we aim to solve the following optimization problem:
 \begin{align*}
@@ -82,10 +82,10 @@ Next, we substitute the objective function with $\rvw$:
 						  &= \frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i\cdot \mathbf{x}_j - \sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i \cdot \mathbf{x}_j-\sum_i \alpha_i y_i b+\sum_i \alpha_i \\
 						  &= \sum_i \alpha_i -\frac{1}{2}\sum_i\sum_j \alpha_i\alpha_j y_iy_j \mathbf{x}_i\cdot \mathbf{x}_j-\sum_i \alpha_i y_i b
 \end{align*}
-Note that we use two indices, $i$ and $j$ when substituting $\mathbf{W}$. This is obvious if we consider a simple example. Imagine you have two data points:
+Note that we use two indices, $i$ and $j$ when substituting $\mathbf{W}$. This is clear when we consider a simple example. Let's say you have two data points:
 \begin{align*}
-	\rvx_1,y1&=(1,2),1\\
-	\rvx_2,y2&=(2,1),−1
+	\rvx_1,y_1&=(1,2),1\\
+	\rvx_2,y_2&=(2,1),−1
 \end{align*}
 Then,
 \begin{align*}
@@ -106,7 +106,7 @@ Once we get the value of $\alpha$, the optimal $\rvw$ and $b$ can be computed us
 \begin{align*} 
 	\alpha_i \left[ y_i(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 \right] = 0. 
 \end{align*}
-One important aspect of the dual problem is that it only involves the dot product of the input vectors $\rvx$. This property allows us to use of the \textbf{kernel trick} to handle non-linearly separable data by mapping it to a higher-dimensional space. 
+One important aspect of the dual problem is that it only involves the dot product of the input vectors $\rvx$. This property allows us to use of the \textit{kernel trick} to handle non-linearly separable data by mapping it to a higher-dimensional space. 
 
 % Details will be covered in the following section.
 
@@ -115,7 +115,7 @@ One important aspect of the dual problem is that it only involves the dot produc
 
 When dealing with optimization problems that involve inequality constraints, such as those encountered in Support Vector Machines (SVMs), an additional requirement must be met: the solution must satisfy the \textbf{Karush-Kuhn-Tucker (KKT) conditions}.
 
-The KKT conditions are a set of first-order necessary conditions that must be satisfied for a solution to be optimal. These conditions extend the method of Lagrange multipliers to handle inequality constraints and are particularly useful in non-linear programming. For the KKT conditions to apply, the problem must also satisfy certain regularity conditions. Fortunately, one of these regularity conditions is Slater’s condition, which we have already established holds true for SVMs.
+The KKT conditions are a set of first-order necessary conditions that must be satisfied for a solution to be optimal. These conditions extend the method of Lagrange multipliers to handle inequality constraints and are particularly useful in non-linear programming. For the KKT conditions to apply, the problem must also satisfy certain regularity conditions. Fortunately, one of these regularity conditions is \textit{Slater}'s condition, which we have already established holds true for SVMs.
 
 \subsection{KKT Conditions and SVM Optimization}
 
@@ -129,22 +129,21 @@ $$ w=\sum_{i\in \mathcal S}\alpha_i\,y_i\,x_i $$
 Then, the decision function is
 $$ f(x)=w^{\!\top}x + b $$
 
-Since the feature map $\phi(\,\cdot\,)$ may live in a huge or even infinite-dimensional space, we never form $w$ explicitly. Instead we keep the **kernel trick** inside the decision function:
-$$ f(x)=\sum_{i\in\mathcal S}\alpha_i\,y_i\,K(x_i,\,x)+b $$
-
+Since the feature map $\phi(\,\cdot\,)$ may live in a huge or even infinite-dimensional space, we never form $w$ explicitly. Instead we keep the \textit{kernel trick} inside the decision function:
+\begin{align*}
+	f(x)=\sum_{i\in\mathcal S}\alpha_i\,y_i\,K(x_i,\,x)+b,
+\end{align*}
 where $K(x_i,x)=\langle\phi(x_i),\phi(x)\rangle$.
 Typical kernels are the RBF $K(u,v)=\exp\!\bigl(-\frac{\|u-v\|^2}{2\sigma^2}\bigr)$ or the polynomial $K(u,v)=(u^{\!\top}v+c)^p$.
 
 Finally, we need to turn the decision value into a class label. For binary classification the prediction is simply the sign of the decision function:
-
-$$
-\hat y = \operatorname{sign}\bigl(f(x)\bigr) = 
-\begin{cases}
-+1 &\text{if }f(x)\gt 0,\\[4pt]
--1 &\text{if }f(x)\lt 0.
-\end{cases}
-$$
-
+\begin{align*}
+	\hat y = \operatorname{sign}\bigl(f(x)\bigr) = 
+	\begin{cases}
+	+1 &\text{if }f(x)\gt 0,\\[4pt]
+	-1 &\text{if }f(x)\lt 0.
+	\end{cases}
+\end{align*}
 In sum,
 $$
 \textbf{Predict}(x):
