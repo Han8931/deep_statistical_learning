@@ -65,7 +65,7 @@ plt.show()
 
 \subsection{MLE Interpretation}
 \begin{align*}
-	&\mathcal{L}(\boldsymbol{\theta}; \mathcal{D}) = \prod_{t=1}^n \frac{1}{\sqrt{2\pi \sigma^2}} \exp \left(-\frac{(y_t-\boldsymbol{\theta}\rvx_t)^2}{2\sigma^2}\right)\\
+	&\mathcal{L}(\boldsymbol{\theta}; \mathcal{D}) = p(\rvy | X, \rvx ) = \prod_i p(y_i | \rvx_i, \rvx ) = \prod_{t=1}^n \frac{1}{\sqrt{2\pi \sigma^2}} \exp \left(-\frac{(y_t-\boldsymbol{\theta}\rvx_t)^2}{2\sigma^2}\right)\\
 	&\log \mathcal{L}(\boldsymbol{\theta}; \mathcal{D}) = \text{const} - \frac{1}{2\sigma^2}\sum_{t=1}^n(y_t-\boldsymbol{\theta}\rvx_t)^2
 \end{align*}
 

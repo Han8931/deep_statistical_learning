@@ -2,7 +2,10 @@
 
 \section{Introduction}
 \label{sec:gaussian_process}
-A Gaussian process (GP) is a probability distribution over possible functions that fit a set of points fully specified by a mean and covariance function. \textbf{It means that GPs don't give you a single function to fit data. They will give you an entire distribution of possible functions.} More formally, GPs define \textbf{distributions over functions} $f(x)$ of which the distribution is defined by a mean function $m(x)=\mathbb{E}[f(x)]$ and positive definite covariance function $k(x,x')=\mathbb{E}[(f(x)-m(x))(f(x')-m(x'))]$, which tells us how points are related to each other (\ie \textit{kernel}). Thus, it is a distribution over functions whose shape is defined by the kernel:
+A \textit{Gaussian process} (GP) is a probability distribution over possible functions that fit a set of points fully specified by a mean and covariance function. It is a generalization of the Gaussian probability distribution. Whereas a probability distribution describes random variables which are scalars or vectors (for multivariate distributions), a stochastic process governs the properties of functions.
+
+
+\textbf{It means that GPs don't give you a single function to fit data. They will give you an entire distribution of possible functions.} More formally, GPs define \textbf{distributions over functions} $f(x)$ of which the distribution is defined by a mean function $m(x)=\mathbb{E}[f(x)]$ and positive definite covariance function $k(x,x')=\mathbb{E}[(f(x)-m(x))(f(x')-m(x'))]$, which tells us how points are related to each other (\ie \textit{kernel}). Thus, it is a distribution over functions whose shape is defined by the kernel:
 % A GP is a collection of R.Vs., where any finite subset follows a multivariate Gaussian distribution.
 \begin{align*}
 	f(x) \sim \mathcal{GP}(m(x),k(x,x')).
