@@ -64,10 +64,16 @@ plt.show()
 \end{lstlisting}
 
 \subsection{MLE Interpretation}
+If we assume $\boldsymbol{\epsilon}_i\sim \mathcal{N}(0, \sigma^2)$, then 
 \begin{align*}
-	&\mathcal{L}(\boldsymbol{\theta}; \mathcal{D}) = \prod_{t=1}^n \frac{1}{\sqrt{2\pi \sigma^2}} \exp \left(-\frac{(y_t-\boldsymbol{\theta}\rvx_t)^2}{2\sigma^2}\right)\\
-	&\log \mathcal{L}(\boldsymbol{\theta}; \mathcal{D}) = \text{const} - \frac{1}{2\sigma^2}\sum_{t=1}^n(y_t-\boldsymbol{\theta}\rvx_t)^2
+	y_i|\rvx_i \sim \mathcal{N}(\mathbf{X}\boldsymbol{\theta}, \sigma^2).
 \end{align*}
+Thus, the likelihood (\ie the probability density of the observations given the parameters) function is given by
+\begin{align*}
+	&\mathcal{L}(\boldsymbol{\theta}; \mathcal{D}) = p(\rvy | X, \boldsymbol{\theta} ) = \prod_i^n p(y_i | \rvx_i, \boldsymbol{\theta} ) = \prod_{i=1}^n \frac{1}{\sqrt{2\pi \sigma^2}} \exp \left(-\frac{(y_i-\boldsymbol{\theta}\rvx_i)^2}{2\sigma^2}\right)\\
+	&\log \mathcal{L}(\boldsymbol{\theta}; \mathcal{D}) = \text{const} - \frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\boldsymbol{\theta}\rvx_i)^2
+\end{align*}
+For a fixed $\sigma$, it is equivalent to minimizing the MSE. 
 
 \subsection{Time Complexity}
 The time complexity of the training process involves the following steps:
