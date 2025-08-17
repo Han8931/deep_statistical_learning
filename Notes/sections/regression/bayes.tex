@@ -103,3 +103,147 @@ Since both the likelihood and posterior are Gaussian, the predictive distributio
 
 In Bayesian regression, we incorporate prior beliefs about the regression coefficients through the prior distribution $ p(\beta) $, and update this belief after observing data to obtain the posterior distribution $ p(\beta | y, X) $. This method provides not only point estimates of the regression coefficients but also quantifies the uncertainty in these estimates through the posterior distribution.
 
+
+% We use the model (no intercept for simplicity):
+
+% $$
+% y = X\beta + \epsilon,\quad \epsilon\sim\mathcal{N}(0,\sigma^2 I),
+% $$
+
+% with $\beta\in\mathbb{R}^2$. Choose:
+
+% $$
+% X=\begin{bmatrix}
+% 1 & 1\\
+% 1 & -1
+% \end{bmatrix},\qquad
+% y=\begin{bmatrix}2\\0\end{bmatrix},\qquad
+% \sigma^2=1.
+% $$
+
+% Prior:
+
+% $$
+% \beta \sim \mathcal{N}(\mu_0,\Sigma_0),\quad
+% \mu_0=\begin{bmatrix}0\\0\end{bmatrix},\quad
+% \Sigma_0=I_2.
+% $$
+
+% ## Posterior
+
+% General conjugate formulas:
+
+% $$
+% \Sigma_n=\Big(\Sigma_0^{-1}+\tfrac{1}{\sigma^2}X^\top X\Big)^{-1},\qquad
+% \mu_n=\Sigma_n\Big(\Sigma_0^{-1}\mu_0+\tfrac{1}{\sigma^2}X^\top y\Big).
+% $$
+
+% Here,
+
+% $$
+% X^\top X
+% =\begin{bmatrix}
+% 1&1\\
+% 1&-1
+% \end{bmatrix}^\top
+% \begin{bmatrix}
+% 1&1\\
+% 1&-1
+% \end{bmatrix}
+% =
+% \begin{bmatrix}
+% 2&0\\
+% 0&2
+% \end{bmatrix}
+% =2I_2,
+% $$
+
+% $$
+% X^\top y
+% =
+% \begin{bmatrix}
+% 1&1\\
+% 1&-1
+% \end{bmatrix}^\top
+% \begin{bmatrix}
+% 2\\0
+% \end{bmatrix}
+% =
+% \begin{bmatrix}
+% 2\\2
+% \end{bmatrix}.
+% $$
+
+% Since $\Sigma_0^{-1}=I_2$ and $\sigma^2=1$,
+
+% $$
+% \Sigma_n=\big(I_2+2I_2\big)^{-1}=(3I_2)^{-1}=\tfrac{1}{3}I_2,
+% $$
+
+% $$
+% \mu_n=\Sigma_n\,(X^\top y)=\tfrac{1}{3}I_2\begin{bmatrix}2\\2\end{bmatrix}
+% =\begin{bmatrix}\tfrac{2}{3}\\[2pt]\tfrac{2}{3}\end{bmatrix}.
+% $$
+
+% **Result:**
+
+% $$
+% \beta \mid X,y \sim \mathcal{N}\!\left(
+% \begin{bmatrix}\tfrac{2}{3}\\[2pt]\tfrac{2}{3}\end{bmatrix},
+% \;\tfrac{1}{3}I_2
+% \right).
+% $$
+
+% ## Prediction at a new point
+
+% Take a new input $x_*=\begin{bmatrix}1\\2\end{bmatrix}$ (two features). The predictive distribution is:
+
+% $$
+% y_* \mid x_*,X,y \sim \mathcal{N}\!\big(x_*^\top \mu_n,\; x_*^\top \Sigma_n x_* + \sigma^2\big).
+% $$
+
+% Compute mean:
+
+% $$
+% x_*^\top \mu_n
+% =
+% \begin{bmatrix}1&2\end{bmatrix}
+% \begin{bmatrix}\tfrac{2}{3}\\[2pt]\tfrac{2}{3}\end{bmatrix}
+% =
+% \tfrac{2}{3}+ \tfrac{4}{3}
+% =2.
+% $$
+
+% Compute variance:
+
+% $$
+% x_*^\top \Sigma_n x_* + \sigma^2
+% =
+% \begin{bmatrix}1&2\end{bmatrix}
+% \Big(\tfrac{1}{3}I_2\Big)
+% \begin{bmatrix}1\\2\end{bmatrix}
+% + 1
+% =
+% \tfrac{1}{3}(1^2+2^2) + 1
+% =
+% \tfrac{5}{3}+1
+% =
+% \tfrac{8}{3}.
+% $$
+
+% **Predictive distribution:**
+
+% $$
+% y_* \sim \mathcal{N}\!\left(2,\;\tfrac{8}{3}\right).
+% $$
+
+% ---
+
+% ## Why this is easy by hand
+
+% * $X^\top X=2I_2$ keeps inverses trivial.
+% * Prior and noise variances are 1.
+% * All matrix multiplications are small and orthogonal.
+
+% If you want an intercept too, set $X=\begin{bmatrix}1&1&1\\1&1&-1\end{bmatrix}$ and carry out the same steps with a 3D prior; the algebra is identical, just one dimension larger.
+

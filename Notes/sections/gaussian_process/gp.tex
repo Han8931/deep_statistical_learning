@@ -2,10 +2,10 @@
 
 \section{Introduction}
 \label{sec:gaussian_process}
-A \textit{Gaussian process} (GP) is a probability distribution over possible functions that fit a set of points fully specified by a mean and covariance function. It is a generalization of the Gaussian probability distribution. Whereas a probability distribution describes random variables which are scalars or vectors (for multivariate distributions), a stochastic process governs the properties of functions.
+A \textit{Gaussian process} (GP) is a probability distribution over possible functions that fit a set of points fully specified by a mean and covariance function (posterior over $f$, function space view). It is a generalization of the Gaussian probability distribution. Whereas a probability distribution describes random variables which are scalars or vectors (for multivariate distributions), a stochastic process governs the properties of functions.
 
 
-\textbf{It means that GPs don't give you a single function to fit data. They will give you an entire distribution of possible functions.} More formally, GPs define \textbf{distributions over functions} $f(x)$ of which the distribution is defined by a mean function $m(\rvx)=\mathbb{E}[f(\rvx)]$ and positive definite covariance function $k(\rvx,\rvx')=\mathbb{E}[(f(\rvx)-m(\rvx))(f(\rvx')-m(\rvx'))]$, which tells us how points are related to each other (\ie \textit{kernel}). Thus, it is a distribution over functions whose shape is defined by the kernel:
+\textbf{It means that GPs don't give you a single function to fit data. They will give you an entire distribution of possible functions.}   More formally, GPs define \textbf{distributions over functions} $f(x)$ of which the distribution is defined by a mean function $m(\rvx)=\mathbb{E}[f(\rvx)]$ and positive definite covariance function $k(\rvx,\rvx')=\mathbb{E}[(f(\rvx)-m(\rvx))(f(\rvx')-m(\rvx'))]$, which tells us how points are related to each other (\ie \textit{kernel}). Thus, it is a distribution over functions whose shape is defined by the kernel:
 % A GP is a collection of R.Vs., where any finite subset follows a multivariate Gaussian distribution.
 \begin{align*}
 	f(\rvx) \sim \mathcal{GP}(m(\rvx),k(\rvx,\rvx')).
@@ -203,4 +203,193 @@ This gives the complete predictive distribution for the function value at $x_*$.
 
 \section{Time Complexity}
 
-One drawback of Gaussian processes is that it scales very badly with the number of observations $N$. It takes $O(N^3)$ time.
+One drawback of Gaussian processes is that it scales very badly with the number of observations $N$. It takes $O(N^3)$ time, since we need to compute the inverse of the kernel matrix.
+
+
+\section{Example}
+
+We observe two training points in $\mathbb{R}^2$:
+$$
+X = \{(0,0), (1,1)\}, \quad y = \{1, 2\}.
+$$
+
+We want to predict the function value at a new test point:
+$$
+x_* = (0,1).
+$$
+
+We use the squared exponential (RBF) kernel for 2D inputs:
+$$
+k(x, x') = \exp\!\left(-\frac{\|x - x'\|^2}{2\ell^2}\right), \quad \ell = 1.
+$$
+
+Assume zero mean and no noise ($\sigma_n^2 = 0$).
+
+\paragraph{Compute covariance matrices}
+
+Training covariance:
+$$
+K(X,X) =
+\begin{bmatrix}
+k((0,0),(0,0)) & k((0,0),(1,1)) \\
+k((1,1),(0,0)) & k((1,1),(1,1))
+\end{bmatrix}.
+$$
+
+Compute distances:
+\begin{itemize}
+	\item $\|(0,0) - (0,0)\|^2 = 0 \quad \Rightarrow k=1.$
+	\item $\|(0,0) - (1,1)\|^2 = 1^2+1^2 = 2 \quad \Rightarrow k=e^{-1}=0.3679.$
+	\item $\|(1,1) - (1,1)\|^2 = 0 \quad \Rightarrow k=1.$
+\end{itemize}
+
+
+So:
+$$
+K =
+\begin{bmatrix}
+1 & 0.3679 \\
+0.3679 & 1
+\end{bmatrix}.
+$$
+
+Cross-covariance $K(X, x_*)$:
+
+Distances:
+\begin{itemize}
+	\item $\|(0,0) - (0,1)\|^2 = 1 \quad \Rightarrow k=e^{-0.5}=0.6065.$
+	\item $\|(1,1) - (0,1)\|^2 = 1 \quad \Rightarrow k=e^{-0.5}=0.6065.$
+\end{itemize}
+
+So:
+$$
+K(X, x_*) =
+\begin{bmatrix}
+0.6065 \\
+0.6065
+\end{bmatrix}.
+$$
+
+Test covariance:
+
+$$
+K(x_*, x_*) = 1.
+$$
+
+\paragraph{Posterior mean}
+$$
+\mathbb{E}[f_*] = K(X,x_*)^\top K(X,X)^{-1} y.
+$$
+
+Compute $K^{-1}$.
+For a $2 \times 2$ symmetric matrix:
+$$
+K^{-1} = \frac{1}{1 - (0.3679)^2}
+\begin{bmatrix}
+1 & -0.3679 \\
+-0.3679 & 1
+\end{bmatrix}.
+$$
+
+Denominator: $1 - 0.1353 = 0.8647$.
+So:
+$$
+K^{-1} \approx
+\begin{bmatrix}
+1.156 & -0.425 \\
+-0.425 & 1.156
+\end{bmatrix}.
+$$
+
+Now multiply:
+$$
+K^{-1} y =
+\begin{bmatrix}
+1.156 & -0.425 \\
+-0.425 & 1.156
+\end{bmatrix}
+\begin{bmatrix}
+1 \\
+2
+\end{bmatrix}.
+$$
+
+$$
+= \begin{bmatrix}
+1.156(1) - 0.425(2) \\
+-0.425(1) + 1.156(2)
+\end{bmatrix}
+= \begin{bmatrix}
+0.306 \\
+1.887
+\end{bmatrix}.
+$$
+
+Now compute mean:
+$$
+\mathbb{E}[f_*] = [0.6065 \ \ 0.6065] \begin{bmatrix}0.306 \\ 1.887\end{bmatrix}.
+$$
+
+$$
+= 0.6065(0.306 + 1.887) = 1.33.
+$$
+
+Posterior mean:
+$$
+\mathbb{E}[f(0,1)] \approx 1.33.
+$$
+
+\paragraph{Posterior variance}
+$$
+\text{Var}[f_*] = K(x_*,x_*) - K(X,x_*)^\top K(X,X)^{-1} K(X,x_*).
+$$
+
+First compute:
+$$
+v = K^{-1} K(X,x_*) =
+\begin{bmatrix}
+1.156 & -0.425 \\
+-0.425 & 1.156
+\end{bmatrix}
+\begin{bmatrix}
+0.6065 \\
+0.6065
+\end{bmatrix}.
+$$
+
+$$
+= \begin{bmatrix}
+(1.156 - 0.425)(0.6065) \\
+(-0.425 + 1.156)(0.6065)
+\end{bmatrix}
+=
+\begin{bmatrix}
+0.443 \\
+0.443
+\end{bmatrix}.
+$$
+
+Now:
+$$
+K(X,x_*)^\top v = [0.6065 \ \ 0.6065] \begin{bmatrix}0.443 \\ 0.443\end{bmatrix}.
+$$
+
+$$
+= 0.6065(0.443+0.443) = 0.537.
+$$
+
+So:
+$$
+\text{Var}[f_*] = 1 - 0.537 = 0.463.
+$$
+
+\paragraph{Posterior variance}
+$$
+\text{Std}[f(0,1)] \approx \sqrt{0.463} \approx 0.68.
+$$
+
+For training data $((0,0),1), ((1,1),2)$ and test point $(0,1)$:
+$$
+f(0,1) \sim \mathcal{N}(1.33, \ 0.68^2).
+$$
+
