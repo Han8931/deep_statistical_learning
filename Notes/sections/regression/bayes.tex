@@ -56,17 +56,12 @@ A common choice for the prior distribution on $\beta$ is a Gaussian distribution
 where $\mu_0$ is the prior mean (our prior belief about $\beta$), and $\Sigma_0$ is the prior covariance matrix (representing the uncertainty in our prior belief).
 
 \subsection{Posterior Distribution}
-The posterior distribution of $\beta$ is obtained by combining the likelihood with the prior using Bayes' theorem.
-
-The likelihood is:
+The posterior distribution of $\beta$ is obtained by combining the likelihood with the prior using Bayes' theorem. The likelihood and prior are given by
 \begin{align*}
-	p(y | X, \beta) = \mathcal{N}(y | X\beta, \sigma^2 I)
+	p(y | X, \beta) &= \mathcal{N}(y | X\beta, \sigma^2 I)\\
+	p(\beta) &= \mathcal{N}(\beta | \mu_0, \Sigma_0).
 \end{align*}
-The prior is given by
-\begin{align*}
-	p(\beta) = \mathcal{N}(\beta | \mu_0, \Sigma_0)
-\end{align*}
-Multiplying the prior and the likelihood (and applying properties of Gaussian distributions), we obtain the posterior distribution, which is also Gaussian:
+Since the posterior is proportional to the product of the prior and the likelihood (and applying properties of Gaussian distributions), we obtain the posterior distribution and it is also Gaussian:
 \begin{align*}
 	p(\beta | y, X) = \mathcal{N}(\beta | \mu_n, \Sigma_n),
 \end{align*}
@@ -81,12 +76,8 @@ where:
 			\Sigma_n = \left( \Sigma_0^{-1} + \frac{1}{\sigma^2} X^T X \right)^{-1}
 		\end{align*}
 \end{itemize}
+We can find the best $\beta$ by computing the highest posterior probability and it is called \textit{maximum a posterior} (MAP) approach. 
 
-% \begin{align*}
-% 	\log p(\beta| \mathcal{D}) &= \log p(\beta)+\log p(\mathcal{D}\mid \beta) + \text{const}\\ 
-% 							   &= \dots\\
-% 							   &= \dots\\
-% \end{align*}
 
 
 \subsection{Prediction}
