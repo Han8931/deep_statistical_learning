@@ -1,0 +1,15 @@
+\chapter{Trees}
+
+A classification tree is a flowchart that helps a computer make decisions. It asks a series of yes/no questions about your data like ``Is age $\leq$ 30''? and follows the answers down branches until it reaches a final box (a \textit{leaf}). That leaf says which class the item belongs to, for example spam or not spam.
+
+Trees are popular because they're easy to read and explain. You can show the rules to anyone on your team and they'll understand why a prediction was made. Trees also work well with mixed data (numbers and categories) and need very little data cleaning.
+
+At each step, the tree tries many possible questions and picks the one that best separates the classes. We measure \textit{how mixed} a node is using a number called \textit{impurity} (common choices are \textit{Gini} or \textit{entropy}). A good question makes child nodes less mixed (ideally, each child is mostly one class).
+
+Once a new example flows through the questions to a leaf, the tree predicts the majority class in that leaf. It can also report simple probabilities, like Class A: 80\%, Class B: 20\%, based on how the training examples in that leaf were labeled.
+
+Deep trees can memorize the training data and make mistakes on new data (\textit{overfitting}). You can control this by limiting the depth, requiring a minimum number of samples per split/leaf, or pruning back weak branches. When you need more accuracy and stability, ensembles like \textit{Random Forests} or \textit{Gradient Boosted Trees} build on the same idea but combine many trees.
+
+Decision trees are more prone to overfitting than many of the models, as their learning algorithms can produce large, complicated decision trees that perfectly model every training instance but fail to generalize the real relationship. Several techniques can mitigate over-fitting in decision trees. \textit{Pruning} is a common strategy that removes some of the tallest nodes and leaves of a decision tree. 
+
+\input{./sections/trees/decision_tree}

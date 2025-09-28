@@ -1,1 +1,67 @@
 \chapter{Ensemble Learning}
+
+\section{Bagging}
+
+\textit{Bagging} (bootstrap aggregating) is a simple way to make a noisy model more stable. Imagine you have a wobbly predictor-like a deep decision tree-that can change its mind a lot if the training data changes a little. Instead of trusting a single tree, bagging builds many versions of that model on slightly different views of the data, and then averages their answers (or takes a majority vote for classification). Averaging smooths out the noise, so the final prediction is steadier and usually more accurate.
+
+
+How do we get those slightly different views? That's where bootstrapping comes in. From the original training set, we repeatedly draw new datasets of the same size with replacement (so the same example can appear multiple times, and some examples are left out). Each bootstrapped dataset trains its own model. Because each model sees a different sample, their mistakes won't line up perfectly—averaging then cancels out a lot of the randomness.
+
+Why does this help? Many models, especially high-variance ones like decision trees, can overfit the quirks of a single dataset. Bagging reduces variance by blending many perspectives, without increasing bias too much. In practice, this often yields a solid accuracy boost and better reliability. A nice side effect is you get out-of-bag estimates: the examples left out of each bootstrap can be used as a built-in validation set to measure performance without a separate hold-out.
+
+Bagging isn't magic—if the base model is already very stable (low variance) or consistently biased in the wrong direction, averaging won't fix the core problem. It also costs more compute and can feel less interpretable since you're dealing with many models instead of one. But as a foundational ensemble idea, bagging is both elegant and powerful—and it's the backbone of methods like Random Forests, which add an extra twist by randomly selecting features, too.
+
+\subsection{Intuition}
+
+
+We start with a single training set ($D={(x_i,y_i)}_{i=1}^n$). Instead of hoping for many independent datasets, we \textbf{simulate} them by drawing \textbf{bootstrap samples} ($D_1,\dots,D_M$): each ($D_m$) is formed by sampling ($n$) examples \textbf{with replacement} from ($D$). For each ($D_m$), we fit a base learner ($h_m$) (\eg a decision tree, ridge regression, logistic regression). We then \textbf{aggregate} the models:
+\begin{align*}
+	\bar{h}(x)=\frac{1}{M}\sum_{m=1}^{M}h_m(x).
+\end{align*}
+
+If we could draw truly independent datasets ($D^{(1)},\dots,D^{(M)}$) from the population and train ($h^{D^{(m)}}$) on each, then the \textbf{empirical average hypothesis} would converge to the \textbf{theoretical average hypothesis} ($\mathbb{E}_D[h^D(x)]$) as ($M\to\infty$). With bagging, our bootstraps come from the \textbf{empirical distribution} of ($D$), not the population, so they're not independent. 
+
+\begin{itemize}
+	\item Each bootstrap sample is just a reshuffled, reweighted version of the same original points.
+	\item So two bootstrap samples will overlap a lot (they reuse the same observations), unlike two brand-new datasets collected from the real world.
+	\item In short: they're new mixes of the same ingredients, not new ingredients.
+\end{itemize}
+
+Still, two facts make bagging effective:
+\begin{enumerate}
+	\item \textbf{Variance reduction by averaging}: Training many models on these different mixes and averaging their predictions smooths out noise (reduces variance), especially for models that change a lot when the data changes (like deep trees).
+	\item \textbf{Bootstrap as a population proxy}: Drawing with replacement from ($D$) mimics sampling from the underlying data-generating process via the empirical distribution. This is not perfect independence, but for many learners it's good enough to bring ($\bar h$) close to ($\mathbb{E}_D[h^D(x)]$) in practice, especially for unstable learners (small data perturbations $\to$ large model changes), like deep decision trees.
+\end{enumerate}
+
+\subsection{Bias–variance intuition}
+
+\begin{itemize}
+	\item Variance: Bagging typically decreases variance because averaging stabilizes predictions.
+	\item Bias: Bagging usually does not increase bias, and may slightly reduce it for some learners. But its main win is variance.
+	\item Who benefits most? Unstable learners (\eg trees, k-NN with small ($k$)) benefit a lot. Stable learners (\eg linear/ridge regression) benefit less, though averaging can still help in noisy regimes.
+\end{itemize}
+
+Their are some costs: 
+\begin{itemize}
+	\item Interpretability
+	\item Computational costs
+\end{itemize}
+
+## When and why it works (and when it doesn't)
+
+\begin{itemize}
+	\item Correlation matters. If base learners are too correlated, variance reduction is limited. This is why Random Forests add feature subsampling at each split to further decorrelate trees, improving over plain bagging of trees.
+	\item Computational cost. Training ($M$) models costs ($M\times$) as much compute (though it parallelizes nicely).
+	\item Interpretability. An averaged ensemble is harder to interpret than a single model (especially vs. a small tree or linear model). You can mitigate with feature importance, partial dependence, SHAP, and so on., but it's still less transparent.
+	\item Diminishing returns in ($M$). Gains flatten as (M) grows because you approach the correlation floor. In practice, tens to a few hundreds of models are often sufficient.
+\end{itemize}
+
+\section{Boosting}
+
+Boosting builds a strong model by adding many small, simple models (weak learners) sequentially. Each new model focuses on the mistakes of the models before it. In the end, we add their predictions to get one strong predictor.
+
+\begin{itemize}
+	\item Bagging = parallel averaging to reduce variance.
+	\item Boosting = sequential fixing to reduce bias (and often variance too).
+\end{itemize}
+

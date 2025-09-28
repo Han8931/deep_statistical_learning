@@ -37,6 +37,14 @@
 }
 \lstset{style=mystyle}
 
+\usepackage[most]{tcolorbox}
+\newtcolorbox{commentbox}[1]{colback=blue!5!white,
+  colframe=blue!75!black,
+  fonttitle=\bfseries,
+  title=#1,  % use like \begin{commentbox}{My title}
+  enhanced, breakable
+}
+
 
 \usepackage[autostyle]{csquotes}
 \usepackage{dsfont}
@@ -44,6 +52,7 @@
 % \usepackage{algorithm,algpseudocode}
 \usepackage[ruled,vlined]{algorithm2e}
 \usepackage{multicol}
+\usepackage{multirow}
 
 \usepackage{hyperref}
 \usepackage{amssymb}
@@ -95,12 +104,11 @@
 \part{Introduction}
 % \include{./sections/probability/prob_basics}
 \include{./sections/basics/intro}
-\include{./sections/basics/pca}
-\include{./sections/basics/lda}
 \include{./sections/fourier/fourier}
 \include{./sections/basics/learning}
+
 \include{./sections/basics/optimization}
-\part{Ensemble Learning}
+\include{./sections/trees/trees}
 \include{./sections/ensemble_learning/basics}
 \part{Regression}
 \include{./sections/regression/basics}

@@ -1,0 +1,142 @@
+\section{Classification Tree}
+
+Let ($p_k$) be the fraction of samples of class ($k$) in the node.
+\textbf{Gini impurity}:
+\begin{align*}
+  \text{Gini} = 1 - \sum_{k} p_k^2
+\end{align*}
+\begin{itemize}
+	\item Range: $[0, 0.5]$ (0) (pure) to  0.5 ($p=0.5$) for a binary class problem.
+\end{itemize}
+
+\textbf{Entropy (information entropy)}
+\begin{align*}
+  H = -\sum_{k} p_k \log_2 p_k
+\end{align*}
+\begin{itemize}
+	\item Range: (0) (pure) to ($\log_2 K$) (maximally mixed; for binary, max = 1 bit at ($p=0.5$)).
+\end{itemize}
+
+In both cases, the node is pure when it has 0 impurity and maximally impure when classes are evenly mixed.
+
+\begin{commentbox}{Example}
+
+A node with 80\% class A, 20\% class B: ($p=[0.8,0.2]$)
+\begin{itemize}
+	\item Gini: $1 - (0.8^2 + 0.2^2) = 1 - (0.64+0.04) = 0.32$
+	\item Entropy: $-[0.8\log_2 0.8 + 0.2\log_2 0.2] \approx 0.72$ bits
+\end{itemize}
+
+A node with 60\% / 40\%: ($p=[0.6,0.4]$)
+\begin{itemize}
+	\item Gini: $1 - (0.36 + 0.16) = 0.48$
+	\item Entropy $\approx 0.97$ bits
+\end{itemize}
+\end{commentbox}
+
+How a split is scored (impurity decrease):
+
+Trees choose the split that \textbf{reduces impurity} the most:
+\begin{align*}
+	\text{Gain} = \text{Impurity(parent)} - \Big(\tfrac{n_L}{n}\text{Impurity}(L) + \tfrac{n_R}{n}\text{Impurity}(R)\Big)
+\end{align*}
+
+\begin{commentbox}{Example}
+Let's say a node splits samples as follows:
+	\begin{itemize}
+		\item 100 samples, classes A/B = 60/40 (parent ($p=[0.6,0.4]$))
+		\item Candidate split:  Left: 50 samples (40/10), Right: 50 samples (20/30)
+	\end{itemize}
+The impurity of the node is given by 
+\begin{itemize}
+	\item Gini: 0.48, 
+	\item Entropy: $\approx 0.97$
+\end{itemize}
+
+Then, we can compute the total Gini impurity, which is a weighted average of Gini impurities for the leaves, 
+\begin{itemize}
+	\item Left (40/10, ($p=[0.8,0.2]$)): 
+		\begin{itemize}
+			\item Gini: 0.32, 
+			\item Entropy: $\approx 0.72$
+		\end{itemize}
+	\item Right (20/30, ($p=[0.4,0.6]$)): 
+		\begin{itemize}
+			\item Gini: 0.48
+			\item Entropy $\approx 0.97$
+		\end{itemize}
+\end{itemize}
+
+Then, 
+\begin{itemize}
+	\item Gini: $0.5\times0.32 + 0.5\times0.48 = 0.40$. 
+		\begin{itemize}
+			\item Gain: $0.48 - 0.40 = 0.08$
+		\end{itemize}
+	\item Entropy: $0.5\times0.72 + 0.5\times0.97 = 0.8465$
+		\begin{itemize}
+			\item Gain $\approx 0.97 - 0.8465 = 0.1245$ bits
+		\end{itemize}
+\end{itemize}
+This split improves purity; you'd compare it with other candidate splits and pick the best gain.
+	
+\end{commentbox}
+
+
+% The basic algorithm used in decision trees is known as the ID3 (by Quinlan) algorithm. The ID3 algorithm builds decision trees using a top-down, greedy approach. Briefly, the steps to the algorithm are: Select the best attribute $\rightarrow$ Assign A as the decision attribute (test case) for the NODE. - For each value of A, create a new descendant of the NODE. - Sort the training examples to the appropriate descendant node leaf. - If examples are perfectly.
+
+% Now, the next big question is how to choose the best attribute. For ID3, we think of the best attribute in terms of which attribute has the most information gain, a measure that expresses how well an attribute splits that data into groups based on classification.
+
+% Pseudocode: ID3 is a greedy algorithm that grows the tree top-down, at each node selecting the attribute that best classifies the local training examples. This process continues until the tree perfectly classifies the training examples or until all attributes have been used.
+
+% The pseudocode assumes that the attributes are discrete and that the classification is binary. Examples are the training example. Target attribute is the attribute whose value is to be predicted by the tree. Attributes is a list of other attributes that may be tested by the learned decision tree. Finally, it returns a decision tree that correctly classifies the given Examples.
+
+% \subsection{Information Gain}
+% Information gain is a statistical property that measures how well a given attribute separates the training examples according to their target classification. As you can see in the Fig. , attribute with low information gain (right) splits the data relatively evenly and as a result doesn't bring us any closer to a decision. Whereas, an attribute with high information gain (left) splits the data into groups with an uneven number of positives and negatives and as a result helps in separating the two from each other.
+
+% % Fig \Cref{fig:info_gain}
+
+% % \begin{figure}[h]
+% %     \centering
+% %     \begin{subfigure}{.4\textwidth}
+% %         \centering
+% %         \includegraphics[scale=.45]{./images/decision_tree/high_gain.png}
+% %         \caption{High information gain.}
+% %         \label{fig:high_gain}
+% %     \end{subfigure}
+% %     \begin{subfigure}{.4\textwidth}
+% %         \centering
+% %         \includegraphics[scale=.45]{./images/decision_tree/low_gain.png}
+% %         \caption{Low information gain.}
+% %         \label{fig:low_gain}
+% %     \end{subfigure}
+% %     \caption{Information gain comparison.}
+% %     \label{fig:info_gain}
+% % \end{figure}
+
+% To define information gain precisely, we need to define a measure commonly used in information theory called entropy that measures the level of impurity in a group of examples. Mathematically, it is defined as:
+% $$Entropy = -\sum_i p_i \log p_i$$
+% , where $i$ is the class index. Since, the basic version of the ID3 algorithm deal with the case where classification are either positive or negative, we can define entropy as:
+% $$Entropy(S) = -p_+\log_2 p_+ - p_-\log_2 p_-$$
+% , where 
+% \begin{itemize}
+%     \item $S$: training examples
+%     \item $p_+$: is the proportion of positive examples in $S$
+%     \item $p_-$: is the proportion of negative examples in $S$
+% \end{itemize}
+
+% To illustrate, suppose $S$ is a sample containing 14 boolean examples, with 9 positive and 5 negative examples. Then, the entropy of $S$ relative to this boolean classification is:
+% $$Entropy([9+, 5-]) = -(9/14)\cdot \log_2(9/14) - (5/14)\cdot \log_2(5/14) = 0.940$$
+% Note that entropy is 0 if all the members of $S$ belong to the same class. For example, if all members are positive ($p_+$=1), then $p_-=0$, and $Entropy(S) = -1\cdot \log_2(1) -0\cdot \log_2(0) = 0$. Entropy is 1 when the sample contains an equal number of positive and negative examples. If the sample contains unequal number of positive and negative examples, entropy is between 0 and 1. The following figure shows the form of the entropy function relative to a boolean classification as $p_+$ varies between 0 and 1.
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=.40]{./images/decision_tree/entropy.jpg}
+%     \caption{Entropy.}
+%     \label{fig:entropy}
+% \end{figure}
+
+% Now, given entropy as a measure of the impurity in a sample of training examples, we can now define information gain as a measure of the effectiveness of an attribute in classifying the training data. Information gain, $Gain (S, A)$ of an attribute $A$, relative to a sample of examples $S$, is defined as:
+% $$Gain(S, A) \equiv Entrpoy(S) - \sum_{v \in Values(A)} \frac{|S_v|}{|S|} \cdot Entropy(S_v)$$
+% , where $|S_v|$ is a sample belongs to class $v$ and $|S|$ is the number of training samples. In other words,
+% $$\textrm{Gain  = Parent node of Entropy - [Average of Children Nodes Entropy]}$$
