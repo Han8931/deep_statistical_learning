@@ -68,11 +68,11 @@ Boosting builds a strong model by adding many small, simple models (weak learner
 Types of Boosting Algorithms:
 \begin{itemize}
 	\item AdaBoost (Adaptive Boosting)
-	\item Gradient Tree Boosting
+	\item Gradient Boosting
 	\item XGBoost
 \end{itemize}
 
-\subsection{AdaBoost}
+\section{AdaBoost}
 
 Boosting is a general strategy for learning classifiers by combining simpler ones. The idea of boosting is to take a ``weak classifier'' - that is, any classifier that will do at least slightly better than chance — and use it to build a much better classifier, thereby boosting the performance of the weak classification algorithm. This boosting is done by averaging the outputs of a collection of weak classifiers. 
 
@@ -93,26 +93,41 @@ Suppose we are given training data $\{(\rvx_i, y_i)\}^N_{i=1}$, where $\rvx_i \i
 AdaBoost aims to build a strong classifier by combining many weak ones. It does this in rounds $m=1,2,\dots,M$ :
 
 \begin{enumerate}
-	\item Start fair: Give every training example the same weight (everyone is equally important at the beginning).
-	\item Fit a weak learner on the weighted data
-	\item Compute how good it is: measure its weighted error of weak learner $f_m$, $e_m$. 
+	\item Give every training example the same weight. Every sample is equally important at the beginning.
+	\item Fit a \textit{weak learner} $f_m$ on the weighted data
+	\item Compute how good it is: measure its \textit{weighted error} of weak learner, $e_m$. 
 		\begin{align*}
 			e_m = \sum_{i=1}^{N}w_i^m \cdot I(f_m(\rvx_i), y_i),
 		\end{align*}
 		where $w_i^m$ is the current example weight. 
-	\item Give it a vote: compute $\alpha_m$ (bigger when $e_m$ is smaller). 
+		\begin{itemize}
+			\item This measures how many (weighted) mistakes that stump/tree makes this round.
+		\end{itemize}
+	\item Compute $\alpha_m$, which is the \textit{vote weight} (strength) assigned to that weak learner when forming the final ensemble: 
 		\begin{align*}
 			\alpha_m = \frac{1}{2}\ln \left(\frac{1-e_m}{e_m}\right).
 		\end{align*}
-	\item Focus on the hard cases
+		\begin{itemize}
+			\item minimizing the weighted exponential loss for fixed $f_m$.
+			\item bigger when the error $e_m$ is smaller
+			\item As $e_m\to 0$, $\alpha_m\to \infty$.
+			\item As $e_m\to 1$, $\alpha_m\to -\infty$.
+		\end{itemize}
 	\item Repeat: fit the next weak learner on the reweighted data, and so on.
+		\begin{align*}
+			w_i^{(m+1)}\propto w_i^{(m)}\cdot \exp(-\alpha_m y_i f_m(\rvx_i)).
+		\end{align*}
 \end{enumerate}
 
 After learning, the final classifier is based on a linear combination of the weak classifiers:
 \begin{align*}
-	\sum_m \alpha_mf_m(\rvx).
+	F(\rvx) = \sum_{m=1}^M \alpha_mf_m(\rvx).
 \end{align*}
+If more of the strong (high-$\alpha$) weak learners say $+1$ than $-1$, the final answer is $+1$, etc.
 
+This is why it's called \textbf{adaptive:} each new weak learner adapts to the mistakes of the previous ones by focusing more weight on hard examples.
+
+\section{Gradient Boosting}
 
 
 
