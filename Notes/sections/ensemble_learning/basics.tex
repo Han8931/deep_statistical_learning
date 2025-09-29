@@ -61,7 +61,59 @@ Their are some costs:
 Boosting builds a strong model by adding many small, simple models (weak learners) sequentially. Each new model focuses on the mistakes of the models before it. In the end, we add their predictions to get one strong predictor.
 
 \begin{itemize}
-	\item Bagging = parallel averaging to reduce variance.
-	\item Boosting = sequential fixing to reduce bias (and often variance too).
+	\item Bagging = parallel averaging to reduce \textbf{variance}.
+	\item Boosting = sequential fixing to reduce \textbf{bias} (and often variance too).
 \end{itemize}
+
+Types of Boosting Algorithms:
+\begin{itemize}
+	\item AdaBoost (Adaptive Boosting)
+	\item Gradient Tree Boosting
+	\item XGBoost
+\end{itemize}
+
+\subsection{AdaBoost}
+
+Boosting is a general strategy for learning classifiers by combining simpler ones. The idea of boosting is to take a ``weak classifier'' - that is, any classifier that will do at least slightly better than chance — and use it to build a much better classifier, thereby boosting the performance of the weak classification algorithm. This boosting is done by averaging the outputs of a collection of weak classifiers. 
+
+The most popular boosting algorithm is \textit{AdaBoost}, so-called because it is ``adaptive.'' AdaBoost is extremely simple to use and implement (far simpler than SVMs), and often gives very effective results. There is tremendous flexibility in the choice of weak classifier as well. Boosting is a specific example of a general class of learning algorithms called ensemble methods, which attempt to build better learning algorithms by combining multiple simpler algorithms.
+
+Suppose we are given training data $\{(\rvx_i, y_i)\}^N_{i=1}$, where $\rvx_i \in \mathbb{R}^K$ and $y_i \in \left\{-1, 1\right\}$. And suppose we are given a (potentially large) number of weak classifiers, denoted $f_m(\rvx) \in \left\{-1, 1\right\}$, and a \textbf{0-1} loss function $I$, defined as
+\begin{align*}
+	I(f_m(\rvx), y) = \begin{cases}
+		0&\text{ if } f_m(\rvx_i)=y_i\\
+		1&\text{ if } f_m(\rvx_i)\neq y_i
+	\end{cases}
+\end{align*}
+\begin{itemize}
+	\item $I=0$ if prediction equals the truth ( $\hat{y}=y$)
+	\item $I=1$ if prediction is wrong ( $\hat{y}\neq y$)
+\end{itemize}
+
+AdaBoost aims to build a strong classifier by combining many weak ones. It does this in rounds $m=1,2,\dots,M$ :
+
+\begin{enumerate}
+	\item Start fair: Give every training example the same weight (everyone is equally important at the beginning).
+	\item Fit a weak learner on the weighted data
+	\item Compute how good it is: measure its weighted error of weak learner $f_m$, $e_m$. 
+		\begin{align*}
+			e_m = \sum_{i=1}^{N}w_i^m \cdot I(f_m(\rvx_i), y_i),
+		\end{align*}
+		where $w_i^m$ is the current example weight. 
+	\item Give it a vote: compute $\alpha_m$ (bigger when $e_m$ is smaller). 
+		\begin{align*}
+			\alpha_m = \frac{1}{2}\ln \left(\frac{1-e_m}{e_m}\right).
+		\end{align*}
+	\item Focus on the hard cases
+	\item Repeat: fit the next weak learner on the reweighted data, and so on.
+\end{enumerate}
+
+After learning, the final classifier is based on a linear combination of the weak classifiers:
+\begin{align*}
+	\sum_m \alpha_mf_m(\rvx).
+\end{align*}
+
+
+
+
 
