@@ -56,6 +56,12 @@ Their are some costs:
 	\item Diminishing returns in ($M$). Gains flatten as (M) grows because you approach the correlation floor. In practice, tens to a few hundreds of models are often sufficient.
 \end{itemize}
 
+\section{Random Forest}
+
+Now, what exactly makes a random forest different from a bagged forest? The answer to this question has to do with the way in which single trees are grown in a random forests. We are going to introduce a twist in the tree-building algorithm. More specifically, we are going to modify the node splitting procedure. Assuming we have p features, we predetermine a number $k\ll p$ such that at each node, $k$ features are randomly selected (from the set of $p$ predictors), to find the best split.
+
+The fundamental reason to introduce another random sampling operation, which is repeated for every node partition, is to attempt reducing the number of correlated predictors that could potentially be present in the construction of a single tree. This seemingly awkward operation turns out to return high dividends when a forest is deployed in practice.
+
 \section{Boosting}
 
 Boosting builds a strong model by adding many small, simple models (weak learners) sequentially. Each new model focuses on the mistakes of the models before it. In the end, we add their predictions to get one strong predictor.
@@ -72,7 +78,7 @@ Types of Boosting Algorithms:
 	\item XGBoost
 \end{itemize}
 
-\section{AdaBoost}
+\subsection{AdaBoost}
 
 Boosting is a general strategy for learning classifiers by combining simpler ones. The idea of boosting is to take a ``weak classifier'' - that is, any classifier that will do at least slightly better than chance — and use it to build a much better classifier, thereby boosting the performance of the weak classification algorithm. This boosting is done by averaging the outputs of a collection of weak classifiers. 
 
@@ -127,8 +133,18 @@ If more of the strong (high-$\alpha$) weak learners say $+1$ than $-1$, the fina
 
 This is why it's called \textbf{adaptive:} each new weak learner adapts to the mistakes of the previous ones by focusing more weight on hard examples.
 
-\section{Gradient Boosting}
+\subsection{Gradient Boosting}
 
+Similar to AdaBoost, \textit{gradient boosting} is an ensemble method that combines multiple weak learners (such as decision trees) into a strong learner. Also, similar to AdaBoost (and in contrast to Bagging), gradient boosting is a sequential (rather than parallel) algorithm – it is powerful but rather expensive to train.
 
+In contrast to AdaBoost, we do not adjust the weights for the training examples that have been either misclassified or correctly classified. Also, we do not compute a weight for each model in the sequential gradient boosting ensemble. Instead, in gradient boosting, we \textit{optimize a differentiable loss function} (\eg mean-squared-error for regression or negative log-likelihood for classification) of a weak learner via consecutive rounds of boosting. The output of gradient boosting is an additive models of multiple weak learners (we do not apply majority voting to the ensemble of models like AdaBoost).
 
+Note that in gradient boosting, we may use decision trees (the most common base learning algorithm for gradient boosting is in fact a decision tree algorithm), but we do not necessarily use decision tree stumps. The first model in gradient boosting is basically just a decision tree's root node (on which we do majority voting in classification or averaging in regression). The consequent models in gradient boosting are deeper decision trees. The depth is usually determined by the practitioner. Values like 8 or 32 are common, depending on the complexity of the dataset/difficulty of the task.
+
+Conceptually, the main idea behind gradient boosting can be summarized via the following three steps:
+\begin{enumerate}
+	\item Construct a base tree (just the root node)
+	\item Build next tree based on errors of the previous tree
+	\item Combine tree from step 1 with trees from step 2. Go to step 2.
+\end{enumerate}
 
