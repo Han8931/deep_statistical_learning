@@ -148,3 +148,30 @@ Conceptually, the main idea behind gradient boosting can be summarized via the f
 	\item Combine tree from step 1 with trees from step 2. Go to step 2.
 \end{enumerate}
 
+
+Build a strong predictor by **stacking many tiny corrections**: start with a simple guess, then repeatedly add small models that fix what’s still wrong.
+
+\begin{itemize}
+	\item Start simple: Make an initial prediction for every data point (\eg the average target value).
+	\item Look at what you got wrong: Compute the residuals = (true − predicted).
+	\item For classification, this error is the negative gradient of the loss (that’s the “gradient” in gradient boosting).
+	\item Learn to fix the errors: Train a small, weak model (usually a shallow decision tree) to predict those residuals.
+	\item Add a small step: Add a fraction (the learning rate) of that weak model to your running prediction.
+	\item Repeat: Recompute the residuals with the improved predictions, fit another small tree to those, add it in, and so on.
+\end{itemize}
+
+After ($M$) rounds you have:
+\begin{align*}
+	\hat{y}(x) = f_0(x) + \nu \cdot h_1(x) + \nu \cdot h_2(x) + \cdots + \nu \cdot h_M(x)
+\end{align*}
+where ($f_0$) is the initial guess, each ($h_m$) is a small tree trained to fix current mistakes, and ($\nu$) is the learning rate (\eg 0.1).
+
+\begin{itemize}
+	\item Targets: $[3, 5, 7]$.
+	\item Initial guess: mean = 5 → predictions $[5, 5, 5]$.
+	\item Residuals: $[-2, 0, +2]$.
+	\item Fit a tiny tree to map features → residuals (learns left points are low, right points are high).
+	\item Add a small step (say 0.5$\times$ tree output) to your predictions.
+	\item Recompute residuals and repeat. Each round chips away at what's still wrong.
+\end{itemize}
+
