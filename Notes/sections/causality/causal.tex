@@ -1,0 +1,205 @@
+\chapter{Causal Inference}
+% \section{Introduction}
+
+% Our starting point is the difference between an \textit{observation} and an \textit{action}. What we see in passive observation is how individuals follow their routine behavior, habits, and natural inclination. Passive observation reflects the state of the world projected to a set of features we chose to highlight. Data that we collect from passive observation show a snapshot of our world as it is.
+
+% There are many questions we can answer from passive observation alone: Do 16 year-old drivers have a higher incidence rate of traffic accidents than 18 year-old drivers? Formally, the answer corresponds to a difference of conditional probabilities. We can calculate the conditional probability of a traffic accident given that the driver's age is 16 years and subtract from it the conditional probability of a traffic accident given the age is 18 years. Both conditional probabilities can be estimated from a large enough sample drawn from the distribution, assuming that there are both 16 year old and 18 year old drivers. The answer to the question we asked is solidly in the realm of observational statistics.
+
+% But important questions often are not observational in nature. Would traffic fatalities decrease if we raised the legal driving age by two years? Although the question seems similar on the surface, we quickly realize that it asks for a fundamentally different insight. Rather than asking for the frequency of an event in our manifested world, this question asks for the effect of a hypothetical action.
+
+% As a result, the answer is not so simple. Even if older drivers have a lower incidence rate of traffic accidents, this might simply be a consequence of additional driving experience. There is no obvious reason why an 18 year old with two months on the road would be any less likely to be involved in an accident than, say, a 16 year-old with the same experience. We can try to address this problem by holding the number of months of driving experience fixed, while comparing individuals of different ages. But we quickly run into subtleties. What if 18 year-olds with two months of driving experience correspond to individuals who are exceptionally cautious and hence—by their natural inclination—not only drive less, but also more cautiously? What if such individuals predominantly live in regions where traffic conditions differ significantly from those in areas where people feel a greater need to drive at a younger age?
+
+% We can think of numerous other strategies to answer the original ques- tion of whether raising the legal driving age reduces traffic accidents. We could compare countries with different legal driving ages, say, the United States and Germany. But again, these countries differ in many other possibly relevant ways, such as, the legal drinking age.
+
+% At the outset, causal reasoning is a conceptual and technical framework for addressing questions about the effect of hypothetical actions or interventions. Once we understand what the effect of an action is, we can turn the question around and ask what action plausibly caused an event. This gives us a formal language to talk about cause and effect.
+
+
+\section{Observations vs Actions}
+
+Let's start with the difference between just watching the world and actually changing something in it.
+\begin{itemize}
+	\item When we passively observe, we simply watch how people normally behave, following their habits, routines, and preferences.
+	\item The data we collect in this way are like a snapshot of the world as it currently is, summarized in whatever features we decided to record (age, income, accident history, etc.).
+\end{itemize}
+This kind of data is called \textit{observational data}. So what we can answer with observational data? Some questions fit perfectly into this observational world. For example:
+
+\begin{commentbox}{Example}
+\begin{center}
+	\textit{Do 16-year-old drivers have more traffic accidents than 18-year-old drivers?}
+\end{center}
+This is a question about how often something happens in the world as it is.
+
+Mathematically, we can:
+\begin{itemize}
+	\item Compute the probability of an accident given that the driver is 16.
+	\item Compute the probability of an accident given that the driver is 18.
+	\item Then compare those two numbers (\eg subtract them).
+\end{itemize}
+If we have a large enough sample with both 16- and 18-year-old drivers, we can estimate these probabilities directly from the data. This is standard observational statistics.
+\end{commentbox}
+
+\newpage
+Now consider a slightly different question:
+\begin{center}
+	\textit{What would happen to traffic fatalities if we raised the legal driving age by two years?}
+\end{center}
+This sounds similar, but it's actually a different type of question.
+\begin{itemize}
+	\item The previous question was about \textbf{how often something happens in the current world}.
+	\item This new question is about \textbf{what would happen if we changed the rules of the world.} 
+\end{itemize}
+That is, it's asking about the effect of a \textit{hypothetical action (an intervention)}: ``Raise the driving age $\to$ what changes?''
+
+You can't answer that reliably just by looking at current accident rates by age, because:
+\begin{itemize}
+	\item Maybe older drivers crash less simply because they have more experience, not because they're older.
+	\item An 18-year-old with only 2 months of driving experience might be no safer than a 16-year-old with 2 months of experience.
+\end{itemize}
+We could try to control for experience, for example, we can compare accident rates for people with the same number of months of driving, but different ages.
+
+But even then, we hit complications:
+\begin{itemize}
+	\item Maybe 18-year-olds who only just started driving are unusually cautious people, who drive less and more carefully.
+	\item Maybe they tend to live in areas with different traffic conditions than places where people start driving younger.
+\end{itemize}
+So even when you try to adjust for obvious factors like months of experience, other hidden differences can still mess up your conclusions.
+
+We might try another strategy: Compare countries with different legal driving ages, like the US and Germany. These countries differ in many ways besides driving age:
+\begin{itemize}
+	\item Road design, public transport, culture, enforcement,
+	\item and even other laws, like the legal drinking age.
+\end{itemize}
+So differences in accident rates could be caused by any of those factors, not just the driving age.
+
+\section{What causal reasoning is about}
+
+This is where causal reasoning comes in. Causal reasoning is a framework—both conceptual and technical—for answering questions like:
+\begin{itemize}
+	\item What is the effect of doing X? (\eg raising the driving age)
+	\item What action caused Y? (\eg what policy likely reduced accidents?)
+\end{itemize}
+It focuses on \textit{interventions}: 
+\begin{itemize}
+	\item Not just what is the world like?
+	\item But what would the world look like if we changed something?
+\end{itemize}
+Once we understand how to define and estimate \textit{the effect of an action}, we can turn questions around and ask:
+\begin{center}
+	\textit{Given that we observed this outcome, what actions or causes are likely responsible?}
+\end{center}
+To do this systematically, we use \textit{causal models}, which:
+\begin{itemize}
+	\item Help design better studies (which variables to measure, control, or ignore),
+	\item And give us a formal language to connect assumptions (how we think the world works) to conclusions (what we think would happen under different actions).
+\end{itemize}
+
+\section{The limitations of observation}
+In 1973, researchers looked at graduate school admissions at the University of California, Berkeley. They had data on 12,763 applicants across 101 departments and programs.
+
+\begin{itemize}
+	\item About 4,321 of these applicants were women, and roughly 35\% of them were admitted.
+	\item About 8,442 were men, and around 44\% of them were admitted.
+\end{itemize}
+
+Just looking at these totals, it seems like \textbf{men were more likely to be admitted than women} (44\% vs 35\%). Standard statistical tests say this difference is too big to be explained by random chance alone, so it looks like a real gap.
+
+The same pattern appeared when the researchers focused on the six largest departments:
+\begin{itemize}
+	\item Across these six, men again had an overall acceptance rate of about 44\%,
+	\item while women had an overall rate of about 30\%.
+\end{itemize}
+
+Again, this suggests that men are doing better than women when you look at the data in aggregate (all combined).
+
+However, each department decides who to admit by itself, and departments can be very different — different fields, different standards, different competitiveness. So the researchers drilled down and looked at the acceptance rates within each of those six big departments.
+
+What they found was surprising:
+\begin{itemize}
+	\item In four of the six departments, women actually had a higher acceptance rate than men.
+	\item In the other two departments, men had the higher acceptance rate.
+\end{itemize}
+But those two departments weren't big enough or different enough to explain the large overall gap in the combined data.
+
+We can find a \textit{reversal}:
+\begin{itemize}
+	\item Overall across departments: men seem to be favored.
+	\item Inside most departments: women do as well or better than men.
+\end{itemize}
+This is an example of what's often called \textit{Simpson's paradox}: a situation where a pattern that appears in overall (aggregate) data reverses when you break the data into subgroups.
+
+In this case:
+\begin{itemize}
+	\item Event ($Y$): the applicant is accepted.
+	\item Event ($A$): the applicant is female (gender treated as a binary variable).
+	\item Variable ($Z$): which department the applicant applied to.
+\end{itemize}
+Simpson's paradox means it can happen that:
+\begin{itemize}
+	\item For each department (Z), women might do as well as or better than men:
+		\begin{align*}
+			P(\text{accepted} \mid \text{female}, Z) \ge P(\text{accepted} \mid \text{male}, Z)\text{, but}
+		\end{align*}
+	\item Overall, women still have a lower acceptance rate than men:
+		\begin{align*}
+			P(\text{accepted} \mid \text{female}) < P(\text{accepted} \mid \text{male}).
+		\end{align*}
+\end{itemize}
+This happens because men and women apply to different departments in different proportions, and those departments have different levels of competitiveness.
+
+From the data, one thing is very clear: \textbf{Gender affects which departments people apply to}. Men and women have \textbf{different patterns of department choice}.
+
+We also know that \textbf{departments differ in how hard it is to get in}. Some have low acceptance rates (very competitive), others have higher acceptance rates.
+
+So one plausible explanation is:
+\begin{itemize}
+	\item Women tended to apply more to highly competitive departments, while men applied more to less competitive ones.
+	\item As a result, women were rejected more often overall, even though departments themselves may have treated individual male and female applicants fairly.
+\end{itemize}
+
+This was essentially the conclusion of the original study.
+They argued:
+\begin{itemize}
+	\item The bias seen in the combined statistics does not come from admissions committees systematically discriminating against women.
+	\item Instead, it comes from earlier stages in the pipeline: the way society and the education system have steered women toward certain fields.
+\end{itemize}
+They suggested that: Women were \textbf{shunted} by their upbringing and education into fields that:
+\begin{itemize}
+	\item are more crowded,
+	\item have fewer resources and funding,
+	\item have lower completion rates,
+	\item and often lead to poorer job prospects.
+\end{itemize}
+In other words, they said the gender bias was mainly a \textit{pipeline problem}: by the time women reached graduate applications, they were already concentrated in less favorable, more competitive fields, through no fault of the departments themselves. However, it's hard to fully defend or criticize that conclusion using this data alone, because key information is missing.
+
+For example, we don't know, why women chose those more competitive departments:
+\begin{itemize}
+	\item Maybe some less competitive departments (like certain engineering programs) were unwelcoming to women.
+	\item Maybe some departments had a bad reputation for how they treated women, so women avoided them.
+	\item Maybe the way departments advertised or described themselves discouraged women from applying.
+\end{itemize}
+We also don't know anything about the qualifications of applicants:
+\item It could be that, because of social barriers, women who applied to engineering in 1973 were on average more qualified than the men who applied.
+\item In that case, if the acceptance rate for men and women is equal, it might actually mean women are being held to a higher bar, which would be discrimination.
+
+So, the observed acceptance rates alone cannot tell us whether there was discrimination or not. They leave us with many plausible stories, and we can't distinguish between them without more information.
+
+Given this uncertainty, the author says there are two main options:
+\begin{enumerate}
+\item Design a new study and collect better data.
+	\begin{itemize}
+		\item Measure more variables (like applicant qualifications, department culture, prior experiences, etc.).
+		\item This might allow a more conclusive answer about discrimination.
+	\end{itemize}
+
+\item Stay with the current data and argue using assumptions and background knowledge.
+
+	\begin{itemize}
+		\item Use what we know about the social context of the 1970s, academic culture, and gender norms.
+		\item Then argue about which explanation is more likely:
+			\begin{itemize}
+				 \item Is it mostly a neutral pipeline effect?
+				 \item Or a mix of pipeline factors and discrimination at various stages?
+			\end{itemize}
+	\end{itemize}
+\end{enumerate}
+
