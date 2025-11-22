@@ -7,7 +7,7 @@
 
 How do we get those slightly different views? That's where bootstrapping comes in. From the original training set, we repeatedly draw new datasets of the same size with replacement (so the same example can appear multiple times, and some examples are left out). Each bootstrapped dataset trains its own model. Because each model sees a different sample, their mistakes won't line up perfectly—averaging then cancels out a lot of the randomness.
 
-Why does this help? Many models, especially high-variance ones like decision trees, can overfit the quirks of a single dataset. Bagging reduces variance by blending many perspectives, without increasing bias too much. In practice, this often yields a solid accuracy boost and better reliability. A nice side effect is you get out-of-bag estimates: the examples left out of each bootstrap can be used as a built-in validation set to measure performance without a separate hold-out.
+Why does this help? Many models, especially high-variance ones like decision trees, can overfit the quirks of a single dataset. \textbf{Bagging reduces variance by blending many perspectives, without increasing bias too much}. In practice, this often yields a solid accuracy boost and better reliability. A nice side effect is you get out-of-bag estimates: the examples left out of each bootstrap can be used as a built-in validation set to measure performance without a separate hold-out.
 
 Bagging isn't magic—if the base model is already very stable (low variance) or consistently biased in the wrong direction, averaging won't fix the core problem. It also costs more compute and can feel less interpretable since you're dealing with many models instead of one. But as a foundational ensemble idea, bagging is both elegant and powerful—and it's the backbone of methods like Random Forests, which add an extra twist by randomly selecting features, too.
 
@@ -64,7 +64,7 @@ The fundamental reason to introduce another random sampling operation, which is 
 
 \section{Boosting}
 
-Boosting builds a strong model by adding many small, simple models (weak learners) sequentially. Each new model focuses on the mistakes of the models before it. In the end, we add their predictions to get one strong predictor.
+Boosting builds a strong model by adding many small, simple models (weak learners) sequentially. \textbf{Each new model focuses on the mistakes of the models before it}. In the end, we add their predictions to get one strong predictor.
 
 \begin{itemize}
 	\item Bagging = parallel averaging to reduce \textbf{variance}.
@@ -148,13 +148,12 @@ Conceptually, the main idea behind gradient boosting can be summarized via the f
 	\item Combine tree from step 1 with trees from step 2. Go to step 2.
 \end{enumerate}
 
-
-Build a strong predictor by **stacking many tiny corrections**: start with a simple guess, then repeatedly add small models that fix what’s still wrong.
+Build a strong predictor by stacking many tiny corrections: start with a simple guess, then repeatedly add small models that fix what's still wrong.
 
 \begin{itemize}
 	\item Start simple: Make an initial prediction for every data point (\eg the average target value).
 	\item Look at what you got wrong: Compute the residuals = (true − predicted).
-	\item For classification, this error is the negative gradient of the loss (that’s the “gradient” in gradient boosting).
+	\item For classification, this error is the negative gradient of the loss (that's the "gradient" in gradient boosting).
 	\item Learn to fix the errors: Train a small, weak model (usually a shallow decision tree) to predict those residuals.
 	\item Add a small step: Add a fraction (the learning rate) of that weak model to your running prediction.
 	\item Repeat: Recompute the residuals with the improved predictions, fit another small tree to those, add it in, and so on.

@@ -50,7 +50,7 @@ Some special metrics:
 
 \subsection{Precision Recall Graphs}
 
-When classes are highly imbalanced, ROC curves can be misleading. With very few positives, the false positive rate (FPR) can stay low even for weak models, giving an overly optimistic picture. In these cases, precision–recall (PR) curves are more informative because they focus on the positive class: they plot precision (y-axis) versus recall (x-axis), where recall equals TPR. PR curves highlight how many of the predicted positives are actually correct (precision) at each level of coverage (recall), making them better suited for rare-event detection.
+When classes are highly imbalanced, ROC curves can be misleading. \textbf{With very few positives, the false positive rate (FPR) can stay low even for weak models, giving an overly optimistic picture}. In these cases, \textbf{precision–recall (PR) curves are more informative because they focus on the positive class}: they plot precision (y-axis) versus recall (x-axis), where recall equals TPR. PR curves highlight how many of the predicted positives are actually correct (precision) at each level of coverage (recall), making them better suited for rare-event detection.
 
 This is because precision is more informative than FPR under heavy class imbalance: precision ignores true negatives (TN), whereas FPR uses them. The illustrative plot below shows the difference.
 
