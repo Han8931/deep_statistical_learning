@@ -1,6 +1,9 @@
 \documentclass[oneside, a4paper,11pt]{book}
 \usepackage[margin=1in]{geometry}
 
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
@@ -110,7 +113,6 @@
 \include{./sections/basics/optimization}
 \include{./sections/trees/trees}
 \include{./sections/ensemble_learning/basics}
-\include{./sections/causality/causal}
 \part{Regression}
 \include{./sections/regression/basics}
 \part{Kernel Methods}
@@ -129,8 +131,10 @@
 \input{./sections/diffusion/diffusion_model}
 \include{./sections/flow_models/flows}
 
-\part{Natural Language Processing}
-\input{./sections/nlp/nlp}
+\part{Causal Inference}
+\include{./sections/causality/causal}
+% \part{Natural Language Processing}
+% \input{./sections/nlp/nlp}
 \part{Advanced Topics}
 \input{./sections/advanced/advanced}
 \input{./sections/advanced/deepseek}

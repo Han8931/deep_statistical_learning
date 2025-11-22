@@ -1,18 +1,76 @@
 \chapter{Causal Inference}
-% \section{Introduction}
 
-% Our starting point is the difference between an \textit{observation} and an \textit{action}. What we see in passive observation is how individuals follow their routine behavior, habits, and natural inclination. Passive observation reflects the state of the world projected to a set of features we chose to highlight. Data that we collect from passive observation show a snapshot of our world as it is.
+In this chapter, we move from \emph{correlation-based} learning to genuinely \emph{causal} reasoning. We will:
+\begin{itemize}
+    \item Distinguish correlation from causation and relate this to standard machine learning,
+    \item Discuss the difference between observing the world and intervening in it,
+    \item Use the Berkeley admissions case to illustrate the limits of purely observational analysis,
+    \item Introduce causal models as a bridge between data and assumptions.
+\end{itemize}
 
-% There are many questions we can answer from passive observation alone: Do 16 year-old drivers have a higher incidence rate of traffic accidents than 18 year-old drivers? Formally, the answer corresponds to a difference of conditional probabilities. We can calculate the conditional probability of a traffic accident given that the driver's age is 16 years and subtract from it the conditional probability of a traffic accident given the age is 18 years. Both conditional probabilities can be estimated from a large enough sample drawn from the distribution, assuming that there are both 16 year old and 18 year old drivers. The answer to the question we asked is solidly in the realm of observational statistics.
+\section{Correlation vs Causation}
 
-% But important questions often are not observational in nature. Would traffic fatalities decrease if we raised the legal driving age by two years? Although the question seems similar on the surface, we quickly realize that it asks for a fundamentally different insight. Rather than asking for the frequency of an event in our manifested world, this question asks for the effect of a hypothetical action.
+Before we talk about observations and actions, it is useful to clarify a basic but crucial distinction: \textit{correlation} versus \textit{causation}.
 
-% As a result, the answer is not so simple. Even if older drivers have a lower incidence rate of traffic accidents, this might simply be a consequence of additional driving experience. There is no obvious reason why an 18 year old with two months on the road would be any less likely to be involved in an accident than, say, a 16 year-old with the same experience. We can try to address this problem by holding the number of months of driving experience fixed, while comparing individuals of different ages. But we quickly run into subtleties. What if 18 year-olds with two months of driving experience correspond to individuals who are exceptionally cautious and hence—by their natural inclination—not only drive less, but also more cautiously? What if such individuals predominantly live in regions where traffic conditions differ significantly from those in areas where people feel a greater need to drive at a younger age?
+\subsection{Correlation: how things move together}
 
-% We can think of numerous other strategies to answer the original ques- tion of whether raising the legal driving age reduces traffic accidents. We could compare countries with different legal driving ages, say, the United States and Germany. But again, these countries differ in many other possibly relevant ways, such as, the legal drinking age.
+Two variables are said to be \emph{correlated} if they tend to move together in the data:
+\begin{itemize}
+    \item When one variable is high, the other also tends to be high, or
+    \item When one is high, the other tends to be low.
+\end{itemize}
+Formally, we can measure this with quantities such as \emph{covariance} or \emph{correlation coefficients}. Intuitively, correlation captures how much two variables \emph{co-vary} in the data we observe.
 
-% At the outset, causal reasoning is a conceptual and technical framework for addressing questions about the effect of hypothetical actions or interventions. Once we understand what the effect of an action is, we can turn the question around and ask what action plausibly caused an event. This gives us a formal language to talk about cause and effect.
+A key point is that correlation is purely about \textbf{patterns in the data}, not about mechanisms. If ice-cream sales and drowning accidents go up together in summer, they are correlated; but it would be absurd to say that buying ice cream \emph{causes} drowning. Both are driven by a third factor: the weather.
 
+\subsection{Causation: how one variable affects another}
+
+By contrast, \emph{causation} is about what happens to one variable if we \emph{change} another variable:
+\begin{center}
+    \textit{If we force $X$ to change, how does $Y$ respond (on average)?}
+\end{center}
+Here we are interested in the \textbf{exact impact} of one variable on another under \emph{interventions}, not just how they happened to move together in the past. Causal questions are of the form:
+\begin{itemize}
+    \item What is the effect of raising the legal driving age on traffic accidents?
+    \item What is the effect of a new drug on blood pressure?
+    \item What is the effect of a new recommendation algorithm on user engagement?
+\end{itemize}
+These questions all ask about the consequences of a hypothetical action, not just about existing correlations.
+
+\subsection{What most machine learning actually learns}
+
+Most standard machine learning algorithms---linear regression, logistic regression, random forests, neural networks, transformers, and so on---are trained to learn patterns like
+\begin{align*}
+	P(Y \mid X) \quad \text{or} \quad f(x) \approx \mathbb{E}[Y \mid X = x],
+\end{align*}
+that is, they learn to predict $Y$ from $X$ based on \emph{observed co-variation} in the data. In other words:
+\begin{itemize}
+    \item They learn \textbf{correlations} (or more generally, statistical dependencies) between inputs and outputs.
+    \item They do not, by default, distinguish whether those dependencies are \emph{causal} or simply due to confounding factors.
+\end{itemize}
+We can think of standard ML as \textbf{correlation-based learning}:
+\begin{itemize}
+    \item It focuses on learning \emph{how variables change together} in the data,
+    \item not on what would happen if we actively intervened and changed one variable while holding everything else fixed.
+\end{itemize}
+
+This distinction is crucial:
+\begin{itemize}
+    \item A model that is excellent at exploiting correlations may be very good at prediction in environments similar to its training data,
+    \item but it can fail badly when we change the environment or policy, because it does not know the \emph{underlying causal structure}.
+\end{itemize}
+Causal inference, by contrast, aims precisely at learning (or using assumptions about) the \emph{causal impact} of one variable on another.
+
+In short, correlation-based learning is about capturing \emph{how variables change together} in the observed world, while causal inference aims to characterize the \emph{direct impact} of changing one variable on another under a specified intervention.
+
+\subsection{From correlation to intervention}
+
+In the rest of this note, we will move from correlation-based questions to truly causal ones. To do this, we will introduce the distinction between:
+\begin{itemize}
+    \item \textbf{Observations}: passively watching the world as it is, and
+    \item \textbf{Actions (interventions)}: asking what would happen if we changed something in the world.
+\end{itemize}
+This will lead naturally to the language of \emph{causal reasoning}, and to examples---such as driving-age policies and the Berkeley admissions case---that illustrate why correlation alone is not enough.
 
 \section{Observations vs Actions}
 
@@ -35,7 +93,7 @@ Mathematically, we can:
 	\item Compute the probability of an accident given that the driver is 18.
 	\item Then compare those two numbers (\eg subtract them).
 \end{itemize}
-If we have a large enough sample with both 16- and 18-year-old drivers, we can estimate these probabilities directly from the data. This is standard observational statistics.
+If we have a large enough sample with both 16- and 18-year-old drivers, we can estimate these probabilities directly from the data using standard observational statistics.
 \end{commentbox}
 
 \newpage
@@ -178,8 +236,11 @@ For example, we don't know, why women chose those more competitive departments:
 	\item Maybe the way departments advertised or described themselves discouraged women from applying.
 \end{itemize}
 We also don't know anything about the qualifications of applicants:
-\item It could be that, because of social barriers, women who applied to engineering in 1973 were on average more qualified than the men who applied.
-\item In that case, if the acceptance rate for men and women is equal, it might actually mean women are being held to a higher bar, which would be discrimination.
+\begin{itemize}
+	\item It could be that, because of social barriers, women who applied to engineering in 1973 were on average more qualified than the men who applied.
+	\item In that case, if the acceptance rate for men and women is equal, it might actually mean women are being held to a higher bar, which would be discrimination.
+\end{itemize}
+
 
 So, the observed acceptance rates alone cannot tell us whether there was discrimination or not. They leave us with many plausible stories, and we can't distinguish between them without more information.
 
@@ -203,3 +264,125 @@ Given this uncertainty, the author says there are two main options:
 	\end{itemize}
 \end{enumerate}
 
+\section{Causal models as a bridge between data and assumptions}
+
+Up to this point, we have seen two recurring themes:
+\begin{itemize}
+    \item Observational data alone can be ambiguous: the same pattern can be explained by multiple causal stories.
+    \item Policy questions (``what if we changed $X$?'') are fundamentally about interventions, not just about correlations.
+\end{itemize}
+Causal models provide a way to organize both of these issues. They give us:
+\begin{itemize}
+    \item A way to distinguish between \emph{seeing} and \emph{doing},
+    \item A structured way to encode assumptions about how variables influence one another,
+    \item A toolkit to derive the effect of hypothetical actions from observational data when possible.
+\end{itemize}
+
+\subsection{Observation vs intervention in notation}
+
+In ordinary statistics, we are used to working with conditional probabilities of the form
+\[
+	P(Y \mid X = x),
+\]
+which answer questions of the form:
+\begin{center}
+	\textit{Among the individuals for whom we \emph{see} $X = x$, how often do we see $Y$?}
+\end{center}
+For example, $P(\text{accident} \mid \text{age}=16)$ is the accident rate among all drivers who happen to be $16$ in our data.
+
+Causal questions, by contrast, refer to the effect of an \emph{action}. For this we introduce the notation
+\[
+	P(Y \mid \operatorname{do}(X = x)),
+\]
+which answers:
+\begin{center}
+	\textit{If we were to \emph{force} $X$ to take the value $x$ (by intervention), how often would we see $Y$?}
+\end{center}
+In the driving-age example, $P(\text{accident} \mid \operatorname{do}(\text{min.\ age}=18))$ describes the accident rate we would expect under a policy that sets the legal driving age to 18, taking into account all downstream changes (who drives, when they start, how much experience they accumulate, etc.).
+
+In general,
+\[
+	P(Y \mid X = x) \neq P(Y \mid \operatorname{do}(X = x)),
+\]
+because individuals who \emph{happen} to have $X = x$ in the observational world may differ in systematic ways from those who would end up with $X = x$ under an intervention. This discrepancy is precisely what we saw in the Berkeley example and the driving-age discussion: simple conditioning on $X$ mixes together many other influences.
+
+\subsection{Causal diagrams (informally)}
+
+One convenient way to encode assumptions about how variables influence each other is via \emph{causal diagrams}, also called directed acyclic graphs (DAGs). For the driving-age example, a highly simplified diagram might look like:
+\begin{center}
+\begin{tikzpicture}[>=stealth, node distance=2.3cm]
+	\node (law) {Law};
+	\node (age) [right of=law] {Age at start};
+	\node (exp) [right of=age] {Experience};
+	\node (acc) [right of=exp] {Accidents};
+	\node (pers) [below of=exp] {Personality};
+	\node (reg) [below of=acc] {Region};
+
+	\draw[->] (law) -- (age);
+	\draw[->] (age) -- (exp);
+	\draw[->] (exp) -- (acc);
+	\draw[->] (pers) -- (exp);
+    \draw[->] (pers) -- (acc);
+	\draw[->] (reg) -- (acc);
+\end{tikzpicture}
+\end{center}
+
+Read informally, this says:
+\begin{itemize}
+	\item The \textbf{Law} constrains the age at which people can start driving.
+	\item \textbf{Age at start} influences how much \textbf{Experience} they can accumulate.
+	\item \textbf{Experience} influences the risk of \textbf{Accidents}.
+	\item \textbf{Personality} (cautious vs reckless) affects both how much \textbf{Experience} people seek and their risk of \textbf{Accidents}.
+	\item \textbf{Region} (urban vs rural, road conditions, etc.) also affects \textbf{Accidents}.
+\end{itemize}
+
+This kind of diagram helps us see why simply comparing $P(\text{Accidents} \mid \text{Age})$ can be misleading:
+\begin{itemize}
+	\item Age is entangled with Experience, Personality, and Region.
+	\item Changing the Law changes Age, which in turn changes Experience and who drives at all.
+\end{itemize}
+Causal calculus (Pearl's do-calculus) tells us when and how we can recover $P(Y \mid \operatorname{do}(X=x))$ from purely observational data given such a diagram, and when we cannot.
+
+\subsection{Designing better studies}
+
+Causal models are not only a tool for interpreting existing data; they also guide the \emph{design} of new studies. Given a causal diagram, we can ask:
+\begin{itemize}
+	\item Which variables must we measure in order to block spurious associations (confounding paths)?
+	\item Which variables should we \emph{not} condition on, because they may introduce new biases (colliders)?
+	\item Under what conditions can we estimate causal effects from purely observational data?
+\end{itemize}
+
+In the Berkeley example, a causal model could tell us that we are missing key variables, such as:
+\begin{itemize}
+	\item Applicant qualifications (grades, test scores, research experience),
+	\item Department climate or reputation for treating women,
+	\item Broader social forces shaping field choice.
+\end{itemize}
+The model would then make explicit that, without additional measurements or assumptions, certain causal questions (e.g., ``Was there discrimination at the department level?'') cannot be answered definitively from the existing data.
+
+\subsection{Reasoning with incomplete data}
+
+Even when we cannot collect more data, causal models still have value. They allow us to:
+\begin{itemize}
+	\item Enumerate different plausible causal stories consistent with the observed data,
+	\item Explore the implications of each story (``If the world worked this way, what would the effect of changing X be?''),
+	\item Identify which assumptions are doing the real work in our conclusions.
+\end{itemize}
+In other words, a causal model acts as a \emph{logic engine} for cause-and-effect reasoning: given explicit assumptions, it yields explicit conclusions, and it clarifies which parts of our reasoning depend on empirical evidence and which parts depend on judgment and prior knowledge.
+
+\section{Summary}
+
+We can now summarize the main points:
+\begin{itemize}
+	\item Observational data show us how the world \emph{is}, not automatically how it would be if we \emph{changed} something.
+	\item Questions about policies or interventions (raising the driving age, changing admissions rules, etc.) are inherently \emph{causal} and require reasoning about $\operatorname{do}(\cdot)$, not just conditional probabilities.
+	\item The Berkeley admissions example illustrates how aggregated patterns can reverse when we condition on a relevant variable (department), a phenomenon known as Simpson's paradox.
+	\item Observational patterns alone can be compatible with multiple causal explanations (pipeline effects, discrimination at various stages, or both); data without a causal model cannot fully resolve such ambiguities.
+	\item Causal models provide a structured way to:
+		\begin{itemize}
+			\item Distinguish observation from intervention,
+			\item Design better studies and decide which variables to measure or control,
+			\item Connect domain knowledge and assumptions to concrete, testable implications.
+		\end{itemize}
+\end{itemize}
+In this sense, causal inference is not just an add-on to statistics but a complementary framework that lets us talk rigorously about actions, policies, and the mechanisms that generate the data we see.
